@@ -10,10 +10,11 @@ body{
   justify-content: center;
   align-items: center;
   height: 100vh;
+  gap: 40px;
 }
 
 canvas{
-  height: 400px;
-  width: 700px;  
+  height: 80dvh;
+  width: 90dvw;  
   background-color: black;
 }
