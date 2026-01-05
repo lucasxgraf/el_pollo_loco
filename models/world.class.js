@@ -1,22 +1,12 @@
 class World {
   character = new Character();
-  enemies = [
-    new Chicken(),
-    new Chicken(),
-    new Chicken(),
-  ];
-  clouds = [
-    new Cloud()
-  ];
-  backgroundObjects = [
-    new BackgroundObject('assets/img/5_background/layers/air.png', 0, 0),
-    new BackgroundObject('assets/img/5_background/layers/3_third_layer/1.png', 0, 0),
-    new BackgroundObject('assets/img/5_background/layers/2_second_layer/1.png', 0, 0),
-    new BackgroundObject('assets/img/5_background/layers/1_first_layer/1.png', 0, 0)
-  ];
+  enemies = LEVEL_1.enemies;
+  clouds = LEVEL_1.clouds;
+  backgroundObjects = [];
   canvas;
   ctx;
   keyboard;
+  camera_x = -100;
 
   constructor(canvas, keyboard){
     this.ctx = canvas.getContext('2d');
@@ -24,15 +14,21 @@ class World {
     this.keyboard = keyboard;
     this.drawWorld();
     this.setWorld();
+    this.createBackgroundObjects();
+
   }
 
   drawWorld(){
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+    this.ctx.translate(this.camera_x, 0);
+    
     this.addObjectsToMap(this.backgroundObjects);
     this.addToCharacterMap(this.character);
     this.addObjectsToMap(this.enemies);
     this.addObjectsToMap(this.clouds);
+
+    this.ctx.translate(-this.camera_x, 0);
 
     let self = this;
     requestAnimationFrame(function(){
@@ -45,7 +41,19 @@ class World {
   }
 
   addToCharacterMap(movableCharacter){
+    if(movableCharacter.otherDirection){
+      this.ctx.save();
+      this.ctx.translate(movableCharacter.width, 0);
+      this.ctx.scale(-1, 1);
+      movableCharacter.position_x = movableCharacter.position_x * -1;
+    }
+
     this.ctx.drawImage(movableCharacter.img, movableCharacter.position_x, movableCharacter.position_y, movableCharacter.width, movableCharacter.height);
+
+    if(movableCharacter.otherDirection){
+      movableCharacter.position_x = movableCharacter.position_x * -1;
+      this.ctx.restore();
+    }
   }
 
   addObjectsToMap(objects){
@@ -54,4 +62,22 @@ class World {
     });
   }
 
+  createBackgroundObjects() {
+    const layers = [
+      'assets/img/5_background/layers/air.png',
+      'assets/img/5_background/layers/3_third_layer/',
+      'assets/img/5_background/layers/2_second_layer/',
+      'assets/img/5_background/layers/1_first_layer/'
+    ];
+    
+    for (let i = -1; i < 5; i++) {
+      const MULTIPLIED_BY_720 = i * 720;
+      const IMAGE_VARIANT = i % 2 === 0 ? '1.png' : '2.png';
+      
+      this.backgroundObjects.push(new BackgroundObject(layers[0], MULTIPLIED_BY_720, 0));
+      this.backgroundObjects.push(new BackgroundObject(layers[1] + IMAGE_VARIANT, MULTIPLIED_BY_720, 0));
+      this.backgroundObjects.push(new BackgroundObject(layers[2] + IMAGE_VARIANT, MULTIPLIED_BY_720, 0));
+      this.backgroundObjects.push(new BackgroundObject(layers[3] + IMAGE_VARIANT, MULTIPLIED_BY_720, 0));
+    }
+  }
 }
