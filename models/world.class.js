@@ -1,7 +1,10 @@
 class World {
   character = new Character();
+  level = LEVEL_1;
   enemies = LEVEL_1.enemies;
   clouds = LEVEL_1.clouds;
+  coins = LEVEL_1.coins;
+  salsaBottles = LEVEL_1.salsaBottles;
   backgroundObjects = [];
   canvas;
   ctx;
@@ -15,7 +18,6 @@ class World {
     this.drawWorld();
     this.setWorld();
     this.createBackgroundObjects();
-
   }
 
   drawWorld(){
@@ -27,6 +29,8 @@ class World {
     this.addToCharacterMap(this.character);
     this.addObjectsToMap(this.enemies);
     this.addObjectsToMap(this.clouds);
+    this.addObjectsToMap(this.coins);
+    this.addObjectsToMap(this.salsaBottles);
 
     this.ctx.translate(-this.camera_x, 0);
 
