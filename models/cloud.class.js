@@ -1,4 +1,4 @@
-class Cloud extends MovableObjects{
+class Cloud extends MoveableObject{
   position_x = Math.random() * 720;
   position_y = 0;
   height = 480;

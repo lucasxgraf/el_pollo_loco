@@ -1,4 +1,4 @@
-class Endboss extends MovableObjects {
+class Endboss extends MoveableObject {
   position_x = 2000;
   position_y = 145;
   height = 300;

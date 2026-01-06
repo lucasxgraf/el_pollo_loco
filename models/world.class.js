@@ -62,28 +62,28 @@ class World {
     });
   }
 
-  addToMap(movableObject){
-    if(movableObject.otherDirection){
-      this.flipImage(movableObject);
+  addToMap(moveableObject){
+    if(moveableObject.otherDirection){
+      this.flipImage(moveableObject);
     }
 
-    movableObject.drawObject(this.ctx);
-    movableObject.drawObjectHitbox(this.ctx);
+    moveableObject.drawObject(this.ctx);
+    moveableObject.drawObjectHitbox(this.ctx);
 
-    if(movableObject.otherDirection){
-      this.flipImageBack(movableObject);
+    if(moveableObject.otherDirection){
+      this.flipImageBack(moveableObject);
     }
   }
 
-  flipImage(movableObject){
+  flipImage(moveableObject){
     this.ctx.save();
-    this.ctx.translate(movableObject.width, 0);
+    this.ctx.translate(moveableObject.width, 0);
     this.ctx.scale(-1, 1);
-    movableObject.position_x = movableObject.position_x * -1;
+    moveableObject.position_x = moveableObject.position_x * -1;
   }
 
-  flipImageBack(movableObject){
-    movableObject.position_x = movableObject.position_x * -1;
+  flipImageBack(moveableObject){
+    moveableObject.position_x = moveableObject.position_x * -1;
     this.ctx.restore();
   }
 

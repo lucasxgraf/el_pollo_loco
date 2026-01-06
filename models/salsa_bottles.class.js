@@ -1,4 +1,4 @@
-class SalsaBottle extends MovableObjects {
+class SalsaBottle extends MoveableObject {
   position_x = 100 + Math.random() * 1800;
   position_y = 360;
   height = 70;

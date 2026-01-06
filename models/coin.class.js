@@ -1,4 +1,4 @@
-class Coin extends MovableObjects {
+class Coin extends MoveableObject {
   position_x = 100;
   position_y = 170;
   width = 100;

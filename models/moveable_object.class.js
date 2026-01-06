@@ -1,30 +1,10 @@
-class MovableObjects{
-  position_x = 0;
-  position_y = 180;
-  img;
-  height = 150;
-  width = 100;
-  imageCache = {};
-  currentImage = 0;
+class MoveableObject extends DrawableObject {
   speed = 0.15;
   otherDirection = false;
   speedGravityY = 0;
   acceleration = 2.5;
   health = 100;
   lastHit = 0;
-
-  loadImage(imgPath){
-    this.img = new Image();
-    this.img.src = imgPath;
-  }
-
-  loadImages(arr){
-    arr.forEach(path => {
-      let img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
-    });
-  }
 
   applyGravity(){
     setInterval(() => {
@@ -34,12 +14,8 @@ class MovableObjects{
     } , 1000 / 25);
   }
 
-  isCharacterAboveGround(){
+  isCharacterAboveGround(){  
     return this.position_y < 180;
-  }
-
-  drawObject(ctx){
-    ctx.drawImage(this.img, this.position_x, this.position_y, this.width, this.height);
   }
 
   drawObjectHitbox(ctx){
