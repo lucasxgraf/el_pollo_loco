@@ -12,12 +12,15 @@ class SmallChicken extends MovableObjects {
   constructor(){
     super().loadImage('assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
     this.loadImages(this.IMAGES_WALKING);
-    this.speed = 0.50 + Math.random() * 0.5;
+    this.speed = 0.20 + Math.random() * 0.5;
     this.animate();
   }
 
   animate(){
-    this.moveLeft();
+    setInterval(() => {
+      this.moveLeft();
+    })
+
     setInterval(() => {
       this.playAnimation(this.IMAGES_WALKING);
     }, 100 );

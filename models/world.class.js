@@ -17,6 +17,7 @@ class World {
     this.keyboard = keyboard;
     this.drawWorld();
     this.setWorld();
+    this.checkCollisions();
     this.createBackgroundObjects();
   }
 
@@ -26,11 +27,11 @@ class World {
     this.ctx.translate(this.camera_x, 0);
     
     this.addObjectsToMap(this.backgroundObjects);
-    this.addToCharacterMap(this.character);
     this.addObjectsToMap(this.enemies);
     this.addObjectsToMap(this.clouds);
     this.addObjectsToMap(this.coins);
     this.addObjectsToMap(this.salsaBottles);
+    this.addToMap(this.character);
 
     this.ctx.translate(-this.camera_x, 0);
 
@@ -44,26 +45,45 @@ class World {
     this.character.world = this;
   }
 
-  addToCharacterMap(movableCharacter){
-    if(movableCharacter.otherDirection){
-      this.ctx.save();
-      this.ctx.translate(movableCharacter.width, 0);
-      this.ctx.scale(-1, 1);
-      movableCharacter.position_x = movableCharacter.position_x * -1;
-    }
-
-    this.ctx.drawImage(movableCharacter.img, movableCharacter.position_x, movableCharacter.position_y, movableCharacter.width, movableCharacter.height);
-
-    if(movableCharacter.otherDirection){
-      movableCharacter.position_x = movableCharacter.position_x * -1;
-      this.ctx.restore();
-    }
+  checkCollisions(){
+    setInterval(() => {
+      this.level.enemies.forEach((enemy) => {
+        if(this.character.isColliding(enemy)){
+          console.log('Collision with enemy detected!', enemy);
+        }
+      });
+    }, 200);
   }
 
   addObjectsToMap(objects){
-    objects.forEach(object => {
-      this.ctx.drawImage(object.img, object.position_x, object.position_y, object.width, object.height);
+    objects.forEach(o => {
+      this.addToMap(o);
     });
+  }
+
+  addToMap(movableObject){
+    if(movableObject.otherDirection){
+      this.flipImage(movableObject);
+    }
+
+    movableObject.drawObject(this.ctx);
+    movableObject.drawObjectHitbox(this.ctx);
+
+    if(movableObject.otherDirection){
+      this.flipImageBack(movableObject);
+    }
+  }
+
+  flipImage(movableObject){
+    this.ctx.save();
+    this.ctx.translate(movableObject.width, 0);
+    this.ctx.scale(-1, 1);
+    movableObject.position_x = movableObject.position_x * -1;
+  }
+
+  flipImageBack(movableObject){
+    movableObject.position_x = movableObject.position_x * -1;
+    this.ctx.restore();
   }
 
   createBackgroundObjects() {

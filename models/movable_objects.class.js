@@ -8,6 +8,8 @@ class MovableObjects{
   currentImage = 0;
   speed = 0.15;
   otherDirection = false;
+  speedGravityY = 0;
+  acceleration = 2.5;
 
   loadImage(imgPath){
     this.img = new Image();
@@ -22,14 +24,50 @@ class MovableObjects{
     });
   }
 
+  applyGravity(){
+    setInterval(() => {
+      if (this.isCharacterAboveGround() || this.speedGravityY > 0)
+        this.position_y -= this.speedGravityY;
+        this.speedGravityY -= this.acceleration;
+    } , 1000 / 25);
+  }
+
+  isCharacterAboveGround(){
+    return this.position_y < 180;
+  }
+
+  drawObject(ctx){
+    ctx.drawImage(this.img, this.position_x, this.position_y, this.width, this.height);
+  }
+
+  drawObjectHitbox(ctx){
+    if(this instanceof Character || this instanceof Chicken || this instanceof SmallChicken || this instanceof  Endboss){
+      ctx.beginPath();
+      ctx.lineWidth = '3';
+      ctx.strokeStyle = 'blue';
+      ctx.rect(this.position_x, this.position_y, this.width, this.height);
+      ctx.stroke();
+    }
+  }
+
+  isColliding(moveableObject){
+    return this.position_x + this.width > moveableObject.position_x &&
+           this.position_y + this.height > moveableObject.position_y &&
+           this.position_x < moveableObject.position_x + moveableObject.width &&
+           this.position_y < moveableObject.position_y + moveableObject.height;
+  }
+
   moveRight(){
-    console.log('Moving right');
+    this.position_x += this.speed;
+    this.otherDirection = false;
   }
 
   moveLeft() {
-    setInterval(() => {
-      this.position_x -= this.speed;
-    }, 1000 / 60 );
+    this.position_x -= this.speed;
+  }
+
+  jump(){
+    this.speedGravityY = 30;
   }
 
   playAnimation(images){
