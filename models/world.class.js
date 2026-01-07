@@ -10,6 +10,9 @@ class World {
   ctx;
   keyboard;
   camera_x = -100;
+  statusBarHealth = new StatusBarHealth();
+  statusBarCoin = new StatusBarCoin();
+  statusBarSalsaBottle = new StatusBarSalsaBottle();
 
   constructor(canvas, keyboard){
     this.ctx = canvas.getContext('2d');
@@ -32,6 +35,12 @@ class World {
     this.addObjectsToMap(this.coins);
     this.addObjectsToMap(this.salsaBottles);
     this.addToMap(this.character);
+    
+    this.ctx.translate(-this.camera_x, 0);
+    this.addToMap(this.statusBarHealth);
+    this.addToMap(this.statusBarCoin);
+    this.addToMap(this.statusBarSalsaBottle);
+    this.ctx.translate(this.camera_x, 0);
 
     this.ctx.translate(-this.camera_x, 0);
 
@@ -50,7 +59,7 @@ class World {
       this.level.enemies.forEach((enemy) => {
         if(this.character.isColliding(enemy)){
           this.character.hit();
-          console.log('Collision with enemy detected! health:', this.character.health);
+          this.statusBarHealth.setPercentage(this.character.health);
         }
       });
     }, 200);

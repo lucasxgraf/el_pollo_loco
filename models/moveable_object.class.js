@@ -18,16 +18,6 @@ class MoveableObject extends DrawableObject {
     return this.position_y < 180;
   }
 
-  drawObjectHitbox(ctx){
-    if(this instanceof Character || this instanceof Chicken || this instanceof SmallChicken || this instanceof  Endboss){
-      ctx.beginPath();
-      ctx.lineWidth = '3';
-      ctx.strokeStyle = 'blue';
-      ctx.rect(this.position_x, this.position_y, this.width, this.height);
-      ctx.stroke();
-    }
-  }
-
   isColliding(moveableObject){
     return this.position_x + this.width > moveableObject.position_x &&
            this.position_y + this.height > moveableObject.position_y &&

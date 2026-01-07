@@ -23,4 +23,14 @@ class DrawableObject {
   drawObject(ctx){
     ctx.drawImage(this.img, this.position_x, this.position_y, this.width, this.height);
   }
+
+  drawObjectHitbox(ctx){
+    if(this instanceof Character || this instanceof Chicken || this instanceof SmallChicken || this instanceof  Endboss){
+      ctx.beginPath();
+      ctx.lineWidth = '3';
+      ctx.strokeStyle = 'blue';
+      ctx.rect(this.position_x, this.position_y, this.width, this.height);
+      ctx.stroke();
+    }
+  }
 }
