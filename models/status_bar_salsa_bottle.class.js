@@ -15,6 +15,6 @@ class StatusBarSalsaBottle extends StatusBar {
   constructor() {
     super();
     this.loadImages(this.IMAGES_STATUS_BAR);
-    this.setPercentage(100);
+    this.setPercentage(0);
   }
 }

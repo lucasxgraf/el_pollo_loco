@@ -3,6 +3,8 @@ class Character extends MoveableObject{
   height = 250;
   width = 100;
   speed = 5;
+  collectedCoins = 0;
+  collectedBottles = 0;
   IMAGES_WALKING = [
     'assets/img/2_character_pepe/2_walk/W-21.png',
     'assets/img/2_character_pepe/2_walk/W-22.png',

@@ -62,6 +62,7 @@ class World {
     setInterval(() => {
       this.checkCollisions();
       this.checkThrowObjects();
+      this.checkCollectables();
     }, 200);
   }
 
@@ -83,6 +84,26 @@ class World {
         this.character.canThrowBottle = true;
       }, 1000);
     }
+  }
+
+  checkCollectables() {
+  this.coins.forEach((coin, index) => {
+    if (this.character.isColliding(coin)) {
+      this.coins.splice(index, 1);
+      this.character.collectedCoins++;
+      const percentage = (this.character.collectedCoins / 19) * 100;
+      this.statusBarCoin.setPercentage(percentage);
+    }
+  });
+
+  this.salsaBottles.forEach((bottle, index) => {
+    if (this.character.isColliding(bottle)) {
+      this.salsaBottles.splice(index, 1);
+      this.character.collectedBottles++;
+      const percentage = (this.character.collectedBottles / 6) * 100;
+      this.statusBarSalsaBottle.setPercentage(percentage);
+    }
+  });
   }
 
   addObjectsToMap(objects){
@@ -124,7 +145,7 @@ class World {
       'assets/img/5_background/layers/1_first_layer/'
     ];
     
-    for (let i = -1; i < 5; i++) {
+    for (let i = -1; i < 6; i++) {
       const MULTIPLIED_BY_720 = i * 720;
       const IMAGE_VARIANT = i % 2 === 0 ? '1.png' : '2.png';
       
