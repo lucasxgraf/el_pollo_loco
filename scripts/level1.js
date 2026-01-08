@@ -14,8 +14,29 @@ const LEVEL_1 = new Level(
     new Cloud(),
   ],
   [],
-  generateCoinRows(),
   [
+    new Coin(480, 180),
+    new Coin(540, 180),
+    new Coin(600, 180),
+    new Coin(1280, 180),
+    new Coin(1280, 110),
+    new Coin(1340, 180),
+    new Coin(1340, 110),
+    new Coin(1800, 170),
+    new Coin(1850, 170),
+    new Coin(1900, 170),
+    new Coin(1950, 170),
+    new Coin(2675, 170),
+    new Coin(2740, 170),
+    new Coin(2800, 170),
+    new Coin(3200, 250),
+    new Coin(3300, 170),
+    new Coin(3400, 250),
+    new Coin(3500, 170),
+    new Coin(3600, 250),
+  ],
+  [
+    new SalsaBottle(),
     new SalsaBottle(),
     new SalsaBottle(),
     new SalsaBottle(),
@@ -23,27 +44,3 @@ const LEVEL_1 = new Level(
     new SalsaBottle(),
   ]
 );
-
-function generateCoinRows() {
-  let coins = [];
-  let positions = [];
-  
-  for (let i = 0; i < 4; i++) {
-    positions.push(300 + Math.random() * 1400);
-  }
-  
-  positions.sort((a, b) => a - b);
-  
-  let numRows = 4 + Math.floor(Math.random() * 2);
-  
-  for (let i = 0; i < numRows; i++) {
-    let x = positions[i];
-    let y = 100 + Math.random() * 100;
-    let spacing = 80 + Math.random() * 40;
-    coins.push(new Coin(x, y));
-    coins.push(new Coin(x + spacing, y, true));
-    coins.push(new Coin(x + spacing * 2, y));
-  }
-  
-  return coins;
-}

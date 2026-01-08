@@ -1,5 +1,5 @@
 class SmallChicken extends MoveableObject {
-  position_x = 120 + Math.random() * 1800;
+  position_x = 120 + Math.random() * 3600;
   position_y = 365;
   height = 60;
   width = 60;
