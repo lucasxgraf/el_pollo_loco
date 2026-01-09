@@ -63,7 +63,7 @@ class World {
       this.checkCollisions();
       this.checkThrowObjects();
       this.checkCollectables();
-    }, 200);
+    }, 1000 / 60);
   }
 
   checkCollisions(){
@@ -118,7 +118,8 @@ class World {
     }
 
     moveableObject.drawObject(this.ctx);
-    moveableObject.drawObjectHitbox(this.ctx);
+    // moveableObject.drawObjectHitbox(this.ctx);
+    moveableObject.drawObjectHitboxOffset(this.ctx);
 
     if(moveableObject.otherDirection){
       this.flipImageBack(moveableObject);

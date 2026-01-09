@@ -48,7 +48,7 @@ window.addEventListener("keyup", (e) => {
     keyboard.LEFT = false;
   }
   
-  if(e.key == 'ArrowUp' || e.key == 'w'){a
+  if(e.key == 'ArrowUp' || e.key == 'w'){
     keyboard.UP = false;
   }
   

@@ -3,9 +3,14 @@ class ThrowableObject extends MoveableObject {
   position_y = 200;
   height = 75;
   width = 75;
-
+  offset = { 
+    top: 10, 
+    left: 10, 
+    right: 10, 
+    bottom: 10 
+  };
+  
   constructor() {
-
     super().loadImage('assets/img/6_salsa_bottle/salsa_bottle.png');
     this.throw(this.position_x, this.position_y);
   }

@@ -3,6 +3,12 @@ class Coin extends MoveableObject {
   position_y = 170;
   width = 100;
   height = 100;
+  offset = {
+    top: 65,
+    left: 35,
+    right: 35,
+    bottom: 65
+  }
 
   IMAGES_ROTATE = [
     'assets/img/8_coin/coin_1.png',
