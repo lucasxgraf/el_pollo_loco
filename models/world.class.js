@@ -63,13 +63,14 @@ class World {
       this.checkCollisions();
       this.checkThrowObjects();
       this.checkCollectables();
-    }, 1000 / 60);
+    }, 100);
   }
 
   checkCollisions(){
     this.level.enemies.forEach((enemy) => {
       if(this.character.isColliding(enemy)){
         this.character.hit();
+        this.character.backwardJump();
         this.statusBarHealth.setPercentage(this.character.health);
       }
     });

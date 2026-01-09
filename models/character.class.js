@@ -5,7 +5,6 @@ class Character extends MoveableObject{
   position_y = 0;
   height = 250;
   width = 100;
-  speed = 5;
   collectedCoins = 0;
   collectedBottles = 0;
   stop = true;
@@ -13,6 +12,7 @@ class Character extends MoveableObject{
   counter = 0;
   longIdle = 0;
   amountCounter = 0;
+  speed = 5;
   speedSound = 1;
   offset = { 
     top: 120, 
@@ -89,56 +89,136 @@ class Character extends MoveableObject{
     this.loadImages(this.IMAGES_JUMPING);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
+    this.animateMovement();
+    this.animateConditionOfCharacter();
+    this.animateWalkingSpeed();
     this.applyGravity();
-    this.animate();
   }
 
-  animate(){
+  animateMovement(){
     setInterval(() => {
       this.walking_sound.pause();
       
-      if(this.world.keyboard.RIGHT && this.position_x < this.world.level.level_end_x){
+      if(this.canMoveRight()){
         this.moveRight();
-        this.playWalkingSound();
-      }
-
-      if(this.world.keyboard.LEFT && this.position_x > 0){
+      } else if (this.canMoveLeft()) {
         this.moveLeft();
         this.otherDirection = true;
-        this.playWalkingSound();
       }
 
-      if((this.world.keyboard.UP || this.world.keyboard.SPACE) && !this.isCharacterAboveGround()){
+      if(this.canJump()){
         this.jump();
         this.jump_sound.play();
       }
 
       this.world.camera_x = -this.position_x + 100;
     }, 1000 / 60)
-
-    setInterval(() => {
-      if(this.isDead()){
-        this.playAnimation(this.IMAGES_DEAD);
-      } else if (this.isHurt()){
-        this.playAnimation(this.IMAGES_HURT);
-      } else if (this.isCharacterAboveGround()){
-        this.playAnimation(this.IMAGES_JUMPING);
-      } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT){
-          this.playAnimation(this.IMAGES_WALKING);
-        } else { 
-          this.playAnimation(this.IMAGES_IDLE);
-        }
-    }, 100);
   }
 
-  playWalkingSound(){
-    if(!this.isCharacterAboveGround()){
-      this.walking_sound.play();
+  canMoveRight() { 
+    return this.world.keyboard.RIGHT && this.position_x < this.world.level.level_end_x && !this.hurts; 
+  }
+
+  canMoveLeft() {
+    return this.world.keyboard.LEFT && this.position_x > 0 && !this.hurts;
+  }
+
+  canJump() {
+    return (this.world.keyboard.UP || this.world.keyboard.SPACE) && !this.isCharacterAboveGround();
+  }
+
+  moveRight() {
+    super.moveRight();
+    if (this.otherDirection) this.stopIncreasingSpeed();
+    this.otherDirection = false;
+    if (!this.isCharacterAboveGround()) {
+      playAudio(this.walking_sound, 1);
+      this.walking_sound.playbackRate = this.speedSound;
     }
+    this.increasingSpeed();
+    playAudio(this.walking_sound, 1);
   }
 
-  playJumpSound(){
-    this.jump_sound.play();
+  moveLeft() {
+    super.moveLeft();
+    if (!this.otherDirection) this.stopIncreasingSpeed();
+    this.otherDirection = true;
+    if (!this.isCharacterAboveGround) {
+        playAudio(this.walking_sound, 1);
+        this.walking_sound.playbackRate = this.speedSound;
+    }
+    this.increasingSpeed();
+    playAudio(this.walking_sound, 1)
+  }
+
+  jump(){
+    super.jump();
+    this.walking_sound.pause();
+    this.stopIncreasingSpeed();
+  }
+
+  animateConditionOfCharacter(){
+    this.characterConditionInterval = setInterval(() => {
+      if (this.isDead()) {
+          this.characterDieAnimation();
+        } else if (this.isHurt(0.7)) {
+          this.playAnimation(this.IMAGES_HURT);
+        } else if (this.jumpAnimationRequirements()) {
+          this.characterJumpAnimation();
+        } else if (this.walkAnimationRequirements()) {
+          this.counter++;
+          if (this.counter >= 4) {
+            this.playAnimation(this.IMAGES_WALKING);
+            this.amountCounter += 0.25;
+            this.counter = 0 + this.amountCounter;
+          }
+      } else {
+        this.counter = 0;
+        this.amountCounter = 0;
+      }
+    }, 50);
+  }
+
+  jumpAnimationRequirements() {
+    return this.isCharacterAboveGround() && this.speed >= 0 && !this.jumpedOnAEnemy;
+  }
+
+  walkAnimationRequirements() {
+    return (this.world.keyboard.RIGHT || this.world.keyboard.LEFT && this.position_x > 0) && this.position_x < this.world.level.level_end_x;
+  }
+
+  characterJumpAnimation() {
+    clearInterval(this.characterConditionInterval);
+    this.longIdle = 0;
+    this.characterJumpInterval = setInterval(() => {
+        this.playAnimation(this.IMAGES_JUMPING);
+    }, 220);
+    setTimeout(() => {
+      this.currentImage = 0;
+      this.animateConditionOfCharacter();
+      clearInterval(this.characterJumpInterval);
+    }, 1200);
+  }
+
+  backwardJump() {
+    if (!this.hurts) {
+      this.hurts = true;
+      this.speed = 15;
+      this.stopIncreasingSpeed();
+      playAudio(this.hurt_sound, 1);
+
+      if (this.otherDirection) {
+        this.backwardInterval = setInterval(() => { 
+        this.position_x++ }, 1000 / 200);
+      } else {
+        this.backwardInterval = setInterval(() => { 
+        this.position_x-- }, 1000 / 200);
+      }
+      setTimeout(() => {
+          clearInterval(this.backwardInterval);
+          this.hurts = false;
+      }, 700);
+    }
   }
   
   characterDieAnimation() {
@@ -149,7 +229,36 @@ class Character extends MoveableObject{
     }, 380);
     setTimeout(() => {
         clearInterval(this.characterDieInterval)
-        gameOver(false);
+        // gameOver(false);
     }, 1900);
+  }
+
+  animateWalkingSpeed() {
+    setInterval(() => {
+      if ((!this.world.keyboard.LEFT && !this.world.keyboard.RIGHT) || this.position_x <= 0 || this.position_x > this.world.level.level_end_x) {
+        this.walking_sound.pause(); 
+        this.stopIncreasingSpeed();
+        this.longIdle++
+        if (this.longIdle <= 20) { 
+          this.playAnimation(this.IMAGES_IDLE);
+        } else this.playAnimation(this.IMAGES_LONG_IDLE);
+      } else {
+        this.longIdle = 0;
+      }
+    }, 300);
+  }
+
+  increasingSpeed() {
+    if (this.speed < 8) {
+      this.speed *= 1.01;
+      this.speedSound *= 1.008;
+    }
+  }
+  
+  stopIncreasingSpeed() {
+    this.speed = 2.5;
+    this.speedSound = 1;
+    this.counter = 0;
+    this.amountCounter = 0;
   }
 }

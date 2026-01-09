@@ -1,6 +1,7 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let mute = false;
 
 function init(){
   canvas = document.getElementById('canvas');
@@ -61,3 +62,24 @@ window.addEventListener("keyup", (e) => {
   }
 })
 
+function playAudio(path, volume, repeat) {
+    if (mute) { 
+      return
+    } else {
+        path.volume = volume;
+        path.play();
+        if (repeat == 1) path.loop = false;
+    }
+}
+
+function stopAudio(path) {
+    if (mute) { 
+      return
+    } else {
+        path.pause();
+    }
+}
+
+function stopAllInterval() {
+    for (let i = 1; i < 999; i++) window.clearInterval(i);
+}
