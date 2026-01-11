@@ -2,7 +2,7 @@ class Character extends MoveableObject{
   characterDieInterval;
   characterConditionInterval;
   world;
-  position_y = 0;
+  position_y = 180;
   height = 250;
   width = 100;
   collectedCoins = 0;
