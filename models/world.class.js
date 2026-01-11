@@ -103,7 +103,7 @@ class World {
     if (this.character.isColliding(bottle)) {
       this.salsaBottles.splice(index, 1);
       this.character.collectedBottles++;
-      const percentage = (this.character.collectedBottles / 6) * 100;
+      const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
       this.statusBarSalsaBottle.setPercentage(percentage);
     }
   });
@@ -129,7 +129,8 @@ class World {
     let bottle = new ThrowableObject(this.character.position_x + 50, this.character.position_y + 100);
     this.throwableObjects.push(bottle);
     this.character.collectedBottles--;
-    this.statusBarSalsaBottle.setPercentage(100 / world.totalBottles * this.character.collectedBottles);
+    const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
+    this.statusBarSalsaBottle.setPercentage(percentage);
   }
 
   addObjectsToMap(objects){
