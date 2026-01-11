@@ -24,14 +24,13 @@ class MoveableObject extends DrawableObject {
 
   isColliding(moveableObject){
     return this.position_x + this.offset.left + (this.width - this.offset.left - this.offset.right) > moveableObject.position_x + moveableObject.offset.left &&
-          this.position_y + this.offset.top + (this.height - this.offset.top - this.offset.bottom) > moveableObject.position_y + moveableObject.offset.top &&
-          this.position_x + this.offset.left < moveableObject.position_x + moveableObject.offset.left + (moveableObject.width - moveableObject.offset.left - moveableObject.offset.right) &&
-          this.position_y + this.offset.top < moveableObject.position_y + moveableObject.offset.top + (moveableObject.height - moveableObject.offset.top - moveableObject.offset.bottom);
+      this.position_y + this.offset.top + (this.height - this.offset.top - this.offset.bottom) > moveableObject.position_y + moveableObject.offset.top &&
+      this.position_x + this.offset.left < moveableObject.position_x + moveableObject.offset.left + (moveableObject.width - moveableObject.offset.left - moveableObject.offset.right) &&
+      this.position_y + this.offset.top < moveableObject.position_y + moveableObject.offset.top + (moveableObject.height - moveableObject.offset.top - moveableObject.offset.bottom);
   }
 
   moveRight(){
     this.position_x += this.speed;
-    this.otherDirection = false;
   }
 
   moveLeft() {

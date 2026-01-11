@@ -5,6 +5,8 @@ class World {
   clouds = LEVEL_1.clouds;
   coins = LEVEL_1.coins;
   salsaBottles = LEVEL_1.salsaBottles;
+  totalCoins = LEVEL_1.coins.length;
+  totalBottles = LEVEL_1.salsaBottles.length;
   backgroundObjects = [];
   canvas;
   ctx;
@@ -13,9 +15,9 @@ class World {
   statusBarHealth = new StatusBarHealth();
   statusBarCoin = new StatusBarCoin();
   statusBarSalsaBottle = new StatusBarSalsaBottle();
-  throwableObjects = [
-    new ThrowableObject(),
-  ];
+  throwableObjects = [];
+  throwing = true;
+  no_throwing_sound = new Audio('assets/sound/no_throwing_objects.mp3');
 
   constructor(canvas, keyboard){
     this.ctx = canvas.getContext('2d');
@@ -63,7 +65,7 @@ class World {
       this.checkCollisions();
       this.checkThrowObjects();
       this.checkCollectables();
-    }, 100);
+    }, 1000 / 60);
   }
 
   checkCollisions(){
@@ -77,13 +79,13 @@ class World {
   }
 
   checkThrowObjects(){
-    if (this.keyboard.Q && this.character.canThrowBottle) {
-      let bottle = new ThrowableObject(this.character.position_x + 100, this.character.position_y + 100);
-      this.throwableObjects.push(bottle);
-      this.character.canThrowBottle = false;
-      setTimeout(() => {
-        this.character.canThrowBottle = true;
-      }, 1000);
+    if (this.canThrowObjects()) {
+      this.throwingObject();
+    } else if (this.canNotThrowObjects()) {
+      playAudio(this.no_throwing_sound, 1);
+      setTimeout(() => { 
+        this.no_throwing_sound.pause 
+      }, 2000);
     }
   }
 
@@ -105,6 +107,29 @@ class World {
       this.statusBarSalsaBottle.setPercentage(percentage);
     }
   });
+  }
+
+  allowThrowingObjects() {
+    this.throwing = false;
+    setTimeout(() => {
+      this.throwing = true
+    }, 1000);
+  }
+
+  canThrowObjects() {
+    return this.keyboard.Q && this.throwing && this.character.collectedBottles > 0;
+  }
+
+  canNotThrowObjects() {
+    return this.keyboard.Q && this.throwing && this.character.collectedBottles <= 0;
+  }
+
+  throwingObject() {
+    this.allowThrowingObjects();
+    let bottle = new ThrowableObject(this.character.position_x + 50, this.character.position_y + 100);
+    this.throwableObjects.push(bottle);
+    this.character.collectedBottles--;
+    this.statusBarSalsaBottle.setPercentage(100 / world.totalBottles * this.character.collectedBottles);
   }
 
   addObjectsToMap(objects){
@@ -148,7 +173,7 @@ class World {
     ];
     
     for (let i = -1; i < 6; i++) {
-      const MULTIPLIED_BY_720 = i * 720;
+      const MULTIPLIED_BY_720 = i * 720 + 10 ;
       const IMAGE_VARIANT = i % 2 === 0 ? '1.png' : '2.png';
       
       this.backgroundObjects.push(new BackgroundObject(layers[0], MULTIPLIED_BY_720, 0));

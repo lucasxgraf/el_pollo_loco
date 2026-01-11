@@ -41,7 +41,7 @@ class DrawableObject {
   }
 
   drawObjectHitboxOffset(ctx){
-      if (this instanceof Character || this instanceof Chicken || this instanceof SmallChicken || this instanceof Endboss || this instanceof ThrowableObject || this instanceof Coin || this instanceof SalsaBottle) {
+    if (this instanceof Character || this instanceof Chicken || this instanceof SmallChicken || this instanceof Endboss || this instanceof ThrowableObject || this instanceof Coin || this instanceof SalsaBottle) {
       ctx.beginPath();
       ctx.lineWidth = '3';
       ctx.strokeStyle = 'red';
@@ -49,4 +49,4 @@ class DrawableObject {
       ctx.stroke();
     }
   }
-}
+} 
