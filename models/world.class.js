@@ -27,6 +27,7 @@ class World {
     this.setWorld();
     this.run();
     this.createBackgroundObjects();
+    this.playBackgroundMusic();
   }
 
   drawWorld(){
@@ -197,5 +198,13 @@ isJumpingOnEnemy(enemy){
       this.backgroundObjects.push(new BackgroundObject(layers[2] + IMAGE_VARIANT, MULTIPLIED_BY_720, 0));
       this.backgroundObjects.push(new BackgroundObject(layers[3] + IMAGE_VARIANT, MULTIPLIED_BY_720, 0));
     }
+  }
+
+  playBackgroundMusic(){
+    playAudio(this.level.backgroundMusic, 0.5);
+  }
+
+  stopBackgroundMusic() {
+    stopAudio(this.level.backgroundMusic);
   }
 }

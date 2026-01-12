@@ -42,5 +42,7 @@ const LEVEL_1 = new Level(
     new SalsaBottle(),
     new SalsaBottle(),
     new SalsaBottle(),
-  ]
+  ],
+  new Audio('assets/sound/sandstorm_background.mp3')
+
 );

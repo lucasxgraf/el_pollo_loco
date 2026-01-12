@@ -67,7 +67,12 @@ function playAudio(path, volume, repeat) {
     return
   } else {
       path.volume = volume;
-      path.play();
+      let playPromise = path.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log('Audio play prevented:', error);
+        });
+      }
       if (repeat == 1) path.loop = false;
   }
 }
