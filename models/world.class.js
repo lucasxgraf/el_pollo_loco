@@ -102,6 +102,8 @@ class World {
       this.character.collectedCoins++;
       const percentage = (this.character.collectedCoins / 19) * 100;
       this.statusBarCoin.setPercentage(percentage);
+      let coinSound = new Audio('assets/sound/coin.mp3');
+      playAudio(coinSound, 1);
     }
   });
 
@@ -111,6 +113,8 @@ class World {
       this.character.collectedBottles++;
       const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
       this.statusBarSalsaBottle.setPercentage(percentage);
+      let bottleSound = new Audio('assets/sound/bottle_collect.mp3');
+      playAudio(bottleSound, 1);
     }
   });
   }
