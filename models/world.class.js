@@ -15,6 +15,7 @@ class World {
   statusBarHealth = new StatusBarHealth();
   statusBarCoin = new StatusBarCoin();
   statusBarSalsaBottle = new StatusBarSalsaBottle();
+  statusBarEndboss;
   throwableObjects = [];
   throwing = true;
   no_throwing_sound = new Audio('assets/sound/no_throwing_objects.mp3');
@@ -47,6 +48,9 @@ class World {
     this.addToMap(this.statusBarHealth);
     this.addToMap(this.statusBarCoin);
     this.addToMap(this.statusBarSalsaBottle);
+    if (this.statusBarEndboss) {
+      this.addToMap(this.statusBarEndboss);
+    }
     this.ctx.translate(this.camera_x, 0);
 
     this.ctx.translate(-this.camera_x, 0);
@@ -66,12 +70,14 @@ class World {
       this.checkCollisions();
       this.checkThrowObjects();
       this.checkCollectables();
+      this.checkCollisionsThrowableObjectsWithTheGround();
+      this.checkCollisionsThrowableObjectsWithEnemies();
     }, 1000 / 60);
   }
 
   checkCollisions(){
     this.level.enemies.forEach((enemy) => {
-      if(this.character.isColliding(enemy) && !enemy.isDead){
+      if(this.character.isColliding(enemy) && !enemy.isDead && !this.character.hurts){
         if(this.isJumpingOnEnemy(enemy)){
           enemy.health = 0;
           enemy.isDead = true;
@@ -120,9 +126,75 @@ class World {
   });
   }
 
-isJumpingOnEnemy(enemy){
+  checkCollisionsThrowableObjectsWithTheGround() {
+    this.throwableObjects.forEach((bottle) => {
+      if (bottle.position_y >= bottle.bottleGround && !bottle.break) {
+        this.bottleBreaks(bottle);
+      }
+    })
+  }
+
+  checkCollisionsThrowableObjectsWithEnemies() {
+    this.throwableObjects.forEach((bottle) => {
+      this.level.enemies.forEach((enemy) => {
+        if (bottle.isColliding(enemy) && !enemy.isHurt() && !enemy.isDead) {
+          this.bottleCollidingWithEnemy(enemy, bottle);
+        } 
+      })
+    })
+  }
+
+  bottleCollidingWithEnemy(enemy, bottle) {
+    enemy.hitEnemy();
+    if (enemy instanceof Endboss && this.statusBarEndboss) {
+      this.statusBarEndboss.setPercentage(enemy.health);
+    }
+    if (enemy.hurt_sound) {
+      playAudio(enemy.hurt_sound, 0.5);
+    } else if (enemy.endboss_hurt_sound) {
+      playAudio(enemy.endboss_hurt_sound, 0.5);
+    }
+    this.bottleBreaks(bottle);
+  } 
+
+  bottleBreaks(bottle) {
+    bottle.break = true;
+    bottle.intervalCounter = 200;
+    this.clearTheBottleIntervals(bottle);
+    bottle.animate();
+    this.playBottleThrowSound(bottle);
+  }
+
+  playBottleThrowSound(bottle) {
+    playAudio(bottle.breaking_sound, 1);
+    setTimeout(() => {
+      this.throwableObjects.splice(this.throwableObjects.indexOf(bottle), 1);
+      clearInterval(bottle.animateBottleInterval);
+    }, 1300);
+  }
+
+  clearTheBottleIntervals(bottle) {
+    clearInterval(bottle.animateBottleInterval);
+    clearInterval(bottle.throwInterval);
+    clearInterval(bottle.applyGravityInterval);
+  }
+
+  enemyHurt(enemy) {
+    enemy.energy -= 20;
+  }
+
+  isJumpingOnEnemy(enemy){
     return this.character.speedGravityY < 0 && 
       this.character.position_y + this.character.height - this.character.offset.bottom < enemy.position_y + enemy.height / 2;
+  }
+
+  throwingObject() {
+    this.allowThrowingObjects();
+    let bottle = new ThrowableObject(this.character.position_x + 50, this.character.position_y + 100);
+    this.throwableObjects.push(bottle);
+    this.character.collectedBottles--;
+    const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
+    this.statusBarSalsaBottle.setPercentage(percentage);
   }
 
   allowThrowingObjects() {
@@ -138,15 +210,6 @@ isJumpingOnEnemy(enemy){
 
   canNotThrowObjects() {
     return this.keyboard.Q && this.throwing && this.character.collectedBottles <= 0;
-  }
-
-  throwingObject() {
-    this.allowThrowingObjects();
-    let bottle = new ThrowableObject(this.character.position_x + 50, this.character.position_y + 100);
-    this.throwableObjects.push(bottle);
-    this.character.collectedBottles--;
-    const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
-    this.statusBarSalsaBottle.setPercentage(percentage);
   }
 
   addObjectsToMap(objects){

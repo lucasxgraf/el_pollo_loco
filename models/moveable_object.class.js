@@ -57,6 +57,15 @@ class MoveableObject extends DrawableObject {
     }
   }
 
+  hitEnemy(){
+    this.health -= 20;
+    if(this.health < 0){
+      this.health = 0;
+    } else {
+      this.lastHit = new Date().getTime();
+    }
+  }
+
   isDead(){
     return this.health == 0;
   }

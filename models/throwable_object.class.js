@@ -43,12 +43,12 @@ class ThrowableObject extends MoveableObject {
 
   animate() {
     this.animateBottleInterval = setInterval(() => {
-      if (this.break) {
-        this.playAnimation(this.IMAGES_BOTTLE_BREAK);
-      } else {
-        this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
-      }
-  }, this.intervalCounter);
+    if (this.break) {
+      this.playAnimation(this.IMAGES_BOTTLE_BREAK);
+    } else {
+      this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
+    }
+    }, this.intervalCounter);
   }
   
   throw(){
