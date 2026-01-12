@@ -5,7 +5,7 @@ class SmallChicken extends MoveableObject {
   width = 60;
   isDead = false;
   animateChickenInterval;
-  health = 20;
+  health = 10;
   offset = { 
     top: 0, 
     left: 0, 

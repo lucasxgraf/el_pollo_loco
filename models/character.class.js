@@ -157,6 +157,11 @@ class Character extends MoveableObject{
     this.stopIncreasingSpeed();
   }
 
+  jumpOnEnemy(){
+    this.speedGravityY = 10;
+    this.walking_sound.pause();
+  }
+
   animateConditionOfCharacter(){
     this.characterConditionInterval = setInterval(() => {
       if (this.isDead()) {

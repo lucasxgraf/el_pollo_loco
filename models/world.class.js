@@ -70,10 +70,16 @@ class World {
 
   checkCollisions(){
     this.level.enemies.forEach((enemy) => {
-      if(this.character.isColliding(enemy)){
-        this.character.hit();
-        this.character.backwardJump();
-        this.statusBarHealth.setPercentage(this.character.health);
+      if(this.character.isColliding(enemy) && !enemy.isDead){
+        if(this.isJumpingOnEnemy(enemy)){
+          enemy.health = 0;
+          enemy.isDead = true;
+          this.character.jumpOnEnemy();
+        } else {
+          this.character.hit();
+          this.character.backwardJump();
+          this.statusBarHealth.setPercentage(this.character.health);
+        }
       }
     });
   }
@@ -107,6 +113,11 @@ class World {
       this.statusBarSalsaBottle.setPercentage(percentage);
     }
   });
+  }
+
+isJumpingOnEnemy(enemy){
+    return this.character.speedGravityY < 0 && 
+      this.character.position_y + this.character.height - this.character.offset.bottom < enemy.position_y + enemy.height / 2;
   }
 
   allowThrowingObjects() {

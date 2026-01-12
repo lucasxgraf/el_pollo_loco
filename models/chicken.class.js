@@ -3,6 +3,9 @@ class Chicken extends MoveableObject{
   position_y = 350;
   height = 75;
   width = 75;
+  isDead = false;
+  animateChickenInterval;
+  health = 10;
   offset = { 
     top: 10, 
     left: 10, 
@@ -32,9 +35,13 @@ class Chicken extends MoveableObject{
     }, 1000 / 60 );
 
     setInterval(() => {
-
-
-      this.playAnimation(this.IMAGES_WALKING);
+      if (this.health <= 0) {
+        this.playAnimation(this.IMAGES_DEAD);
+        clearInterval(this.animateChickenInterval);
+        this.isDead = true;
+      } else {
+        this.playAnimation(this.IMAGES_WALKING);
+      }
     }, 100 );
   }
 }
