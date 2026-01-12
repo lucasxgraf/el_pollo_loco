@@ -124,14 +124,14 @@ class Character extends MoveableObject{
   }
 
   canJump() {
-    return (this.world.keyboard.UP || this.world.keyboard.SPACE) && !this.isCharacterAboveGround();
+    return (this.world.keyboard.UP || this.world.keyboard.SPACE) && !this.isObjectAboveGround();
   }
 
   moveRight() {
     super.moveRight();
     if (this.otherDirection) this.stopIncreasingSpeed();
     this.otherDirection = false;
-    if (!this.isCharacterAboveGround()) {
+    if (!this.isObjectAboveGround()) {
       playAudio(this.walking_sound, 1);
       this.walking_sound.playbackRate = this.speedSound;
     }
@@ -143,7 +143,7 @@ class Character extends MoveableObject{
     super.moveLeft();
     if (!this.otherDirection) this.stopIncreasingSpeed();
     this.otherDirection = true;
-    if (!this.isCharacterAboveGround) {
+    if (!this.isObjectAboveGround) {
         playAudio(this.walking_sound, 1);
         this.walking_sound.playbackRate = this.speedSound;
     }
@@ -180,7 +180,7 @@ class Character extends MoveableObject{
   }
 
   jumpAnimationRequirements() {
-    return this.isCharacterAboveGround() && this.speed >= 0 && !this.jumpedOnAEnemy;
+    return this.isObjectAboveGround() && this.speed >= 0 && !this.jumpedOnAEnemy;
   }
 
   walkAnimationRequirements() {

@@ -63,21 +63,21 @@ window.addEventListener("keyup", (e) => {
 })
 
 function playAudio(path, volume, repeat) {
-    if (mute) { 
-      return
-    } else {
-        path.volume = volume;
-        path.play();
-        if (repeat == 1) path.loop = false;
-    }
+  if (mute) { 
+    return
+  } else {
+      path.volume = volume;
+      path.play();
+      if (repeat == 1) path.loop = false;
+  }
 }
 
 function stopAudio(path) {
-    if (mute) { 
-      return
-    } else {
-        path.pause();
-    }
+  if (mute) { 
+    return
+  } else {
+      path.pause();
+  }
 }
 
 function stopAllInterval() {
