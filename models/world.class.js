@@ -145,7 +145,7 @@ class World {
   }
 
   bottleCollidingWithEnemy(enemy, bottle) {
-    enemy.hitEnemy();
+    enemy.hit();
     if (enemy instanceof Endboss && this.statusBarEndboss) {
       this.statusBarEndboss.setPercentage(enemy.health);
     }
@@ -225,7 +225,7 @@ class World {
 
     moveableObject.drawObject(this.ctx);
     // moveableObject.drawObjectHitbox(this.ctx);
-    moveableObject.drawObjectHitboxOffset(this.ctx);
+    // moveableObject.drawObjectHitboxOffset(this.ctx);
 
     if(moveableObject.otherDirection){
       this.flipImageBack(moveableObject);
