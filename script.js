@@ -5,61 +5,63 @@ let mute = false;
 let swipeSound = new Audio('assets/sound/menu_description/swipe.mp3');
 
 function init(){
-  canvas = document.getElementById('canvas');
-  world = new World(canvas, keyboard);
+
+  bindKeyboardBtn();
 }
 
-window.addEventListener("keydown", (e) => {
-  if(e.key == 'ArrowRight' || e.key == 'd'){
-    keyboard.RIGHT = true;
-  }
-  
-  if(e.key == 'ArrowDown' || e.key == 's'){
-    keyboard.DOWN = true;
-  }
-   
-  if(e.key == 'ArrowLeft' || e.key == 'a'){
-    keyboard.LEFT = true;
-  }
-  
-  if(e.key == 'ArrowUp' || e.key == 'w'){
-    keyboard.UP = true;
-  }
-  
-  if(e.key == ' '){
-    keyboard.SPACE = true;
-  }
+function bindKeyboardBtn() {
+  window.addEventListener("keydown", (e) => {
+    if(e.key == 'ArrowRight' || e.key == 'd'){
+      keyboard.RIGHT = true;
+    }
+    
+    if(e.key == 'ArrowDown' || e.key == 's'){
+      keyboard.DOWN = true;
+    }
+    
+    if(e.key == 'ArrowLeft' || e.key == 'a'){
+      keyboard.LEFT = true;
+    }
+    
+    if(e.key == 'ArrowUp' || e.key == 'w'){
+      keyboard.UP = true;
+    }
+    
+    if(e.key == ' '){
+      keyboard.SPACE = true;
+    }
 
-  if(e.key == 'q'){
-    keyboard.Q = true;
-  }
-})
+    if(e.key == 'q'){
+      keyboard.Q = true;
+    }
+  })
 
-window.addEventListener("keyup", (e) => {
-  if(e.key == 'ArrowRight' || e.key == 'd'){
-    keyboard.RIGHT = false;
-  }
-  
-  if(e.key == 'ArrowDown' || e.key == 's'){
-    keyboard.DOWN = false;
-  }
-  
-  if(e.key == 'ArrowLeft' || e.key == 'a'){
-    keyboard.LEFT = false;
-  }
-  
-  if(e.key == 'ArrowUp' || e.key == 'w'){
-    keyboard.UP = false;
-  }
-  
-  if(e.key == ' '){
-    keyboard.SPACE = false;
-  }
+  window.addEventListener("keyup", (e) => {
+    if(e.key == 'ArrowRight' || e.key == 'd'){
+      keyboard.RIGHT = false;
+    }
+    
+    if(e.key == 'ArrowDown' || e.key == 's'){
+      keyboard.DOWN = false;
+    }
+    
+    if(e.key == 'ArrowLeft' || e.key == 'a'){
+      keyboard.LEFT = false;
+    }
+    
+    if(e.key == 'ArrowUp' || e.key == 'w'){
+      keyboard.UP = false;
+    }
+    
+    if(e.key == ' '){
+      keyboard.SPACE = false;
+    }
 
-  if(e.key == 'q'){
-    keyboard.Q = false;
-  }
-})
+    if(e.key == 'q'){
+      keyboard.Q = false;
+    }
+  })
+}
 
 function toggleVolume() {
   if (mute) {
@@ -118,6 +120,14 @@ function stopAudio(path) {
   }
 }
 
+function playGame() {
+  document.getElementById('menu').classList.add('d_none'); //close Menu
+  document.getElementById('canvas').classList.remove('d_none'); //open canvas
+  document.getElementById('playBtn').classList.remove('d_none'); //open canvas
+  initLevel1();
+  canvas = document.getElementById('canvas');
+  world = new World(canvas, keyboard);
+}
 
 
 

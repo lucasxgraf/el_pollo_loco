@@ -108,7 +108,7 @@ class Character extends MoveableObject{
 
       if(this.canJump()){
         this.jump();
-        this.jump_sound.play();
+        playAudio(this.jump_sound, 1);
       }
 
       this.world.camera_x = -this.position_x + 100;
