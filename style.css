@@ -23,14 +23,158 @@ body{
   font-family: Barriecito, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-h1 {
-  font-size: 64px;
-  letter-spacing: 3px;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+main {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 64px;
 }
 
-canvas{
+canvas {
   height: 80dvh;
   width: 80dvw;  
   background-color: black;
+  display: block;
+}
+
+/* Utility Classes */
+.d_none {
+  display: none;
+}
+
+.btn {
+  font-size: 1.5rem;
+  border: 3px solid black;
+  border-radius: 24px;
+  background-color: #f5ac2f;
+  padding: 16px;
+  transition: all 0.3s;
+}
+
+.btn:hover {
+  cursor: pointer;
+  transition: all 0.3s;
+  background-color: #FFDF00;
+}
+
+#menu {
+  height: 60dvh;
+  width: 60dvw;
+}
+
+#menu img {
+  width: 60dvw;
+  height: 60dvh;
+}
+
+.settings_container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.settings_container img {
+  width: 32px;
+  height: 32px;
+}
+
+.sound_btn,
+.keyboard_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.keyboard_info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  height: 75dvh;
+  width: 75dvw;
+  color: white;
+  /* background-image: url('assets/img/5_background/layers/air.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; */
+  background-color: rgba(0, 0, 0, 1);
+  z-index: 5;
+  transition: all 0.3s ease-in-out;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  gap: 80px;
+}
+
+.keyboard_info.show {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.instructions_container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  padding: 0 64px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+}
+
+.instructions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 2rem;
+}
+
+.instruction_key {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.instructions img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Responsive Design */
+@media only screen and (max-width: 720px) {
+  canvas {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-height: 480px) {
+  canvas {
+    height: 100dvh;
+  }
 }

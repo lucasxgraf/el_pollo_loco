@@ -75,9 +75,11 @@ class Endboss extends MoveableObject {
       } else if (this.hadFirstContact) {
         this.playAnimation(this.IMAGES_HURT);
       }
-      if (world.character.position_x >= this.position_x - 450 && !this.hadFirstContact) {          this.firstContactWithEndboss();
+      if (world.character.position_x >= this.position_x - 450 && !this.hadFirstContact) {
+        this.firstContactWithEndboss();
       }
-      if (world.character.x >= this.x - 900 && !this.hadFirstContact) {          world.throwing = false;
+      if (world.character.x >= this.x - 900 && !this.hadFirstContact) {          
+        world.throwing = false;
       }
     }, 150);
 

@@ -2,12 +2,11 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 let mute = false;
+let swipeSound = new Audio('assets/sound/menu_description/swipe.mp3');
 
 function init(){
   canvas = document.getElementById('canvas');
   world = new World(canvas, keyboard);
-
-  console.log('My character is', world.character);
 }
 
 window.addEventListener("keydown", (e) => {
@@ -62,17 +61,51 @@ window.addEventListener("keyup", (e) => {
   }
 })
 
+function toggleVolume() {
+  if (mute) {
+    displayVolumeUpIcon();
+  } else {
+    displayVolumeOffIcon();
+  }
+}
+
+function displayVolumeUpIcon() {
+  document.getElementById('volumeBtn').src = 'assets/img/menu_description/volume_up.svg';
+  mute = false;
+  if (world) {
+    world.playBackgroundMusic();
+  }
+}
+
+function displayVolumeOffIcon() {
+  if (world) {
+    world.stopBackgroundMusic();
+  }
+  document.getElementById('volumeBtn').src = 'assets/img/menu_description/volume_off.svg';
+  mute = true;
+}
+
+function openKeyboardInstruction() {
+  document.getElementById('keyboardBtnInfo').classList.add('show');
+  playAudio(swipeSound, 0.5, 0);
+}
+
+function closeKeyboardInstruction() {
+  document.getElementById('keyboardBtnInfo').classList.remove('show');
+  playAudio(swipeSound, 0.5, 0);
+}
+
 function playAudio(path, volume, repeat) {
   if (mute) { 
     return
   } else {
-      path.volume = volume;
-      let playPromise = path.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log('Audio play prevented:', error);
-        });
-      }
+    path.volume = volume;
+    let playPromise = path.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(error => {
+        console.log('Audio play prevented:', error);
+      });
+    }
       if (repeat == 1) path.loop = false;
   }
 }
@@ -81,9 +114,13 @@ function stopAudio(path) {
   if (mute) { 
     return
   } else {
-      path.pause();
+    path.pause();
   }
 }
+
+
+
+
 
 function stopAllInterval() {
     for (let i = 1; i < 999; i++) window.clearInterval(i);
