@@ -121,7 +121,7 @@ class Endboss extends MoveableObject {
     }, 700);
     setTimeout(() => {
       clearInterval(this.endbossDieInterval);
-      // gameOver(true);
+      gameIsOver(true);
     }, 2300);
   }
 }

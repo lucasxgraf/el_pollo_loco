@@ -3,6 +3,8 @@ let world;
 let keyboard = new Keyboard();
 let mute = false;
 let swipeSound = new Audio('assets/sound/menu_description/swipe.mp3');
+let win_Sound = new Audio('assets/sound/win.mp3');
+let lose_Sound = new Audio('assets/sound/lose.mp3');
 
 function init(){
 
@@ -83,6 +85,11 @@ function displayVolumeOffIcon() {
   if (world) {
     world.stopBackgroundMusic();
   }
+  win_Sound.pause();
+  lose_Sound.pause();
+  win_Sound.currentTime = 0;
+  lose_Sound.currentTime = 0;
+
   document.getElementById('volumeBtn').src = 'assets/img/menu_description/volume_off.svg';
   mute = true;
 }
@@ -121,17 +128,69 @@ function stopAudio(path) {
 }
 
 function playGame() {
-  document.getElementById('menu').classList.add('d_none'); //close Menu
-  document.getElementById('canvas').classList.remove('d_none'); //open canvas
-  document.getElementById('playBtn').classList.remove('d_none'); //open canvas
+  showStartScreenButtons();
+  document.getElementById('menu').classList.add('d_none');
+  document.getElementById('canvas').classList.remove('d_none');
   initLevel1();
   canvas = document.getElementById('canvas');
   world = new World(canvas, keyboard);
 }
 
+function showStartScreenButtons() {
+  document.getElementById('playBtn').classList.remove('d_none');
+  let settings = document.getElementById('settingsContainer');
+  if(settings) settings.classList.remove('d_none');
+  
+  // Sicherstellen, dass die Endscreen-Elemente beim Start weg sind
+  document.getElementById('youWin').classList.add('d_none');
+  document.getElementById('youLost').classList.add('d_none');
+  document.getElementById('endgameBtns').classList.add('d_none');
+}
 
+function gameIsOver(playerHasWon) {
+  document.getElementById('canvas').classList.add('d_none');
+  if (playerHasWon) {
+    playerWin();
+  } else {
+    playerLost();
+  }
+}
 
+function playerWin() {
+  document.getElementById('youWin').classList.remove('d_none');
+  document.getElementById('endgameBtns').classList.remove('d_none'); // Sofort anzeigen
+  playAudio(win_Sound, 1, 1);
+  document.getElementById('playBtn').classList.add('d_none');
+}
+
+function playerLost() {
+  document.getElementById('youLost').classList.remove('d_none');
+  document.getElementById('endgameBtns').classList.remove('d_none'); // Sofort anzeigen
+  playAudio(lose_Sound, 1, 1);
+  document.getElementById('playBtn').classList.add('d_none');
+}
+
+function showEndScreenButtons() {
+  document.getElementById('playBtn').classList.add('d_none');
+  document.querySelectorAll('.endgame_btns').forEach(container => {
+    container.classList.remove('d_none');
+  });
+  document.querySelectorAll('.restart_btn, .go_back_to_menu').forEach(btn => {
+    btn.classList.remove('d_none');
+  });
+}
+
+function restartGame() {
+  document.getElementById('youWin').classList.add('d_none');
+  document.getElementById('youLost').classList.add('d_none');
+  document.getElementById('endgameBtns').classList.add('d_none'); // Buttons wieder verstecken
+  playGame();
+}
+
+function goBackToMenu() {
+  window.location.replace('index.html');
+}
 
 function stopAllInterval() {
-    for (let i = 1; i < 999; i++) window.clearInterval(i);
+  for (let i = 1; i < 999; i++) window.clearInterval(i);
 }

@@ -41,7 +41,7 @@ canvas {
 
 /* Utility Classes */
 .d_none {
-  display: none;
+  display: none !important;
 }
 
 .btn {
@@ -151,20 +151,56 @@ h1 {
   object-fit: contain;
 }
 
+.rotate_phone {
+  height: 100%;
+  position: fixed;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: rgba(157, 157, 157, 0.763);
+  z-index: 999;
+  text-align: center;
+}
 
+.rotate_phone img {
+  width: 220px;
+  opacity: 0.5;
+}
 
+#youWin, #youLost {
+  position: relative;
+  height: 60dvh;
+  width: 60dvw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+#youWin img,
+#youLost img {
+  width: 60dvw;
+  height: 60dvh;
+  object-fit: contain;
+}
 
+.endgame_btns {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  width: 100%;
+}
 
-
-
-
-
-
-
-
-
-
+.restart_btn,
+.go_back_to_menu {
+  font-size: 1.5rem;
+  border: 3px solid black;
+  border-radius: 24px;
+  background-color: #f5ac2f;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
 
 /* Responsive Design */
 @media only screen and (max-width: 720px) {

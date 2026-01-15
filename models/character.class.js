@@ -234,7 +234,7 @@ class Character extends MoveableObject{
     }, 380);
     setTimeout(() => {
         clearInterval(this.characterDieInterval)
-        // gameOver(false);
+        gameIsOver(false);
     }, 1900);
   }
 

@@ -34,7 +34,7 @@
 </head>
 <body onload="init()">
   <main>
-    <div class="settings_container">
+    <div id="settingsContainer" class="settings_container">
       <div onclick="toggleVolume()" id="soundBtn" class="sound_btn btn">
         <img id="volumeBtn" src="assets/img/menu_description/volume_up.svg" alt="Volume Icon">
       </div>
@@ -42,53 +42,53 @@
       <div onclick="openKeyboardInstruction()" class="keyboard_btn btn">
         <img id="keyboardBtn" src="assets/img/menu_description/keyboard.svg" alt="Keyboard Icon">
       </div>
-    </div>
 
-    <div onclick="closeKeyboardInstruction()" id="keyboardBtnInfo" class="keyboard_info">
-      <h1>Keyboard Instructions</h1>
-      <div class="instructions_container">
-        
-        <div class="instructions">
-          <div class="instruction_key">
-            <i>Press</i>
-            <img src="assets/img/menu_description/arrow_right.svg" alt="Right Arrow"> <i>or</i>
-            <img src="assets/img/menu_description/key_d.svg" alt="D Key"> <i>to</i>
+      <div onclick="closeKeyboardInstruction()" id="keyboardBtnInfo" class="keyboard_info">
+        <h1>Keyboard Instructions</h1>
+        <div class="instructions_container">
+          
+          <div class="instructions">
+            <div class="instruction_key">
+              <i>Press</i>
+              <img src="assets/img/menu_description/arrow_right.svg" alt="Right Arrow"> <i>or</i>
+              <img src="assets/img/menu_description/key_d.svg" alt="D Key"> <i>to</i>
+            </div>
+              <div class="instruction_outcome">
+              <span>Move Right</span>
+            </div>
           </div>
+          
+          <div class="instructions">
+            <div class="instruction_key">
+              <i>Press</i>
+              <img src="assets/img/menu_description/arrow_left.svg" alt="Left Arrow"> <i>or</i>
+              <img src="assets/img/menu_description/key_a.svg" alt="A Key"> <i>to</i>
+            </div>
+            <div class="instructions_outcome">
+              <span>Move Left</span>
+            </div>
+          </div>
+          
+          <div class="instructions">
+            <div class="instruction_key">
+              <i>Press</i>
+              <img src="assets/img/menu_description/arrow_upward.svg" alt="Up Arrow"> <i>or</i>
+              <img src="assets/img/menu_description/space_bar.svg" alt="Space Bar"> <i>or</i>
+              <img src="assets/img/menu_description/key_w.svg" alt="W Key"> <i>to</i>
+            </div>
             <div class="instruction_outcome">
-            <span>Move Right</span>
+              <span>Jump</span>
+            </div>
           </div>
-        </div>
-        
-        <div class="instructions">
-          <div class="instruction_key">
-            <i>Press</i>
-            <img src="assets/img/menu_description/arrow_left.svg" alt="Left Arrow"> <i>or</i>
-            <img src="assets/img/menu_description/key_a.svg" alt="A Key"> <i>to</i>
-          </div>
-          <div class="instructions_outcome">
-            <span>Move Left</span>
-          </div>
-        </div>
-        
-        <div class="instructions">
-          <div class="instruction_key">
-            <i>Press</i>
-            <img src="assets/img/menu_description/arrow_upward.svg" alt="Up Arrow"> <i>or</i>
-            <img src="assets/img/menu_description/space_bar.svg" alt="Space Bar"> <i>or</i>
-            <img src="assets/img/menu_description/key_w.svg" alt="W Key"> <i>to</i>
-          </div>
-          <div class="instruction_outcome">
-            <span>Jump</span>
-          </div>
-        </div>
-        
-        <div class="instructions">
-          <div class="instruction_key">
-            <i>Press</i>
-            <img src="assets/img/menu_description/key_q.svg" alt="Q Key"> <i>to</i>
-          </div>
-          <div class="instruction_outcome">
-            <span>Throw bottle</span>
+          
+          <div class="instructions">
+            <div class="instruction_key">
+              <i>Press</i>
+              <img src="assets/img/menu_description/key_q.svg" alt="Q Key"> <i>to</i>
+            </div>
+            <div class="instruction_outcome">
+              <span>Throw bottle</span>
+            </div>
           </div>
         </div>
       </div>
@@ -101,14 +101,39 @@
     <canvas id="canvas" class="d_none" height="480" width="720">
     </canvas>
 
+    <div id="youWin" class="d_none">
+      <img src="assets/img/You won, you lost/You Win A.png" alt="Game win screen">
+    </div>
+
+    <div id="youLost" class="d_none">
+      <img src="assets/img/You won, you lost/You lost.png" alt="You lost screen">
+    </div>
+
+    <div id="endgameBtns" class="endgame_btns d_none">
+      <div id="restartGame" onclick="restartGame()" class="restart_btn btn">Restart</div>
+      <div id="goBackToMenu" onclick="goBackToMenu()" class="go_back_to_menu btn">Go back to menu</div>
+    </div>
 
     <div onclick="playGame()" id="playBtn" class="play_btn btn">
       Play Now
     </div>
+
+    <div class="rotate_phone" id="rotatePhone">
+      <img src="assets/img/menu_description/rotate_phone.png" alt="Rotate phone image">
+      <p>Please rotate your phone.</p>
+    </div>
+
+    <!-- <div id="playbuttons" class="playbutton-section d-none">
+        <div class="playbutton-container-left">
+            <img id="btnLeft" src="img/gaming_buttons/left.svg" alt="">
+            <img id="btnRight" src="img/gaming_buttons/right.svg" alt="">
+        </div>
+        <div class="playbutton-container-right">
+            <img id="btnThrow" src="img/gaming_buttons/throw.svg" alt="">
+            <img id="btnJump" src="img/gaming_buttons/jump.svg" alt="">
+        </div>
+    </div> -->
   </main>
-
-
-
 
 </body>
 </html>
