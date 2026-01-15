@@ -8,14 +8,33 @@ class MoveableObject extends DrawableObject {
 
   applyGravity(){
     setInterval(() => {
-      if (this.isObjectAboveGround() || this.speedGravityY > 0)
+      if (this.isObjectAboveGround() || this.speedGravityY > 0) {
         this.position_y -= this.speedGravityY;
         this.speedGravityY -= this.acceleration;
+        this.resetCharacterOnGroundAfterJumpOnEnemy();
+      } else {
+        this.speedGravityY = 0;
+      }
     } , 1000 / 25);
   }
 
-  isObjectAboveGround(){  
-    if (this instanceof ThrowableObject){
+  resetCharacterOnGroundAfterJumpOnEnemy() {
+    if (!this.isObjectAboveGround() && this.speedGravityY <= 0) {
+      this.speedGravityY = 0;
+      if (this instanceof Character) {
+        this.position_y = 180;
+      } else if (this instanceof SmallChicken) {
+        this.position_y = 360;
+      } else if (this instanceof Chicken) {
+        this.position_y = 350;
+      } else {
+        this.position_y = 180;
+      }
+    }
+  }
+
+  isObjectAboveGround() {
+    if (this instanceof ThrowableObject) {
       return true;
     } else {
       return this.position_y < 180;
@@ -38,7 +57,7 @@ class MoveableObject extends DrawableObject {
   }
 
   jump(){
-    this.speedGravityY = 30;
+    this.speedGravityY = 25;
   }
 
   playAnimation(images){

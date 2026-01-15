@@ -144,8 +144,8 @@ class Character extends MoveableObject{
     if (!this.otherDirection) this.stopIncreasingSpeed();
     this.otherDirection = true;
     if (!this.isObjectAboveGround) {
-        playAudio(this.walking_sound, 1);
-        this.walking_sound.playbackRate = this.speedSound;
+      playAudio(this.walking_sound, 1);
+      this.walking_sound.playbackRate = this.speedSound;
     }
     this.increasingSpeed();
     playAudio(this.walking_sound, 1)
@@ -196,7 +196,7 @@ class Character extends MoveableObject{
     clearInterval(this.characterConditionInterval);
     this.longIdle = 0;
     this.characterJumpInterval = setInterval(() => {
-        this.playAnimation(this.IMAGES_JUMPING);
+      this.playAnimation(this.IMAGES_JUMPING);
     }, 220);
     setTimeout(() => {
       this.currentImage = 0;
@@ -220,8 +220,8 @@ class Character extends MoveableObject{
         this.position_x-- }, 1000 / 200);
       }
       setTimeout(() => {
-          clearInterval(this.backwardInterval);
-          this.hurts = false;
+        clearInterval(this.backwardInterval);
+        this.hurts = false;
       }, 700);
     }
   }
@@ -230,11 +230,11 @@ class Character extends MoveableObject{
     this.walking_sound.pause();
     stopAllInterval();
     this.characterDieInterval = setInterval(() => {
-        this.playAnimation(this.IMAGES_DEAD);
+      this.playAnimation(this.IMAGES_DEAD);
     }, 380);
     setTimeout(() => {
-        clearInterval(this.characterDieInterval)
-        gameIsOver(false);
+      clearInterval(this.characterDieInterval)
+      gameIsOver(false);
     }, 1900);
   }
 

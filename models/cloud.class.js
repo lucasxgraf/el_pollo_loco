@@ -1,17 +1,26 @@
-class Cloud extends MoveableObject{
-  position_x = Math.random() * 720;
-  position_y = 0;
-  height = 480;
+class Cloud extends MoveableObject {
+  position_x;
+  position_y = 50;
+  height = 250;
   width = 720;
 
-  constructor(){
-    super().loadImage('assets/img/5_background/layers/4_clouds/1.png');
+  constructor(imagePath, position_x) {
+    super();
+    this.position_x = position_x;
+    this.loadImage(imagePath);
     this.animate();
   }
 
-  animate(){
+  animate() {
     setInterval(() => {
       this.position_x -= this.speed;
-    }, 1000 / 60 );
+      if (this.position_x + this.width < 0) {
+        this.resetPosition();
+      }
+    }, 1000 / 60);
+  }
+
+  resetPosition() {
+    this.position_x = 720 + this.width;
   }
 }

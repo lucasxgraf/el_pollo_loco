@@ -129,6 +129,7 @@ function stopAudio(path) {
 
 function playGame() {
   showStartScreenButtons();
+  document.getElementById('playBtn').classList.add('invisible');
   document.getElementById('menu').classList.add('d_none');
   document.getElementById('canvas').classList.remove('d_none');
   initLevel1();
@@ -137,17 +138,17 @@ function playGame() {
 }
 
 function showStartScreenButtons() {
-  document.getElementById('playBtn').classList.remove('d_none');
   let settings = document.getElementById('settingsContainer');
   if(settings) settings.classList.remove('d_none');
-  
-  // Sicherstellen, dass die Endscreen-Elemente beim Start weg sind
   document.getElementById('youWin').classList.add('d_none');
   document.getElementById('youLost').classList.add('d_none');
   document.getElementById('endgameBtns').classList.add('d_none');
 }
 
 function gameIsOver(playerHasWon) {
+  stopAllInterval();
+  stopEndbossSoundIfLost();
+
   document.getElementById('canvas').classList.add('d_none');
   if (playerHasWon) {
     playerWin();
@@ -156,22 +157,31 @@ function gameIsOver(playerHasWon) {
   }
 }
 
+function stopEndbossSoundIfLost() {
+  if (world && world.level && world.level.enemies) {
+    world.level.enemies.forEach(enemy => {
+      if (enemy instanceof Endboss) {
+        stopAudio(enemy.endboss_sound);
+      }
+    });
+  }
+}
+
 function playerWin() {
   document.getElementById('youWin').classList.remove('d_none');
-  document.getElementById('endgameBtns').classList.remove('d_none'); // Sofort anzeigen
+  document.getElementById('endgameBtns').classList.remove('d_none');
   playAudio(win_Sound, 1, 1);
   document.getElementById('playBtn').classList.add('d_none');
 }
 
 function playerLost() {
   document.getElementById('youLost').classList.remove('d_none');
-  document.getElementById('endgameBtns').classList.remove('d_none'); // Sofort anzeigen
+  document.getElementById('endgameBtns').classList.remove('d_none');
   playAudio(lose_Sound, 1, 1);
   document.getElementById('playBtn').classList.add('d_none');
 }
 
 function showEndScreenButtons() {
-  document.getElementById('playBtn').classList.add('d_none');
   document.querySelectorAll('.endgame_btns').forEach(container => {
     container.classList.remove('d_none');
   });

@@ -28,6 +28,7 @@ class World {
     this.setWorld();
     this.run();
     this.createBackgroundObjects();
+    this.createClouds();
     this.playBackgroundMusic();
   }
 
@@ -225,7 +226,7 @@ class World {
 
     moveableObject.drawObject(this.ctx);
     // moveableObject.drawObjectHitbox(this.ctx);
-    // moveableObject.drawObjectHitboxOffset(this.ctx);
+    moveableObject.drawObjectHitboxOffset(this.ctx);
 
     if(moveableObject.otherDirection){
       this.flipImageBack(moveableObject);
@@ -252,18 +253,37 @@ class World {
       'assets/img/5_background/layers/1_first_layer/'
     ];
     
-    for (let i = -1; i < 6; i++) {
-      const MULTIPLIED_BY_720 = i * 720 + 10 ;
+    for (let i = -1; i < 7; i++) {
+      const MULTIPLIED_BY_719 = i * 719 ;
       const IMAGE_VARIANT = i % 2 === 0 ? '1.png' : '2.png';
       
-      this.backgroundObjects.push(new BackgroundObject(layers[0], MULTIPLIED_BY_720, 0));
-      this.backgroundObjects.push(new BackgroundObject(layers[1] + IMAGE_VARIANT, MULTIPLIED_BY_720, 0));
-      this.backgroundObjects.push(new BackgroundObject(layers[2] + IMAGE_VARIANT, MULTIPLIED_BY_720, 0));
-      this.backgroundObjects.push(new BackgroundObject(layers[3] + IMAGE_VARIANT, MULTIPLIED_BY_720, 0));
+      this.backgroundObjects.push(new BackgroundObject(layers[0], MULTIPLIED_BY_719, 0));
+      this.backgroundObjects.push(new BackgroundObject(layers[1] + IMAGE_VARIANT, MULTIPLIED_BY_719, 0));
+      this.backgroundObjects.push(new BackgroundObject(layers[2] + IMAGE_VARIANT, MULTIPLIED_BY_719, 0));
+      this.backgroundObjects.push(new BackgroundObject(layers[3] + IMAGE_VARIANT, MULTIPLIED_BY_719, 0));
     }
   }
 
-  playBackgroundMusic(){
+  createClouds() {
+    this.clouds = [];
+    const cloudImages = [
+      'assets/img/5_background/layers/4_clouds/1.png',
+      'assets/img/5_background/layers/4_clouds/2.png'
+    ];
+
+    const numberOfClouds = 6; 
+    const cloudWidth = 720;  
+    const spacingBetweenClouds = cloudWidth;
+
+    for (let i = 0; i < numberOfClouds; i++) {
+      const imagePath = cloudImages[i % 2];
+      const position_x = i * spacingBetweenClouds + 720; 
+      const cloud = new Cloud(imagePath, position_x);
+      this.clouds.push(cloud);
+    }
+  }
+
+  playBackgroundMusic() {
     playAudio(this.level.backgroundMusic, 0.5);
   }
 
