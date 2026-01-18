@@ -35,11 +35,11 @@
 <body onload="init()">
   <main>
     <div id="settingsContainer" class="settings_container">
-      <div onclick="toggleVolume()" id="soundBtn" class=" btn">
+      <div onclick="toggleVolume()" id="soundBtn" class="btn">
         <img id="volumeBtn" src="assets/img/menu_description/volume_up.svg" alt="Volume Icon">
       </div>
 
-      <div onclick="openKeyboardInstruction()" class=" btn">
+      <div onclick="openKeyboardInstruction()" class="btn">
         <img id="keyboardBtn" src="assets/img/menu_description/keyboard.svg" alt="Keyboard Icon">
       </div>
 
@@ -93,10 +93,15 @@
         </div>
       </div>
 
-      <div onclick="toggleFullscreen()" id="fullscreenBtn" class=" btn">
+      <div onclick="playGame()" id="playBtnResp" class="btn">
+        Play Now
+      </div>
+      
+      <div onclick="toggleFullscreen()" id="fullscreenBtn" class="btn">
         <img id="volumeBtn" src="assets/img/menu_description/fullscreen.svg" alt="Volume Icon">
       </div>
     </div>
+
     
     <div id="menu">
       <img src="assets/img/9_intro_outro_screens/start/startscreen_1.png" alt="Start Screen">
@@ -105,17 +110,6 @@
     <div id="fullscreen" class="d_none">
       <canvas id="canvas" class="d_none" height="480" width="720">
       </canvas>
-
-      <div id="mobileBtn" class="mobile_btn_container d_none">
-        <div class="mobile_btn_left">
-          <img id="mobileBtnLeft btn" src="assets/img/menu_description/mobile_arrow_left.svg" alt="Arrow left">
-          <img id="mobileBtnRight btn" src="assets/img/menu_description/mobile_arrow_right.svg" alt="Arrow right">
-        </div>
-        <div class="mobile_btn_right">
-          <img id="mobileBtnThrow btn" src="assets/img/menu_description/mobile_btn_bottle.svg" alt="Bottle Icon">
-          <img id="mobileBtnJump btn" src="assets/img/menu_description/mobile_arrow_upward.svg" alt="Arrow up">
-        </div>
-      </div> 
 
       <div id="youWin" class="d_none">
         <img src="assets/img/You won, you lost/You Win A.png" alt="Game win screen">
@@ -128,11 +122,11 @@
 
 
     <div id="endgameBtns" class="endgame_btns d_none">
-      <div id="restartGame" onclick="restartGame()" class="restart_btn btn">Restart</div>
-      <div id="goBackToMenu" onclick="goBackToMenu()" class="go_back_to_menu btn">Go back to menu</div>
+      <button id="restartGame" onclick="restartGame()" class="restart_btn btn">Restart</button>
+      <button id="goBackToMenu" onclick="goBackToMenu()" class="go_back_to_menu btn">Go back to menu</button>
     </div>
-
-    <div onclick="playGame()" id="playBtn" class="play_btn btn">
+  
+    <div onclick="playGame()" id="playBtn" class="btn">
       Play Now
     </div>
 
@@ -143,14 +137,22 @@
 
     <div id="mobileBtn" class="mobile_btn_container">
       <div class="mobile_btn_left">
-        <img id="mobileBtnLeft btn" src="assets/img/menu_description/mobile_arrow_left.svg" alt="Arrow left">
-        <img id="mobileBtnRight btn" src="assets/img/menu_description/mobile_arrow_right.svg" alt="Arrow right">
+        <button id="mobileBtnLeft">
+          <img src="assets/img/menu_description/mobile_arrow_left.svg" alt="Arrow left">
+        </button>
+        <button id="mobileBtnRight">
+          <img src="assets/img/menu_description/mobile_arrow_right.svg" alt="Arrow right">
+        </button>
       </div>
       <div class="mobile_btn_right">
-        <img id="mobileBtnThrow btn" src="assets/img/menu_description/mobile_btn_bottle.svg" alt="Bottle Icon">
-        <img id="mobileBtnJump btn" src="assets/img/menu_description/mobile_arrow_upward.svg" alt="Arrow up">
+        <button id="mobileBtnThrow">
+          <img src="assets/img/menu_description/mobile_btn_bottle.svg" alt="Bottle Icon">
+        </button>
+        <button id="mobileBtnJump">
+          <img src="assets/img/menu_description/mobile_arrow_upward.svg" alt="Arrow up">
+        </button>
       </div>
-    </div> 
+    </div>
   </main>
 
 </body>

@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Barriecito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 @font-face {
@@ -17,27 +18,18 @@ body{
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  font-family: Barriecito, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 main {
   margin: 0 auto;
-  padding: 24px 0;
   height: 100dvh;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
   flex-direction: column;
+  gap: 48px;
 }
 
-canvas {
-  height: 60dvh;
-  width: 60dvw;  
-  background-color: black;
-  display: block;
-}
-
-/* Utility Classes */
 .d_none {
   display: none !important;
 }
@@ -57,6 +49,7 @@ canvas {
   background-color: #f5ac2f;
   padding: 16px;
   transition: all 0.3s;
+  cursor: pointer;
 }
 
 .btn:hover {
@@ -65,14 +58,21 @@ canvas {
   background-color: #FFDF00;
 }
 
-#menu {
-  height: 60dvh;
-  width: 60dvw;
+canvas, 
+#menu, 
+#youWin, 
+#youLost {
+  width: 80dvw;
+  max-width: 720px;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  display: block;
+  object-fit: contain;
 }
 
 #menu img {
-  width: 60dvw;
-  height: 60dvh;
+  width: 100%;
+  height: 100%;
 }
 
 .settings_container {
@@ -95,10 +95,6 @@ canvas {
   height: 75dvh;
   width: 75dvw;
   color: white;
-  /* background-image: url('assets/img/5_background/layers/air.png');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover; */
   background-color: rgba(0, 0, 0, 1);
   z-index: 5;
   transition: all 0.3s ease-in-out;
@@ -150,38 +146,26 @@ h1 {
   object-fit: contain;
 }
 
-#youWin, 
-#youLost {
-  position: relative;
-  height: 60dvh;
-  width: 60dvw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+#playBtnResp {
+  display: none;
 }
 
 #youWin img,
 #youLost img {
-  width: 60dvw;
-  height: 60dvh;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
 .endgame_btns {
   display: flex;
   justify-content: space-around;
-  gap: 20px;
   width: 100%;
 }
 
 .restart_btn,
 .go_back_to_menu {
-  font-size: 1.5rem;
-  border: 3px solid black;
-  border-radius: 24px;
-  background-color: #f5ac2f;
   padding: 10px 20px;
-  cursor: pointer;
   font-weight: bold;
 }
 
@@ -212,24 +196,37 @@ h1 {
   bottom: 5%;
   align-items: center;
   justify-content: space-between;
+  z-index: 9999;
 }
 
 .mobile_btn_container img {
-  opacity: 0.6;
-  height: 64px;
-  padding: 5px;
+  opacity: 0.8;
+  height: 60px;
+  padding: 8px;
   border: 2px solid black;
   border-radius: 24px;
+  touch-action: manipulation;
+  user-select: none;
 }
 
 .mobile_btn_container img:hover {
   opacity: 1;
+  cursor: pointer;
 }
 
 .mobile_btn_left,
 .mobile_btn_right {
   display: flex;
   gap: 24px;
+}
+
+.mobile_btn_left button, 
+.mobile_btn_right button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
 }
 
 #fullscreen:-webkit-full-screen {
@@ -256,9 +253,23 @@ h1 {
 @media only screen and (max-width: 1200px) {
   .mobile_btn_container {
     display: flex;
+    position: absolute;
+    bottom: 16px;
+    padding: 0 24px;
+  }
+
+  .settings_container .btn {
+    font-size: 1rem;
+  }
+
+  #playBtnResp {
+    display: flex;
+  }
+
+  #playBtn {
+    display: none;
   }
 }
-
 
 /* Responsive Design */
 @media only screen and (max-width: 720px) {
@@ -275,7 +286,7 @@ h1 {
 
 /* Rotate phone message */
 
-@media (max-width: 480px) {
+@media only screen and (max-width: 480px) {
   .rotate_phone {
     display: flex;
   }

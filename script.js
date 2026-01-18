@@ -6,7 +6,7 @@ let swipeSound = new Audio('assets/sound/menu_description/swipe.mp3');
 let win_Sound = new Audio('assets/sound/win.mp3');
 let lose_Sound = new Audio('assets/sound/lose.mp3');
 
-function init(){
+function init() {
   bindKeyboardBtns();
   bindMobileBtns();
 }
@@ -67,37 +67,53 @@ function bindKeyboardBtns() {
 
 function bindMobileBtns() {
   document.getElementById('mobileBtnLeft').addEventListener('touchstart', (e) => {
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     keyboard.LEFT = true;
-  });
+  })
   document.getElementById('mobileBtnLeft').addEventListener('touchend', (e) => {
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     keyboard.LEFT = false;
-  });
+  })
   document.getElementById('mobileBtnRight').addEventListener('touchstart', (e) => {
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     keyboard.RIGHT = true;
-  });
-  document.getElementById('mobileBtnRight').addEventListener('touchend', (e) => {
-    e.preventDefault();
+  })
+  document.getElementById('mobileBtnRight').addEventListener('touchstart', (e) => {
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     keyboard.RIGHT = false;
-  });
+  })
   document.getElementById('mobileBtnJump').addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    this.keyboard.JUMP = true;
-  });
+    if (e.cancelable) {
+      e.preventDefault();
+    }
+    keyboard.SPACE = true;
+  })
   document.getElementById('mobileBtnJump').addEventListener('touchend', (e) => {
-    e.preventDefault();
-    this.keyboard.JUMP = false;
-  });
+    if (e.cancelable) {
+      e.preventDefault();
+    }
+    keyboard.SPACE = false;
+  })
   document.getElementById('mobileBtnThrow').addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    this.keyboard.Q = true;
-  });
+    if (e.cancelable) {
+      e.preventDefault();
+    }
+    keyboard.Q = true;
+  })
   document.getElementById('mobileBtnThrow').addEventListener('touchend', (e) => {
-    e.preventDefault();
-    this.keyboard.Q = false;
-  });
+    if (e.cancelable) {
+      e.preventDefault();
+    }
+    keyboard.Q = false;
+  })
 }
 
 function toggleVolume() {
@@ -229,7 +245,7 @@ function showEndScreenButtons() {
 function restartGame() {
   document.getElementById('youWin').classList.add('d_none');
   document.getElementById('youLost').classList.add('d_none');
-  document.getElementById('endgameBtns').classList.add('d_none'); // Buttons wieder verstecken
+  document.getElementById('endgameBtns').classList.add('d_none');
   playGame();
 }
 
