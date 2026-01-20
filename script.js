@@ -188,8 +188,7 @@ function stopAudio(path) {
 
 function playGame() {
   showStartScreenButtons();
-  document.getElementById('playBtn').classList.add('invisible');
-  document.getElementById('playBtnResp').classList.add('d_none');
+  document.getElementById('playBtn').classList.add('d_none');
   document.getElementById('menu').classList.add('d_none');
   document.getElementById('fullscreen').classList.remove('d_none');
   document.getElementById('fullscreenBtn').classList.remove('d_none');
@@ -218,6 +217,7 @@ function gameIsOver(playerHasWon) {
   } else {
     playerLost();
   }
+  exitFullscreen();
 }
 
 function stopEndbossSoundIfLost() {
@@ -236,6 +236,8 @@ function playerWin() {
   document.getElementById('endgameBtns').classList.remove('d_none');
   playAudio(win_Sound, 1, 0);
   document.getElementById('playBtn').classList.add('d_none');
+  document.getElementById('fullscreenBtn').classList.add('d_none');
+  document.getElementById('mobileBtn').classList.add('d_none');
 }
 
 function playerLost() {
@@ -243,6 +245,8 @@ function playerLost() {
   document.getElementById('endgameBtns').classList.remove('d_none');
   playAudio(lose_Sound, 1, 0);
   document.getElementById('playBtn').classList.add('d_none');
+  document.getElementById('fullscreenBtn').classList.add('d_none');
+  document.getElementById('mobileBtn').classList.add('d_none');
 }
 
 function showEndScreenButtons() {
@@ -270,7 +274,7 @@ function stopAllInterval() {
 }
 
 function toggleFullscreen() {
-  let canvas = document.getElementById('canvas');
+  let canvas = document.getElementById('fullscreen');
   enterFullscreen(canvas);
 }
 
