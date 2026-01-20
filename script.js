@@ -145,29 +145,37 @@ function displayVolumeOffIcon() {
   mute = true;
 }
 
-function openKeyboardInstruction() {
-  document.getElementById('keyboardBtnInfo').classList.add('show');
-  playAudio(swipeSound, 0.5, 0);
-}
+function toggleKeyboardInstruction(event) {
+  if (event) {
+    event.stopPropagation();
+  }
 
-function closeKeyboardInstruction() {
-  document.getElementById('keyboardBtnInfo').classList.remove('show');
+  let overlay = document.getElementById('keyboardBtnInfo');
+  let isOpening = !overlay.classList.contains('show');
+
+  if (isOpening) {
+    overlay.classList.add('show');
+  } else {
+    overlay.classList.remove('show');
+  }
   playAudio(swipeSound, 0.5, 0);
 }
 
 function playAudio(path, volume, repeat) {
-  if (mute) { 
-    return
-  } else {
-    path.volume = volume;
-    let playPromise = path.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(error => {
-        console.log('Audio play prevented:', error);
-      });
-    }
-      if (repeat == 1) path.loop = false;
+  if (mute) {
+    return;
   }
+
+  path.volume = volume;
+  path.currentTime = 0;
+  
+  let playPromise = path.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(e => 
+      console.log("Audio error:", e));
+  }
+
+  path.loop = (repeat == 1);
 }
 
 function stopAudio(path) {

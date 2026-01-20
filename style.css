@@ -88,30 +88,31 @@ canvas,
 }
 
 .keyboard_info {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  height: 75dvh;
-  width: 75dvw;
-  color: white;
-  background-color: rgba(0, 0, 0, 1);
-  z-index: 5;
-  transition: all 0.3s ease-in-out;
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+}
+
+.keyboard_info.show {
+  display: flex;
+}
+
+.instructions_modal {
+  background: #ffc107;
+  padding: 20px;
   border-radius: 30px;
+  width: 75dvw;
+  height: 65dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  opacity: 0;
   pointer-events: none;
   gap: 80px;
-}
-
-.keyboard_info.show {
-  transform: translate(-50%, -50%) scale(1);
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .instructions_container {
