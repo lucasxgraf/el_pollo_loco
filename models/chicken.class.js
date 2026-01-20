@@ -39,7 +39,7 @@ class Chicken extends MoveableObject{
     setInterval(() => {
       if (this.health <= 0) {
         if (!this.soundPlayed) {
-          playAudio(this.dead_chicken_sound, 1);
+          playAudio(this.dead_chicken_sound, 1, 0);
           this.soundPlayed = true;
         }
         this.playAnimation(this.IMAGES_DEAD);

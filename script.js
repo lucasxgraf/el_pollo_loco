@@ -84,7 +84,7 @@ function bindMobileBtns() {
     }
     keyboard.RIGHT = true;
   })
-  document.getElementById('mobileBtnRight').addEventListener('touchstart', (e) => {
+  document.getElementById('mobileBtnRight').addEventListener('touchend', (e) => {
     if (e.cancelable) {
       e.preventDefault();
     }
@@ -189,9 +189,12 @@ function stopAudio(path) {
 function playGame() {
   showStartScreenButtons();
   document.getElementById('playBtn').classList.add('invisible');
+  document.getElementById('playBtnResp').classList.add('d_none');
   document.getElementById('menu').classList.add('d_none');
   document.getElementById('fullscreen').classList.remove('d_none');
+  document.getElementById('fullscreenBtn').classList.remove('d_none');
   document.getElementById('canvas').classList.remove('d_none');
+  document.getElementById('mobileBtn').classList.remove('d_none');
   initLevel1();
   canvas = document.getElementById('canvas');
   world = new World(canvas, keyboard);
@@ -222,6 +225,7 @@ function stopEndbossSoundIfLost() {
     world.level.enemies.forEach(enemy => {
       if (enemy instanceof Endboss) {
         stopAudio(enemy.endboss_sound);
+        stopAudio(enemy.endboss_die_sound);
       }
     });
   }
@@ -230,14 +234,14 @@ function stopEndbossSoundIfLost() {
 function playerWin() {
   document.getElementById('youWin').classList.remove('d_none');
   document.getElementById('endgameBtns').classList.remove('d_none');
-  playAudio(win_Sound, 1, 1);
+  playAudio(win_Sound, 1, 0);
   document.getElementById('playBtn').classList.add('d_none');
 }
 
 function playerLost() {
   document.getElementById('youLost').classList.remove('d_none');
   document.getElementById('endgameBtns').classList.remove('d_none');
-  playAudio(lose_Sound, 1, 1);
+  playAudio(lose_Sound, 1, 0);
   document.getElementById('playBtn').classList.add('d_none');
 }
 
@@ -266,8 +270,8 @@ function stopAllInterval() {
 }
 
 function toggleFullscreen() {
-  let fullscreen = document.getElementById('fullscreen');
-  enterFullscreen(fullscreen);
+  let canvas = document.getElementById('canvas');
+  enterFullscreen(canvas);
 }
 
 function enterFullscreen(element) {
