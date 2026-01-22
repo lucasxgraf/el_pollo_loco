@@ -9,7 +9,7 @@ class StatusBarEndboss extends StatusBar {
 
   ];
   position_x = 500;
-  position_y = 0;
+  position_y = 10;
   width = 200;
   height = 60;
  

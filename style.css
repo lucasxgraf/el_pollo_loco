@@ -170,8 +170,8 @@ h1 {
 }
 
 .rotate_phone {
-  height: 100dvh;
-  width: 100dvh;
+  height: 100%;
+  width: 100%;
   position: fixed;
   display: none;
   justify-content: center;
@@ -221,9 +221,9 @@ h1 {
 
 .mobile_btn_left button, 
 .mobile_btn_right button {
-  background-color: rgba(245, 172, 47, 0.8); /* Dein Orange, leicht transparent */
+  background-color: rgba(245, 172, 47, 0.8);
   border: 3px solid #000;
-  border-radius: 50%; /* Macht die Buttons rund - sieht auf Mobile besser aus */
+  border-radius: 50%;
   width: 70px;
   height: 70px;
   display: flex;
@@ -231,13 +231,13 @@ h1 {
   align-items: center;
   cursor: pointer;
   transition: transform 0.1s, background-color 0.2s;
-  -webkit-tap-highlight-color: transparent; /* Verhindert blauen Kasten beim Tippen auf Handy */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .mobile_btn_left button:active, 
 .mobile_btn_right button:active {
-  transform: scale(0.9); /* Button wird beim Drücken leicht kleiner */
-  background-color: #FFDF00; /* Wechselt zu deinem hellen Gelb */
+  transform: scale(0.9);
+  background-color: #FFDF00;
 }
 
 #fullscreen:-webkit-full-screen {
@@ -257,7 +257,6 @@ h1 {
 }
 
 #fullscreen:fullscreen canvas {
-  width: auto;
   height: 100vh;
   max-width: 100vw;
 }
@@ -267,8 +266,8 @@ h1 {
   position: absolute;
   bottom: 30px;
   left: 50%;
-  transform: translateX(-50%); /* Perfekt mittig im Fullscreen */
-  width: 90%; /* Im Fullscreen etwas breiter für bessere Ergonomie */
+  transform: translateX(-50%);
+  width: 90%;
   background: transparent;
 }
 
@@ -336,6 +335,10 @@ h1 {
     justify-content: center;
     gap: 16px;
   }
+
+  .mobile_btn_container{
+    width: 100%;
+  }
 } 
 
 /* Rotate phone message */
@@ -352,6 +355,5 @@ h1 {
     position: absolute;
     bottom: 16px;
     padding: 0 16px;
-    width: 100%;
   }
 }
