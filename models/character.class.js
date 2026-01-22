@@ -212,13 +212,10 @@ class Character extends MoveableObject{
       this.stopIncreasingSpeed();
       playAudio(this.hurt_sound, 1);
 
-      if (this.otherDirection) {
-        this.backwardInterval = setInterval(() => { 
-        this.position_x++ }, 1000 / 200);
-      } else {
-        this.backwardInterval = setInterval(() => { 
-        this.position_x-- }, 1000 / 200);
-      }
+      this.backwardInterval = setInterval(() => { 
+        this.position_x--; 
+      }, 1000 / 200);
+      
       setTimeout(() => {
         clearInterval(this.backwardInterval);
         this.hurts = false;

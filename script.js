@@ -297,3 +297,22 @@ function exitFullscreen() {
     document.webkitExitFullscreen();
   }
 }
+
+window.addEventListener('resize', checkScreenOrientation);
+window.addEventListener('orientationchange', checkScreenOrientation);
+document.addEventListener('DOMContentLoaded', () => {
+  checkScreenOrientation();
+});
+
+function checkScreenOrientation() {
+  let rotateElement = document.getElementById('rotatePhone');
+  if (!rotateElement) 
+    return;
+  const isPortrait = window.innerHeight > window.innerWidth;
+
+  if (isPortrait) {
+    rotateElement.classList.remove('d_none');
+  } else {
+    rotateElement.classList.add('d_none');
+  }
+}
