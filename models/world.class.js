@@ -96,12 +96,11 @@ class World {
     if (this.canThrowObjects()) {
       this.throwingObject();
     } else if (this.canNotThrowObjects()) {
-      playAudio(this.no_throwing_sound, 1);
-      setTimeout(() => { 
-        this.no_throwing_sound.pause 
-      }, 2000);
+      if (this.no_throwing_sound.paused) {
+        playAudio(this.no_throwing_sound, 1);
+      }
     }
-  }
+}
 
   checkCollectables() {
   this.coins.forEach((coin, index) => {
@@ -137,8 +136,12 @@ class World {
 
   checkCollisionsThrowableObjectsWithEnemies() {
     this.throwableObjects.forEach((bottle) => {
+      if (bottle.hasHit) 
+        return;
+  
       this.level.enemies.forEach((enemy) => {
         if (bottle.isColliding(enemy) && !enemy.isHurt() && !enemy.isDead) {
+          bottle.hasHit = true;
           this.bottleCollidingWithEnemy(enemy, bottle);
         } 
       })

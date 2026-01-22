@@ -202,7 +202,7 @@ class Character extends MoveableObject{
       this.currentImage = 0;
       this.animateConditionOfCharacter();
       clearInterval(this.characterJumpInterval);
-    }, 1200);
+    }, 850);
   }
 
   backwardJump() {
