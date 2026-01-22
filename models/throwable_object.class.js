@@ -58,9 +58,9 @@ class ThrowableObject extends MoveableObject {
     world.character.longIdle = 0;
     this.throwInterval = setInterval(() => {
       if (this.direction) {
-        this.position_x -= 12;
+        this.position_x -= 7;
       } else {
-        this.position_x += 12;
+        this.position_x += 7;
       }
     }, 25);
   }

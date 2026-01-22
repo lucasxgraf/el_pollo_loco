@@ -27,6 +27,8 @@ class MoveableObject extends DrawableObject {
         this.position_y = 360;
       } else if (this instanceof Chicken) {
         this.position_y = 350;
+      } else if (this instanceof Endboss) {
+        this.position_y = 60;
       } else {
         this.position_y = 180;
       }
@@ -36,6 +38,8 @@ class MoveableObject extends DrawableObject {
   isObjectAboveGround() {
     if (this instanceof ThrowableObject) {
       return true;
+    } else if (this instanceof Endboss) {
+      return this.position_y < 60;
     } else {
       return this.position_y < 180;
     }
