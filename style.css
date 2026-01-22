@@ -13,11 +13,11 @@
 body{
   align-items: center;
   min-height: 100dvh;
-  gap: 40px;
   background-image: url('assets/img/5_background/dessert.svg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  overflow: hidden;
 }
 
 main {
@@ -67,7 +67,7 @@ canvas,
   max-width: 100%;
   height: auto;
   display: block;
-  object-fit: contain;
+  object-fit: fill;
 }
 
 #menu img,
@@ -282,7 +282,7 @@ h1 {
     width: 100%;
   }
 
-  menu img{
+  #menu img{
     width: 100%;
   }
 
@@ -292,9 +292,32 @@ h1 {
   }
 }
 
-@media only screen and (max-height: 480px) {
+@media (max-height: 600px) {
   main {
-    height: 100dvh;
+    gap: 24px;
+  }
+
+  .btn {
+    font-size: 1rem;
+  }
+
+  .settings_container {
+    position: absolute;
+    justify-content: center;
+    gap: 16px;
+    top: 16px;
+  }
+}
+
+@media (max-height: 480px) {
+  main {
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .btn {
+    font-size: 1rem;
+    padding: 8px;
   }
 
   canvas {
@@ -302,7 +325,7 @@ h1 {
     height: 100dvh;
   }
 
-  menu img {
+  #menu img {
     width: 100dvw;
     height: 100dvh;
   }
@@ -313,7 +336,7 @@ h1 {
     justify-content: center;
     gap: 16px;
   }
-}
+} 
 
 /* Rotate phone message */
 @media only screen and (max-width: 480px) {
@@ -327,7 +350,8 @@ h1 {
   .mobile_btn_container {
     display: flex;
     position: absolute;
-    bottom: 32px;
-    padding: 0 40px;
+    bottom: 16px;
+    padding: 0 16px;
+    width: 100%;
   }
 }
