@@ -12,16 +12,11 @@ class SmallChicken extends MoveableObject {
     right: 0, 
     bottom: 0 
   }
-  IMAGES_WALKING = [
-    'assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
-    'assets/img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
-    'assets/img/3_enemies_chicken/chicken_small/1_walk/3_w.png'
-  ];
-  IMAGES_DEAD = [
-    'assets/img/3_enemies_chicken/chicken_small/2_dead/dead.png'
-  ];
+  IMAGES_WALKING = ALL_IMAGES.smallChicken.IMAGES_WALKING;
+  IMAGES_DEAD = ALL_IMAGES.smallChicken.IMAGES_DEAD;
+
+  DEAD_SMALL_CHICKEN_SOUND = new Audio (SOUNDS.smallChicken.DEAD_SMALL_CHICKEN_SOUND);
   soundPlayed = false;
-  dead_small_chicken_sound = new Audio('assets/sound/chicken_small.mp3');
   
   constructor(){
     super().loadImage('assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
@@ -42,7 +37,7 @@ class SmallChicken extends MoveableObject {
       if (this.health <= 0) {
         this.playAnimation(this.IMAGES_DEAD);
         if (!this.soundPlayed) {
-          playAudio(this.dead_small_chicken_sound, 1);
+          playAudio(this.DEAD_SMALL_CHICKEN_SOUND, 1);
           this.soundPlayed = true;
         }
         clearInterval(this.animateChickenInterval);

@@ -2,13 +2,84 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 let mute = false;
-let swipeSound = new Audio('assets/sound/menu_description/swipe.mp3');
-let win_Sound = new Audio('assets/sound/win.mp3');
-let lose_Sound = new Audio('assets/sound/lose.mp3');
+
+let swipeSound = new Audio (SOUNDS.gameSound.SWIPE_SOUND);
+let win_Sound = new Audio (SOUNDS.gameSound.WIN_SOUND);
+let lose_Sound = new Audio (SOUNDS.gameSound.LOSE_SOUND);
+
+let loadingProgress = 0;
+let totalAssets = 0;
+let loadedAssets = 0;
+let gameStarted = false;
+const IMAGE_CACHE = {};
 
 function init() {
+  preloadAllImages();
   bindKeyboardBtns();
   bindMobileBtns();
+}
+
+function preloadAllImages() {
+  const allImages = [];
+  Object.values(ALL_IMAGES).forEach(category => {
+    Object.values(category).forEach(value => {
+      if (Array.isArray(value))
+        allImages.push(...value);
+    });
+  });
+
+  totalAssets = allImages.length;
+  loadedAssets = 0;
+
+  allImages.forEach(path => {
+    const img = new Image();
+    img.onload = updateLoadingProgress;
+    img.onerror = updateLoadingProgress;
+    img.src = path;
+    IMAGE_CACHE[path] = img;
+  }); 
+}
+
+function updateLoadingProgress() {
+  loadedAssets++;
+  loadingProgress = Math.round((loadedAssets / totalAssets) * 100);
+  document.getElementById('loadingPercentage').textContent = loadingProgress + '%';
+  document.getElementById('loadingBar').style.width = loadingProgress + '%';
+
+  if (loadedAssets === totalAssets) {
+    loadingScreen();
+    gameStarted = true;
+  }
+}
+
+function preloadAssets() {
+  loadingScreen();
+  totalAssets = preloadStartImg.length + preloadStartSound.length;
+  loadedAssets = 0;
+  preloadSound();
+  preloadImg();
+}
+
+function loadingScreen() {
+  document.getElementById('loadingScreen').classList.toggle('d_none');
+}
+
+function preloadImg() {
+  preloadStartImg.forEach(src => {
+    const img = new Image();
+    img.onload = updateLoadingProgress;
+    img.onerror = updateLoadingProgress;
+    img.src = src;
+  }); 
+}
+
+function preloadSound(){
+  preloadStartSound.forEach(src => {
+    const audio = new Audio();
+    audio.oncanplaythrough = updateLoadingProgress;
+    audio.onerror = updateLoadingProgress;
+    audio.src = src;
+  });
 }
 
 function bindKeyboardBtns() {
@@ -161,39 +232,9 @@ function toggleKeyboardInstruction(event) {
   playAudio(swipeSound, 0.5, 0);
 }
 
-function playAudio(path, volume, repeat) {
-  if (mute) {
-    return;
-  }
-
-  path.volume = volume;
-  path.currentTime = 0;
-  
-  let playPromise = path.play();
-  if (playPromise !== undefined) {
-    playPromise.catch(e => 
-      console.log("Audio error:", e));
-  }
-
-  path.loop = (repeat == 1);
-}
-
-function stopAudio(path) {
-  if (mute) { 
-    return
-  } else {
-    path.pause();
-  }
-}
-
 function playGame() {
   showStartScreenButtons();
-  document.getElementById('playBtn').classList.add('d_none');
-  document.getElementById('menu').classList.add('d_none');
-  document.getElementById('fullscreen').classList.remove('d_none');
-  document.getElementById('fullscreenBtn').classList.remove('d_none');
-  document.getElementById('canvas').classList.remove('d_none');
-  document.getElementById('mobileBtn').classList.remove('d_none');
+  showGameScreen();
   initLevel1();
   canvas = document.getElementById('canvas');
   world = new World(canvas, keyboard);
@@ -201,10 +242,21 @@ function playGame() {
 
 function showStartScreenButtons() {
   let settings = document.getElementById('settingsContainer');
-  if(settings) settings.classList.remove('d_none');
+  if (settings) {
+    settings.classList.remove('d_none');
+  }
   document.getElementById('youWin').classList.add('d_none');
   document.getElementById('youLost').classList.add('d_none');
   document.getElementById('endgameBtns').classList.add('d_none');
+}
+
+function showGameScreen() {
+  document.getElementById('playBtn').classList.add('d_none');
+  document.getElementById('menu').classList.add('d_none');
+  document.getElementById('fullscreen').classList.remove('d_none');
+  document.getElementById('fullscreenBtn').classList.remove('d_none');
+  document.getElementById('canvas').classList.remove('d_none');
+  document.getElementById('mobileBtn').classList.remove('d_none');
 }
 
 function gameIsOver(playerHasWon) {
@@ -224,8 +276,8 @@ function stopEndbossSoundIfLost() {
   if (world && world.level && world.level.enemies) {
     world.level.enemies.forEach(enemy => {
       if (enemy instanceof Endboss) {
-        stopAudio(enemy.endboss_sound);
-        stopAudio(enemy.endboss_die_sound);
+        stopAudio(enemy.ENDBOSS_SOUND);
+        stopAudio(enemy.ENDBOSS_DIE_SOUND);
       }
     });
   }

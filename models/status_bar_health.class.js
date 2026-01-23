@@ -1,12 +1,5 @@
 class StatusBarHealth extends StatusBar {
-  IMAGES_STATUS_BAR = [
-    'assets/img/7_statusbars/1_statusbar/2_statusbar_health/green/0.png',
-    'assets/img/7_statusbars/1_statusbar/2_statusbar_health/green/20.png',
-    'assets/img/7_statusbars/1_statusbar/2_statusbar_health/green/40.png',
-    'assets/img/7_statusbars/1_statusbar/2_statusbar_health/green/60.png',
-    'assets/img/7_statusbars/1_statusbar/2_statusbar_health/green/80.png',
-    'assets/img/7_statusbars/1_statusbar/2_statusbar_health/green/100.png'
-  ];
+  IMAGES_STATUS_BAR = ALL_IMAGES.statusbars.IMAGES_STATUS_BAR_HEALTH;
   position_x = 20;
   position_y = 0;
   width = 200;

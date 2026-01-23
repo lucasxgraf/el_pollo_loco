@@ -10,10 +10,7 @@ class Coin extends MoveableObject {
     bottom: 65
   }
 
-  IMAGES_ROTATE = [
-    'assets/img/8_coin/coin_1.png',
-    'assets/img/8_coin/coin_2.png',
-  ];
+  IMAGES_ROTATE = ALL_IMAGES.coins;
 
   constructor(x, y, isMiddle = false) {
     super().loadImage(isMiddle ? 'assets/img/8_coin/coin_2.png' : 'assets/img/8_coin/coin_1.png');

@@ -1,12 +1,5 @@
 class StatusBarSalsaBottle extends StatusBar {
-  IMAGES_STATUS_BAR = [
-    'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/green/0.png',
-    'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/green/20.png',
-    'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/green/40.png',
-    'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/green/60.png',
-    'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/green/80.png',
-    'assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/green/100.png'
-  ];
+  IMAGES_STATUS_BAR = ALL_IMAGES.statusbars.IMAGES_STATUS_BAR_SALSA_BOTTLE;
   position_x = 20;
   position_y = 100;
   width = 200;

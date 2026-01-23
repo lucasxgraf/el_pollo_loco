@@ -10,10 +10,7 @@ class SalsaBottle extends MoveableObject {
     bottom: 10
   }
 
-  IMAGES_SALSA_BOTTLE = [
-    'assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png',
-    'assets/img/6_salsa_bottle/2_salsa_bottle_on_ground.png',
-  ];
+  IMAGES_SALSA_BOTTLE = ALL_IMAGES.salsaBottles;
 
   constructor() {
     super().loadImage('assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png');

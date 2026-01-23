@@ -20,55 +20,29 @@ class Endboss extends MoveableObject {
     right: 35,
     bottom: 10
   }
-  IMAGES_ALERT = [
-    'assets/img/4_enemie_boss_chicken/2_alert/G5.png',
-    'assets/img/4_enemie_boss_chicken/2_alert/G6.png',
-    'assets/img/4_enemie_boss_chicken/2_alert/G7.png',
-    'assets/img/4_enemie_boss_chicken/2_alert/G8.png',
-    'assets/img/4_enemie_boss_chicken/2_alert/G9.png',
-    'assets/img/4_enemie_boss_chicken/2_alert/G10.png',
-    'assets/img/4_enemie_boss_chicken/2_alert/G11.png',
-    'assets/img/4_enemie_boss_chicken/2_alert/G12.png'
-  ];
-  IMAGES_WALKING = [
-    'assets/img/4_enemie_boss_chicken/1_walk/G1.png',
-    'assets/img/4_enemie_boss_chicken/1_walk/G2.png',
-    'assets/img/4_enemie_boss_chicken/1_walk/G3.png',
-    'assets/img/4_enemie_boss_chicken/1_walk/G4.png'
-  ];
-  IMAGES_ATTACK = [
-    'assets/img/4_enemie_boss_chicken/3_attack/G13.png',
-    'assets/img/4_enemie_boss_chicken/3_attack/G14.png',
-    'assets/img/4_enemie_boss_chicken/3_attack/G15.png',
-    'assets/img/4_enemie_boss_chicken/3_attack/G16.png',
-    'assets/img/4_enemie_boss_chicken/3_attack/G17.png',
-    'assets/img/4_enemie_boss_chicken/3_attack/G18.png',
-    'assets/img/4_enemie_boss_chicken/3_attack/G19.png',
-    'assets/img/4_enemie_boss_chicken/3_attack/G20.png'
-  ];
-  IMAGES_HURT = [
-    'assets/img/4_enemie_boss_chicken/4_hurt/G21.png',
-    'assets/img/4_enemie_boss_chicken/4_hurt/G22.png',
-    'assets/img/4_enemie_boss_chicken/4_hurt/G23.png'
-  ];
-  IMAGES_DEAD = [
-    'assets/img/4_enemie_boss_chicken/5_dead/G24.png',
-    'assets/img/4_enemie_boss_chicken/5_dead/G25.png',
-    'assets/img/4_enemie_boss_chicken/5_dead/G26.png'
-  ];
-  endboss_sound = new Audio('assets/sound/endboss_sound.mp3');
-  endboss_die_sound = new Audio('assets/sound/endboss_die.mp3');
-  endboss_hurt_sound = new Audio('assets/sound/chicken.mp3');
+  IMAGES_ALERT = ALL_IMAGES.endboss.IMAGES_ALERT;
+  IMAGES_WALKING = ALL_IMAGES.endboss.IMAGES_WALKING;
+  IMAGES_ATTACK = ALL_IMAGES.endboss.IMAGES_ATTACK;
+  IMAGES_HURT = ALL_IMAGES.endboss.IMAGES_HURT;
+  IMAGES_DEAD = ALL_IMAGES.endboss.IMAGES_DEAD;
+  
+  ENDBOSS_SOUND = new Audio (SOUNDS.endboss.ENDBOSS_SOUND);
+  ENDBOSS_DIE_SOUND = new Audio (SOUNDS.endboss.ENDBOSS_DIE_SOUND);
+  ENDBOSS_HURT_SOUND = new Audio (SOUNDS.endboss.ENDBOSS_HURT_SOUND);
 
   constructor(){
     super().loadImage(this.IMAGES_WALKING[0]);
+    this.loadImagesEndboss();
+    this.applyGravity();
+    this.animate();
+  }
+  
+  loadImagesEndboss(){
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ALERT);
     this.loadImages(this.IMAGES_ATTACK);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
-    this.applyGravity();
-    this.animate();
   }
 
   animate() {
@@ -98,10 +72,10 @@ class Endboss extends MoveableObject {
     this.healthInterval = setInterval(() => {
       if (this.health <= 0) {
         this.endbossDieAnimation();
-        stopAudio(this.endboss_sound);
+        stopAudio(this.ENDBOSS_SOUND);
         clearInterval(this.animateEndbossInterval);
         clearInterval(this.healthInterval);
-        playAudio(this.endboss_die_sound, 0.5, 1);
+        playAudio(this.ENDBOSS_DIE_SOUND, 0.5, 1);
       }
     }, 200);
   }
@@ -121,7 +95,7 @@ class Endboss extends MoveableObject {
 
   firstContactWithEndboss() {
     this.meetCounter = 0;
-    playAudio(this.endboss_sound, 0.15, 0);
+    playAudio(this.ENDBOSS_SOUND, 0.15, 0);
     this.hadFirstContact = true;
     world.statusBarEndboss = new StatusBarEndboss();
   }

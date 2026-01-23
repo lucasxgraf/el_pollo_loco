@@ -18,7 +18,9 @@ class World {
   statusBarEndboss;
   throwableObjects = [];
   throwing = true;
-  no_throwing_sound = new Audio('assets/sound/no_throwing_objects.mp3');
+  NO_THROWING_SOUND = new Audio (SOUNDS.salsaBottle.NO_THROWING_SOUND);
+  COIN_COLLECT_SOUND = new Audio (SOUNDS.gameSound.COIN_COLLECT_SOUND);
+  SALSA_BOTTLE_COLLECT_SOUND = new Audio (SOUNDS.gameSound.SALSA_BOTTLE_COLLECT_SOUND);
 
   constructor(canvas, keyboard){
     this.ctx = canvas.getContext('2d');
@@ -96,34 +98,32 @@ class World {
     if (this.canThrowObjects()) {
       this.throwingObject();
     } else if (this.canNotThrowObjects()) {
-      if (this.no_throwing_sound.paused) {
-        playAudio(this.no_throwing_sound, 1);
+      if (SOUNDS.salsaBottle.NO_THROWING_SOUND.paused) {
+        playAudio(SOUNDS.salsaBottle.NO_THROWING_SOUND, 1);
       }
     }
-}
+  }
 
   checkCollectables() {
-  this.coins.forEach((coin, index) => {
-    if (this.character.isColliding(coin)) {
-      this.coins.splice(index, 1);
-      this.character.collectedCoins++;
-      const percentage = (this.character.collectedCoins / 19) * 100;
-      this.statusBarCoin.setPercentage(percentage);
-      let coinSound = new Audio('assets/sound/coin.mp3');
-      playAudio(coinSound, 1);
-    }
-  });
-
-  this.salsaBottles.forEach((bottle, index) => {
-    if (this.character.isColliding(bottle)) {
-      this.salsaBottles.splice(index, 1);
-      this.character.collectedBottles++;
-      const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
-      this.statusBarSalsaBottle.setPercentage(percentage);
-      let bottleSound = new Audio('assets/sound/bottle_collect.mp3');
-      playAudio(bottleSound, 1);
-    }
-  });
+    this.coins.forEach((coin, index) => {
+      if (this.character.isColliding(coin)) {
+        this.coins.splice(index, 1);
+        this.character.collectedCoins++;
+        const percentage = (this.character.collectedCoins / 19) * 100;
+        this.statusBarCoin.setPercentage(percentage);
+        playAudio(this.COIN_COLLECT_SOUND, 1);
+      }
+    });
+  
+    this.salsaBottles.forEach((bottle, index) => {
+      if (this.character.isColliding(bottle)) {
+        this.salsaBottles.splice(index, 1);
+        this.character.collectedBottles++;
+        const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
+        this.statusBarSalsaBottle.setPercentage(percentage);
+        playAudio(this.SALSA_BOTTLE_COLLECT_SOUND, 1);
+      }
+    });
   }
 
   checkCollisionsThrowableObjectsWithTheGround() {
@@ -152,14 +152,12 @@ class World {
     enemy.hit();
     if (enemy instanceof Endboss && this.statusBarEndboss) {
       this.statusBarEndboss.setPercentage(enemy.health);
-    }
-    if (enemy.hurt_sound) {
-      playAudio(enemy.hurt_sound, 0.5);
-    } else if (enemy.endboss_hurt_sound) {
-      playAudio(enemy.endboss_hurt_sound, 0.5);
+      playAudio(SOUNDS.endboss.ENDBOSS_HURT_SOUND, 0.5);
+    } else {
+      playAudio(SOUNDS.chicken.DEAD_CHICKEN_SOUND, 0.5);
     }
     this.bottleBreaks(bottle);
-  } 
+  }
 
   bottleBreaks(bottle) {
     bottle.break = true;
@@ -170,7 +168,7 @@ class World {
   }
 
   playBottleThrowSound(bottle) {
-    playAudio(bottle.breaking_sound, 1);
+    playAudio(SOUNDS.salsaBottle.BREAKING_SOUND, 1);
     setTimeout(() => {
       this.throwableObjects.splice(this.throwableObjects.indexOf(bottle), 1);
       clearInterval(bottle.animateBottleInterval);
@@ -229,7 +227,7 @@ class World {
 
     moveableObject.drawObject(this.ctx);
     // moveableObject.drawObjectHitbox(this.ctx);
-    moveableObject.drawObjectHitboxOffset(this.ctx);
+    // moveableObject.drawObjectHitboxOffset(this.ctx);
 
     if(moveableObject.otherDirection){
       this.flipImageBack(moveableObject);
@@ -269,10 +267,7 @@ class World {
 
   createClouds() {
     this.clouds = [];
-    const cloudImages = [
-      'assets/img/5_background/layers/4_clouds/1.png',
-      'assets/img/5_background/layers/4_clouds/2.png'
-    ];
+    const cloudImages = ALL_IMAGES.clouds;
 
     const numberOfClouds = 6; 
     const cloudWidth = 720;  

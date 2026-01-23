@@ -14,15 +14,24 @@ class DrawableObject {
   }
 
   loadImage(imgPath){
-    this.img = new Image();
-    this.img.src = imgPath;
+    if (window.GLOBAL_IMAGE_CACHE && window.GLOBAL_IMAGE_CACHE[imgPath]) {
+      this.img = window.GLOBAL_IMAGE_CACHE[imgPath];
+    } else {
+      this.img = new Image();
+      this.img.src = imgPath;
+    }
   }
 
   loadImages(arr){
     arr.forEach(path => {
-      let img = new Image();
-      img.src = path;
-      this.imageCache[path] = img;
+      if (window.GLOBAL_IMAGE_CACHE && window.GLOBAL_IMAGE_CACHE[path]) {
+        // benutze das vorab geladene Image-Objekt
+        this.imageCache[path] = window.GLOBAL_IMAGE_CACHE[path];
+      } else {
+        let img = new Image();
+        img.src = path;
+        this.imageCache[path] = img;
+      }
     });
   }
 

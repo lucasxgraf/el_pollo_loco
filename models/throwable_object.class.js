@@ -14,22 +14,11 @@ class ThrowableObject extends MoveableObject {
     right: 10, 
     bottom: 10 
   };
-  IMAGES_BOTTLE_ROTATION = [
-    'assets/img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
-    'assets/img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png',
-    'assets/img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png',
-    'assets/img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png'
-  ];
-  IMAGES_BOTTLE_BREAK = [
-    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png',
-    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/2_bottle_splash.png',
-    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/3_bottle_splash.png',
-    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png',
-    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/5_bottle_splash.png',
-    'assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png'
-  ];
-  throwing_sound = new Audio('assets/sound/throwing.mp3');
-  breaking_sound = new Audio('assets/sound/breaking_bottle.mp3');
+  IMAGES_BOTTLE_ROTATION = ALL_IMAGES.salsaBottlesRotation;
+  IMAGES_BOTTLE_BREAK = ALL_IMAGES.salsaBottlesBreak;
+
+  THROWING_SOUND = new Audio (SOUNDS.salsaBottle.THROWING_SOUND);
+  BREAKING_SOUND = new Audio (SOUNDS.salsaBottle.BREAKING_SOUND);
 
   constructor(position_x, position_y) {
     super().loadImage('assets/img/6_salsa_bottle/salsa_bottle.png');
@@ -52,7 +41,7 @@ class ThrowableObject extends MoveableObject {
   }
   
   throw(){
-    playAudio(this.throwing_sound, 1)
+    playAudio(this.THROWING_SOUND, 1)
     this.speedGravityY = 25;
     this.applyGravity();
     world.character.longIdle = 0;

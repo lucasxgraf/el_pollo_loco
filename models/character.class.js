@@ -20,84 +20,38 @@ class Character extends MoveableObject{
     right: 35, 
     bottom: 10
    };
-  IMAGES_IDLE = [
-    'assets/img/2_character_pepe/1_idle/idle/I-1.png',
-    'assets/img/2_character_pepe/1_idle/idle/I-2.png',
-    'assets/img/2_character_pepe/1_idle/idle/I-3.png',
-    'assets/img/2_character_pepe/1_idle/idle/I-4.png',
-    'assets/img/2_character_pepe/1_idle/idle/I-5.png',
-    'assets/img/2_character_pepe/1_idle/idle/I-6.png',
-    'assets/img/2_character_pepe/1_idle/idle/I-7.png',
-    'assets/img/2_character_pepe/1_idle/idle/I-8.png',
-    'assets/img/2_character_pepe/1_idle/idle/I-9.png',
-    'assets/img/2_character_pepe/1_idle/idle/I-10.png',
-  ];
-  IMAGES_LONG_IDLE = [
-    'assets/img/2_character_pepe/1_idle/long_idle/I-11.png',
-    'assets/img/2_character_pepe/1_idle/long_idle/I-12.png',
-    'assets/img/2_character_pepe/1_idle/long_idle/I-13.png',
-    'assets/img/2_character_pepe/1_idle/long_idle/I-14.png',
-    'assets/img/2_character_pepe/1_idle/long_idle/I-15.png',
-    'assets/img/2_character_pepe/1_idle/long_idle/I-16.png',
-    'assets/img/2_character_pepe/1_idle/long_idle/I-17.png',
-    'assets/img/2_character_pepe/1_idle/long_idle/I-18.png',
-    'assets/img/2_character_pepe/1_idle/long_idle/I-19.png',
-    'assets/img/2_character_pepe/1_idle/long_idle/I-20.png',
-  ];
-  IMAGES_WALKING = [
-    'assets/img/2_character_pepe/2_walk/W-21.png',
-    'assets/img/2_character_pepe/2_walk/W-22.png',
-    'assets/img/2_character_pepe/2_walk/W-23.png',
-    'assets/img/2_character_pepe/2_walk/W-24.png',
-    'assets/img/2_character_pepe/2_walk/W-25.png',
-    'assets/img/2_character_pepe/2_walk/W-26.png'
-  ];
-  IMAGES_JUMPING = [
-    'assets/img/2_character_pepe/3_jump/J-31.png',
-    'assets/img/2_character_pepe/3_jump/J-32.png',
-    'assets/img/2_character_pepe/3_jump/J-33.png',
-    'assets/img/2_character_pepe/3_jump/J-34.png',
-    'assets/img/2_character_pepe/3_jump/J-35.png',
-    'assets/img/2_character_pepe/3_jump/J-36.png',
-    'assets/img/2_character_pepe/3_jump/J-37.png',
-    'assets/img/2_character_pepe/3_jump/J-38.png',
-    'assets/img/2_character_pepe/3_jump/J-39.png'
-  ];
-  IMAGES_DEAD = [
-    'assets/img/2_character_pepe/5_dead/D-51.png',
-    'assets/img/2_character_pepe/5_dead/D-52.png',
-    'assets/img/2_character_pepe/5_dead/D-53.png',
-    'assets/img/2_character_pepe/5_dead/D-54.png',
-    'assets/img/2_character_pepe/5_dead/D-55.png',
-    'assets/img/2_character_pepe/5_dead/D-56.png',
-    'assets/img/2_character_pepe/5_dead/D-57.png'
-  ];
-  IMAGES_HURT = [
-    'assets/img/2_character_pepe/4_hurt/H-41.png',
-    'assets/img/2_character_pepe/4_hurt/H-42.png',
-    'assets/img/2_character_pepe/4_hurt/H-43.png'
-  ];
-  walking_sound = new Audio('assets/sound/walking.mp3');
-  jump_sound = new Audio('assets/sound/jump.mp3');
-  hurt_sound = new Audio('assets/sound/hurt.mp3');
+  IMAGES_IDLE = ALL_IMAGES.character.IMAGES_IDLE;
+  IMAGES_LONG_IDLE = ALL_IMAGES.character.IMAGES_LONG_IDLE;
+  IMAGES_WALKING = ALL_IMAGES.character.IMAGES_WALKING;
+  IMAGES_JUMPING = ALL_IMAGES.character.IMAGES_JUMPING;
+  IMAGES_DEAD = ALL_IMAGES.character.IMAGES_DEAD;
+  IMAGES_HURT = ALL_IMAGES.character.IMAGES_HURT;
+
+  WALKING_SOUND = new Audio (SOUNDS.character.WALKING_SOUND);
+  JUMP_SOUND = new Audio (SOUNDS.character.JUMP_SOUND);
+  HURT_SOUND = new Audio (SOUNDS.character.HURT_SOUND);
 
   constructor(){
     super().loadImage('assets/img/2_character_pepe/1_idle/idle/I-1.png');
+    this.loadImagesCharacter();
+    this.animateMovement();
+    this.animateConditionOfCharacter();
+    this.animateWalkingSpeed();
+    this.applyGravity();
+  }
+  
+  loadImagesCharacter(){
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_LONG_IDLE);
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_JUMPING);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
-    this.animateMovement();
-    this.animateConditionOfCharacter();
-    this.animateWalkingSpeed();
-    this.applyGravity();
   }
 
   animateMovement(){
     setInterval(() => {
-      this.walking_sound.pause();
+      this.WALKING_SOUND.pause();
       
       if(this.canMoveRight()){
         this.moveRight();
@@ -108,7 +62,7 @@ class Character extends MoveableObject{
 
       if(this.canJump()){
         this.jump();
-        playAudio(this.jump_sound, 1);
+        playAudio(this.JUMP_SOUND, 1);
       }
 
       this.world.camera_x = -this.position_x + 100;
@@ -132,11 +86,11 @@ class Character extends MoveableObject{
     if (this.otherDirection) this.stopIncreasingSpeed();
     this.otherDirection = false;
     if (!this.isObjectAboveGround()) {
-      playAudio(this.walking_sound, 1);
-      this.walking_sound.playbackRate = this.speedSound;
+      playAudio(this.WALKING_SOUND, 1);
+      this.WALKING_SOUND.playbackRate = this.speedSound;
     }
     this.increasingSpeed();
-    playAudio(this.walking_sound, 1);
+    playAudio(this.WALKING_SOUND, 1);
   }
 
   moveLeft() {
@@ -144,22 +98,22 @@ class Character extends MoveableObject{
     if (!this.otherDirection) this.stopIncreasingSpeed();
     this.otherDirection = true;
     if (!this.isObjectAboveGround) {
-      playAudio(this.walking_sound, 1);
-      this.walking_sound.playbackRate = this.speedSound;
+      playAudio(this.WALKING_SOUND, 1);
+      this.WALKING_SOUND.playbackRate = this.speedSound;
     }
     this.increasingSpeed();
-    playAudio(this.walking_sound, 1)
+    playAudio(this.WALKING_SOUND, 1)
   }
 
   jump(){
     super.jump();
-    this.walking_sound.pause();
+    this.WALKING_SOUND.pause();
     this.stopIncreasingSpeed();
   }
 
   jumpOnEnemy(){
     this.speedGravityY = 10;
-    this.walking_sound.pause();
+    this.WALKING_SOUND.pause();
   }
 
   animateConditionOfCharacter(){
@@ -210,7 +164,7 @@ class Character extends MoveableObject{
       this.hurts = true;
       this.speed = 15;
       this.stopIncreasingSpeed();
-      playAudio(this.hurt_sound, 1);
+      playAudio(this.HURT_SOUND, 1);
 
       this.backwardInterval = setInterval(() => { 
         this.position_x--; 
@@ -224,7 +178,7 @@ class Character extends MoveableObject{
   }
   
   characterDieAnimation() {
-    this.walking_sound.pause();
+    this.WALKING_SOUND.pause();
     stopAllInterval();
     this.characterDieInterval = setInterval(() => {
       this.playAnimation(this.IMAGES_DEAD);
@@ -238,7 +192,7 @@ class Character extends MoveableObject{
   animateWalkingSpeed() {
     setInterval(() => {
       if ((!this.world.keyboard.LEFT && !this.world.keyboard.RIGHT) || this.position_x <= 0 || this.position_x > this.world.level.level_end_x) {
-        this.walking_sound.pause(); 
+        this.WALKING_SOUND.pause(); 
         this.stopIncreasingSpeed();
         this.longIdle++
         if (this.longIdle <= 20) { 
