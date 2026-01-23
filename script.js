@@ -13,6 +13,10 @@ let loadedAssets = 0;
 let gameStarted = false;
 const IMAGE_CACHE = {};
 
+const keyboardInfo = document.getElementById('keyboardBtnInfo');
+const instructionsModal = document.querySelector('.instructions_modal');
+const closeBtn = document.getElementById('closeInstructionsBtn');
+
 function init() {
   preloadAllImages();
   bindKeyboardBtns();
@@ -370,3 +374,22 @@ function checkScreenOrientation() {
     rotateElement.classList.add('d_none');
   }
 }
+
+document.getElementById('closeInstructionsBtn').addEventListener('click', function() {
+  const keyboardInfo = document.getElementById('keyboardBtnInfo');
+  if (keyboardInfo.classList.contains('show')) {
+    keyboardInfo.classList.remove('show');
+  }
+});
+
+closeBtn.addEventListener('click', () => {
+  keyboardInfo.classList.remove('show');
+});
+
+keyboardInfo.addEventListener('click', () => {
+  keyboardInfo.classList.remove('show');
+});
+
+instructionsModal.addEventListener('click', (event) => {
+  event.stopPropagation();
+});

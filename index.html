@@ -34,7 +34,7 @@
   <script src="script.js"></script>
   
 </head>
-<body onload="init()" oncontextmenu="return true">
+<body onload="init()" oncontextmenu="return false">
 
   <div id="loadingScreen" class="loading_screen dnone">
     <div class="loading_content">
@@ -62,7 +62,9 @@
 
       <div onclick="toggleKeyboardInstruction(event)" id="keyboardBtnInfo" class="keyboard_info">
         <div onclick="event.stopPropagation()" class="instructions_modal">
-          <h1>Keyboard Instructions</h1>  
+          <h1>Keyboard Instructions</h1>
+          <button id="closeInstructionsBtn" class="close_btn" aria-label="Close instructions">×
+          </button>
           <div class="instructions_container">
             <div class="instructions">
               <div class="instruction_key">

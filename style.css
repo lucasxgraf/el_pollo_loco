@@ -21,7 +21,6 @@ body{
 }
 
 /* Loading Screen */
-
 .loading_screen {
   position: fixed;
   top: 0;
@@ -59,52 +58,6 @@ body{
   width: 0%;
   transition: width 0.3s;
 }
-
-/* #loading-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #f8d384;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  transition: opacity 0.5s ease-out;
-}
-
-.loader-content {
-  text-align: center;
-  font-family: 'Zabars', sans-serif; /* Falls du eine Custom Font hast 
-}
-
-.loader-content img {
-  width: 100px;
-  animation: walk 1s infinite;
-}
-
-.progress-bar {
-  width: 200px;
-  height: 10px;
-  background: white;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-#progress-fill {
-  width: 0%;
-  height: 100%;
-  background: #e33d12;
-  transition: width 0.2s;
-} 
-
-@keyframes walk {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-} */
-
 /* Normales Zeug */
 
 main {
@@ -185,10 +138,10 @@ canvas,
 
 .mobile-btn, 
 canvas {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;           
-    touch-action: manipulation;  
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;           
+  touch-action: manipulation;  
 }
 
 .settings_container {
@@ -218,11 +171,12 @@ canvas {
 }
 
 .instructions_modal {
+  position: relative;
   background: #ffc107;
-  padding: 20px;
+  padding: 24px;
   border-radius: 30px;
   width: 75dvw;
-  height: 65dvh;
+  height: 70dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -231,12 +185,29 @@ canvas {
   gap: 80px;
 }
 
+.close_btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.3s;
+  z-index: 10;
+}
+
+.close_btn:hover {
+  color: #000;
+}
+
 .instructions_container {
   display: flex;
   flex-direction: column;
   gap: 32px;
   width: 100%;
-  padding: 0 64px;
 }
 
 h1 {
@@ -392,6 +363,68 @@ h1 {
 }
 
 /* Responsive Design */
+
+@media (max-width: 800px) {
+  .instructions_modal {
+    height: 50dvh;
+    gap: 56px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .instructions_container {
+    padding: 0;
+  }
+
+  .instructions {
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .instruction_key {
+    gap: 8px;
+  }
+
+  .instruction_key img {
+    height: 32px;
+    width: 32px;
+  }
+}
+
+@media (max-width: 430px) {
+  .instructions_modal {
+    width: 90vw;
+    height: auto;
+    padding: 20px;
+    gap: 32px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .instructions_container {
+    gap: 24px;
+  }
+
+  .instructions {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .instruction_key {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .instruction_outcome span {
+    color: #000000;
+  }
+}
+
 @media only screen and (max-width: 720px) {
   main {
     gap: 16px;
@@ -408,6 +441,25 @@ h1 {
   .btn {
     font-size: 1rem;
     padding: 8px;
+  }
+}
+
+@media (max-height: 1000px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .instructions_modal {
+    gap: 32px;
+  }
+
+  .instructions {
+    font-size: 1.5rem;
+  }
+
+  .instruction_key img {
+    height: 32px;
+    width: 32px;
   }
 }
 
@@ -460,6 +512,20 @@ h1 {
   .endgame_btns {
     margin-top: 8px;
     gap: 8px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .instructions_modal {
+    height: 100dvh;
+    width: 100dvw;
+    padding: 32px;
+  }
+
+  .instructions {
+    font-size: 1rem;
   }
 } 
 
