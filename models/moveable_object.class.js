@@ -1,3 +1,12 @@
+/**
+ * @file MoveableObject.class.js
+ * @description Base class for all movable objects in the game, providing physics, collision, and animation support.
+ */
+
+/**
+ * Class representing a movable object with physics and animation capabilities.
+ * Extends DrawableObject to inherit image rendering functionality.
+ */
 class MoveableObject extends DrawableObject {
   speed = 0.15;
   otherDirection = false;
@@ -5,8 +14,11 @@ class MoveableObject extends DrawableObject {
   acceleration = 2.5;
   health = 100;
   lastHit = 0;
-
-  applyGravity(){
+  
+  /**
+   * Applies gravity effect to the object, updating its vertical position.
+   */
+  applyGravity() {
     setInterval(() => {
       if (this.isObjectAboveGround() || this.speedGravityY > 0) {
         this.position_y -= this.speedGravityY;
@@ -15,9 +27,13 @@ class MoveableObject extends DrawableObject {
       } else {
         this.speedGravityY = 0;
       }
-    } , 1000 / 25);
+    }, 1000 / 25);
   }
 
+  /**
+   * Resets object to ground level after jumping on an enemy.
+   * Adjusts position based on object type.
+   */
   resetCharacterOnGroundAfterJumpOnEnemy() {
     if (!this.isObjectAboveGround() && this.speedGravityY <= 0) {
       this.speedGravityY = 0;
@@ -35,6 +51,10 @@ class MoveableObject extends DrawableObject {
     }
   }
 
+  /**
+   * Checks if the object is currently above the ground.
+   * @returns {boolean} True if the object is above ground.
+   */
   isObjectAboveGround() {
     if (this instanceof ThrowableObject) {
       return true;
@@ -45,25 +65,53 @@ class MoveableObject extends DrawableObject {
     }
   }
 
-  isColliding(moveableObject){
-    return this.position_x + this.offset.left + (this.width - this.offset.left - this.offset.right) > moveableObject.position_x + moveableObject.offset.left &&
-      this.position_y + this.offset.top + (this.height - this.offset.top - this.offset.bottom) > moveableObject.position_y + moveableObject.offset.top &&
-      this.position_x + this.offset.left < moveableObject.position_x + moveableObject.offset.left + (moveableObject.width - moveableObject.offset.left - moveableObject.offset.right) &&
-      this.position_y + this.offset.top < moveableObject.position_y + moveableObject.offset.top + (moveableObject.height - moveableObject.offset.top - moveableObject.offset.bottom);
+  /**
+   * Checks for collision with another movable object using axis-aligned bounding box (AABB).
+   * @param {MoveableObject} moveableObject - The object to check collision against.
+   * @returns {boolean} True if the objects are colliding.
+   */
+  isColliding(moveableObject) {
+    return (
+      this.position_x + this.offset.left + (this.width - this.offset.left - this.offset.right) >
+        moveableObject.position_x + moveableObject.offset.left &&
+      this.position_y + this.offset.top + (this.height - this.offset.top - this.offset.bottom) >
+        moveableObject.position_y + moveableObject.offset.top &&
+      this.position_x + this.offset.left <
+        moveableObject.position_x +
+          moveableObject.offset.left +
+          (moveableObject.width - moveableObject.offset.left - moveableObject.offset.right) &&
+      this.position_y + this.offset.top <
+        moveableObject.position_y +
+          moveableObject.offset.top +
+          (moveableObject.height - moveableObject.offset.top - moveableObject.offset.bottom)
+    );
   }
 
-  moveRight(){
+  /**
+   * Moves the object to the right by its speed value.
+   */
+  moveRight() {
     this.position_x += this.speed;
   }
 
+  /**
+   * Moves the object to the left by its speed value.
+   */
   moveLeft() {
     this.position_x -= this.speed;
   }
 
-  jump(){
+  /**
+   * Initiates a jump by setting vertical speed.
+   */
+  jump() {
     this.speedGravityY = 25;
   }
 
+  /**
+   * Plays an animation sequence by cycling through an array of image paths.
+   * @param {Array<string>} imagesArray - Array of image paths for the animation frames.
+   */
   playAnimation(imagesArray) {
     let i = this.currentImage % imagesArray.length;
     let path = imagesArray[i];
@@ -71,20 +119,31 @@ class MoveableObject extends DrawableObject {
     this.currentImage++;
   }
 
-  hit(){
+  /**
+   * Reduces the object's health and updates the last hit timestamp.
+   */
+  hit() {
     this.health -= 20;
-    if(this.health < 0){
+    if (this.health < 0) {
       this.health = 0;
     } else {
       this.lastHit = new Date().getTime();
     }
   }
 
-  isDead(){
+  /**
+   * Checks if the object's health has reached zero.
+   * @returns {boolean} True if the object is dead.
+   */
+  isDead() {
     return this.health == 0;
   }
 
-  isHurt(){
+  /**
+   * Checks if the object was recently hit (within the last second).
+   * @returns {boolean} True if the object is in a hurt state.
+   */
+  isHurt() {
     let timePassed = new Date().getTime() - this.lastHit;
     timePassed = timePassed / 1000;
     return timePassed < 1;

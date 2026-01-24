@@ -1,5 +1,14 @@
+/**
+ * @file World.class.js
+ * @description Represents the game world, managing entities, collisions, rendering, and game state.
+ */
+
+/**
+ * Class representing the game world.
+ * Manages all moving and static objects, handles collisions, and controls game flow.
+ */
 class World {
-  character = new Character();
+  character = new Character(this.keyboard);
   level = LEVEL_1;
   enemies = LEVEL_1.enemies;
   clouds = LEVEL_1.clouds;
@@ -11,39 +20,47 @@ class World {
   canvas;
   ctx;
   keyboard;
-  camera_x = -100;
+  camera_x = -100
   statusBarHealth = new StatusBarHealth();
   statusBarCoin = new StatusBarCoin();
   statusBarSalsaBottle = new StatusBarSalsaBottle();
   statusBarEndboss;
   throwableObjects = [];
   throwing = true;
-  NO_THROWING_SOUND = new Audio (SOUNDS.salsaBottle.NO_THROWING_SOUND);
-  COIN_COLLECT_SOUND = new Audio (SOUNDS.gameSound.COIN_COLLECT_SOUND);
-  SALSA_BOTTLE_COLLECT_SOUND = new Audio (SOUNDS.gameSound.SALSA_BOTTLE_COLLECT_SOUND);
+  NO_THROWING_SOUND = new Audio(SOUNDS.salsaBottle.NO_THROWING_SOUND);
+  COIN_COLLECT_SOUND = new Audio(SOUNDS.gameSound.COIN_COLLECT_SOUND);
+  SALSA_BOTTLE_COLLECT_SOUND = new Audio(SOUNDS.gameSound.SALSA_BOTTLE_COLLECT_SOUND);
 
-  constructor(canvas, keyboard){
+  /**
+   * Constructs a new World instance.
+   * @param {HTMLCanvasElement} canvas - The canvas element to draw on.
+   * @param {Keyboard} keyboard - The keyboard input controller.
+   */
+  constructor(canvas, keyboard) {
     this.ctx = canvas.getContext('2d');
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.backgroundObjects = BackgroundObject.createBackgroundObjects();
+    this.clouds = Cloud.createClouds();
     this.drawWorld();
     this.setWorld();
-    this.createBackgroundObjects();
-    this.createClouds();
     this.playBackgroundMusic();
   }
 
+  /**
+   * Main rendering loop that clears and redraws the world continuously.
+   */
   drawWorld() {
     this.update();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  
+
     this.ctx.save();
     this.ctx.translate(this.camera_x, 0);
-  
+
     this.drawMovingObjectsToWorld();
 
     this.ctx.restore();
-  
+
     this.drawNoneMovingObjectsToWorld();
 
     requestAnimationFrame(() => {
@@ -51,6 +68,9 @@ class World {
     });
   }
 
+  /**
+   * Draws all moving game objects onto the canvas.
+   */
   drawMovingObjectsToWorld() {
     this.addObjectsToMap(this.backgroundObjects);
     this.addObjectsToMap(this.clouds);
@@ -61,6 +81,9 @@ class World {
     this.addToMap(this.character);
   }
 
+  /**
+   * Draws all static UI elements onto the canvas.
+   */
   drawNoneMovingObjectsToWorld() {
     this.addToMap(this.statusBarHealth);
     this.addToMap(this.statusBarCoin);
@@ -70,10 +93,16 @@ class World {
     }
   }
 
-  setWorld(){
+  /**
+   * Assigns the world reference to the character.
+   */
+  setWorld() {
     this.character.world = this;
   }
 
+  /**
+   * Performs all game logic updates each frame.
+   */
   update() {
     this.checkCollisions();
     this.checkThrowObjects();
@@ -82,10 +111,17 @@ class World {
     this.checkCollisionsThrowableObjectsWithEnemies();
   }
 
-  checkCollisions(){
+  /**
+   * Checks for collisions between the character and enemies.
+   */
+  checkCollisions() {
     this.level.enemies.forEach((enemy) => {
-      if(this.character.isColliding(enemy) && !enemy.isDead && !this.character.hurts){
-        if(this.isJumpingOnEnemy(enemy)){
+      if (
+        this.character.isColliding(enemy) &&
+        !enemy.isDead &&
+        !this.character.hurts
+      ) {
+        if (this.isJumpingOnEnemy(enemy)) {
           enemy.health = 0;
           enemy.isDead = true;
           this.character.jumpOnEnemy();
@@ -98,7 +134,10 @@ class World {
     });
   }
 
-  checkThrowObjects(){
+  /**
+   * Handles throwing of salsa bottles based on input and availability.
+   */
+  checkThrowObjects() {
     if (this.canThrowObjects()) {
       this.throwingObject();
     } else if (this.canNotThrowObjects()) {
@@ -108,11 +147,17 @@ class World {
     }
   }
 
+  /**
+   * Checks for collisions with collectible items (coins and bottles).
+   */
   checkCollectables() {
     this.checkCoins();
     this.checkBottles();
   }
-  
+
+  /**
+   * Checks for collisions with coins and handles collection.
+   */
   checkCoins() {
     let coinsToRemove = [];
     this.coins.forEach((coin, index) => {
@@ -121,10 +166,13 @@ class World {
         this.collectCoin();
       }
     });
-  
+
     this.removeCollectables(this.coins, coinsToRemove);
   }
-  
+
+  /**
+   * Checks for collisions with salsa bottles and handles collection.
+   */
   checkBottles() {
     let bottlesToRemove = [];
     this.salsaBottles.forEach((bottle, index) => {
@@ -133,52 +181,77 @@ class World {
         this.collectBottle();
       }
     });
-  
+
     this.removeCollectables(this.salsaBottles, bottlesToRemove);
   }
-  
+
+  /**
+   * Processes coin collection logic.
+   */
   collectCoin() {
     this.character.collectedCoins++;
     const percentage = (this.character.collectedCoins / 19) * 100;
     this.statusBarCoin.setPercentage(percentage);
     playAudio(this.COIN_COLLECT_SOUND, 1);
   }
-  
+
+  /**
+   * Processes salsa bottle collection logic.
+   */
   collectBottle() {
     this.character.collectedBottles++;
     const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
     this.statusBarSalsaBottle.setPercentage(percentage);
     playAudio(this.SALSA_BOTTLE_COLLECT_SOUND, 1);
   }
-  
+
+  /**
+   * Removes collected items from their respective arrays.
+   * @param {Array} collection - The array of collectible items.
+   * @param {Array<number>} indicesToRemove - Indices of items to remove.
+   */
   removeCollectables(collection, indicesToRemove) {
     for (let i = indicesToRemove.length - 1; i >= 0; i--) {
       collection.splice(indicesToRemove[i], 1);
     }
   }
 
+  /**
+   * Checks if thrown bottles have hit the ground.
+   */
   checkCollisionsThrowableObjectsWithTheGround() {
     this.throwableObjects.forEach((bottle) => {
       if (bottle.position_y >= bottle.bottleGround && !bottle.break) {
         this.bottleBreaks(bottle);
       }
-    })
+    });
   }
 
+  /**
+   * Checks for collisions between thrown bottles and enemies.
+   */
   checkCollisionsThrowableObjectsWithEnemies() {
     this.throwableObjects.forEach((bottle) => {
-      if (bottle.hasHit) 
-        return;
-  
+      if (bottle.hasHit) return;
+
       this.level.enemies.forEach((enemy) => {
-        if (bottle.isColliding(enemy) && !enemy.isHurt() && !enemy.isDead) {
+        if (
+          bottle.isColliding(enemy) &&
+          !enemy.isHurt() &&
+          !enemy.isDead
+        ) {
           bottle.hasHit = true;
           this.bottleCollidingWithEnemy(enemy, bottle);
-        } 
-      })
-    })
+        }
+      });
+    });
   }
 
+  /**
+   * Handles collision effects between a bottle and an enemy.
+   * @param {Enemy} enemy - The enemy that was hit.
+   * @param {ThrowableObject} bottle - The bottle that caused the hit.
+   */
   bottleCollidingWithEnemy(enemy, bottle) {
     enemy.hit();
 
@@ -192,6 +265,10 @@ class World {
     this.bottleBreaks(bottle);
   }
 
+  /**
+   * Triggers the breaking animation for a bottle.
+   * @param {ThrowableObject} bottle - The bottle to break.
+   */
   bottleBreaks(bottle) {
     bottle.break = true;
     bottle.intervalCounter = 200;
@@ -200,61 +277,115 @@ class World {
     this.playBottleThrowSound(bottle);
   }
 
+  /**
+   * Plays the bottle breaking sound and removes it after delay.
+   * @param {ThrowableObject} bottle - The bottle that broke.
+   */
   playBottleThrowSound(bottle) {
     playAudio(SOUNDS.salsaBottle.BREAKING_SOUND, 1);
     setTimeout(() => {
-      this.throwableObjects.splice(this.throwableObjects.indexOf(bottle), 1);
+      this.throwableObjects.splice(
+        this.throwableObjects.indexOf(bottle),
+        1
+      );
       clearInterval(bottle.animateBottleInterval);
     }, 1300);
   }
 
+  /**
+   * Clears all active intervals associated with a bottle.
+   * @param {ThrowableObject} bottle - The bottle whose intervals to clear.
+   */
   clearTheBottleIntervals(bottle) {
     clearInterval(bottle.animateBottleInterval);
     clearInterval(bottle.throwInterval);
     clearInterval(bottle.applyGravityInterval);
   }
 
-  enemyHurt(enemy) {
-    enemy.energy -= 20;
+  /**
+   * Determines if the character is jumping on top of an enemy.
+   * @param {Enemy} enemy - The enemy to check against.
+   * @returns {boolean} True if the character is jumping on the enemy.
+   */
+  isJumpingOnEnemy(enemy) {
+    return (
+      this.character.speedGravityY < 0 &&
+      this.character.position_y +
+        this.character.height -
+        this.character.offset.bottom <
+        enemy.position_y + enemy.height / 2
+    );
   }
 
-  isJumpingOnEnemy(enemy){
-    return this.character.speedGravityY < 0 && 
-      this.character.position_y + this.character.height - this.character.offset.bottom < enemy.position_y + enemy.height / 2;
-  }
-
+  /**
+   * Throws a new salsa bottle if conditions are met.
+   */
   throwingObject() {
     this.allowThrowingObjects();
-    let bottle = new ThrowableObject(this.character.position_x + 50, this.character.position_y + 100);
+    let bottle = new ThrowableObject(
+      this.character.position_x + 50,
+      this.character.position_y + 100
+    );
     this.throwableObjects.push(bottle);
     this.character.collectedBottles--;
-    const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
+    const percentage = Math.min(
+      (this.character.collectedBottles / 5) * 100,
+      100
+    );
     this.statusBarSalsaBottle.setPercentage(percentage);
   }
 
+  /**
+   * Temporarily disables throwing to enforce cooldown.
+   */
   allowThrowingObjects() {
     this.throwing = false;
     setTimeout(() => {
-      this.throwing = true
+      this.throwing = true;
     }, 1000);
   }
 
+  /**
+   * Checks if the player can currently throw a bottle.
+   * @returns {boolean} True if throwing is possible.
+   */
   canThrowObjects() {
-    return this.keyboard.Q && this.throwing && this.character.collectedBottles > 0;
+    return (
+      this.keyboard.Q &&
+      this.throwing &&
+      this.character.collectedBottles > 0
+    );
   }
 
+  /**
+   * Checks if the player tried to throw but has no bottles.
+   * @returns {boolean} True if throwing failed due to lack of bottles.
+   */
   canNotThrowObjects() {
-    return this.keyboard.Q && this.throwing && this.character.collectedBottles <= 0;
+    return (
+      this.keyboard.Q &&
+      this.throwing &&
+      this.character.collectedBottles <= 0
+    );
   }
 
-  addObjectsToMap(objects){
-    objects.forEach(o => {
+  /**
+   * Adds multiple objects to the map for rendering.
+   * @param {Array<MovableObject>} objects - Objects to add.
+   */
+  addObjectsToMap(objects) {
+    objects.forEach((o) => {
       this.addToMap(o);
     });
   }
 
-  addToMap(moveableObject){
-    if(moveableObject.otherDirection){
+  /**
+   * Adds a single movable object to the map for rendering.
+   * Handles flipping images for directional movement.
+   * @param {MovableObject} moveableObject - Object to render.
+   */
+  addToMap(moveableObject) {
+    if (moveableObject.otherDirection) {
       this.flipImage(moveableObject);
     }
 
@@ -262,61 +393,41 @@ class World {
     // moveableObject.drawObjectHitbox(this.ctx);
     // moveableObject.drawObjectHitboxOffset(this.ctx);
 
-    if(moveableObject.otherDirection){
+    if (moveableObject.otherDirection) {
       this.flipImageBack(moveableObject);
     }
   }
 
-  flipImage(moveableObject){
+  /**
+   * Flips an object's image horizontally for left-facing movement.
+   * @param {MovableObject} moveableObject - Object to flip.
+   */
+  flipImage(moveableObject) {
     this.ctx.save();
     this.ctx.translate(moveableObject.width, 0);
     this.ctx.scale(-1, 1);
     moveableObject.position_x = moveableObject.position_x * -1;
   }
 
-  flipImageBack(moveableObject){
+  /**
+   * Restores the canvas transformation after flipping an image.
+   * @param {MovableObject} moveableObject - Object that was flipped.
+   */
+  flipImageBack(moveableObject) {
     moveableObject.position_x = moveableObject.position_x * -1;
     this.ctx.restore();
   }
 
-  createBackgroundObjects() {
-    const layers = [
-      'assets/img/5_background/layers/air.png',
-      'assets/img/5_background/layers/3_third_layer/',
-      'assets/img/5_background/layers/2_second_layer/',
-      'assets/img/5_background/layers/1_first_layer/'
-    ];
-    
-    for (let i = -1; i < 7; i++) {
-      const MULTIPLIED_BY_719 = i * 719 ;
-      const IMAGE_VARIANT = i % 2 === 0 ? '1.png' : '2.png';
-      
-      this.backgroundObjects.push(new BackgroundObject(layers[0], MULTIPLIED_BY_719, 0));
-      this.backgroundObjects.push(new BackgroundObject(layers[1] + IMAGE_VARIANT, MULTIPLIED_BY_719, 0));
-      this.backgroundObjects.push(new BackgroundObject(layers[2] + IMAGE_VARIANT, MULTIPLIED_BY_719, 0));
-      this.backgroundObjects.push(new BackgroundObject(layers[3] + IMAGE_VARIANT, MULTIPLIED_BY_719, 0));
-    }
-  }
-
-  createClouds() {
-    this.clouds = [];
-    const cloudImages = ALL_IMAGES.clouds;
-    const numberOfClouds = 6; 
-    const cloudWidth = 720;  
-    const spacingBetweenClouds = cloudWidth;
-
-    for (let i = 0; i < numberOfClouds; i++) {
-      const imagePath = cloudImages[i % 2];
-      const position_x = i * spacingBetweenClouds + 720; 
-      const cloud = new Cloud(imagePath, position_x);
-      this.clouds.push(cloud);
-    }
-  }
-
+  /**
+   * Starts playing the level's background music.
+   */
   playBackgroundMusic() {
     playAudio(this.level.backgroundMusic, 0.5);
   }
 
+  /**
+   * Stops playing the level's background music.
+   */
   stopBackgroundMusic() {
     stopAudio(this.level.backgroundMusic);
   }

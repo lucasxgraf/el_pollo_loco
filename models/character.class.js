@@ -1,4 +1,13 @@
-class Character extends MoveableObject{
+/**
+ * @file Character.class.js
+ * @description Represents the player character with movement, animation, sound, and game state handling.
+ */
+
+/**
+ * Class representing the player character.
+ * Extends MoveableObject to inherit movement, animation, and physics.
+ */
+class Character extends MoveableObject {
   characterDieInterval;
   characterConditionInterval;
   world;
@@ -14,33 +23,40 @@ class Character extends MoveableObject{
   amountCounter = 0;
   speed = 5;
   speedSound = 1;
-  offset = { 
-    top: 120, 
-    left: 40, 
-    right: 35, 
+  offset = {
+    top: 120,
+    left: 40,
+    right: 35,
     bottom: 10
-   };
+  };
   IMAGES_IDLE = ALL_IMAGES.character.IMAGES_IDLE;
   IMAGES_LONG_IDLE = ALL_IMAGES.character.IMAGES_LONG_IDLE;
   IMAGES_WALKING = ALL_IMAGES.character.IMAGES_WALKING;
   IMAGES_JUMPING = ALL_IMAGES.character.IMAGES_JUMPING;
   IMAGES_DEAD = ALL_IMAGES.character.IMAGES_DEAD;
   IMAGES_HURT = ALL_IMAGES.character.IMAGES_HURT;
+  WALKING_SOUND = new Audio(SOUNDS.character.WALKING_SOUND);
+  JUMP_SOUND = new Audio(SOUNDS.character.JUMP_SOUND);
+  HURT_SOUND = new Audio(SOUNDS.character.HURT_SOUND);
 
-  WALKING_SOUND = new Audio (SOUNDS.character.WALKING_SOUND);
-  JUMP_SOUND = new Audio (SOUNDS.character.JUMP_SOUND);
-  HURT_SOUND = new Audio (SOUNDS.character.HURT_SOUND);
-
-  constructor(){
+  /**
+   * Constructs a new Character instance.
+   * Loads images, starts animations, and applies gravity.
+   */
+  constructor() {
     super().loadImage('assets/img/2_character_pepe/1_idle/idle/I-1.png');
+    this.keyboard = keyboard;
     this.loadImagesCharacter();
     this.animateMovement();
     this.animateConditionOfCharacter();
     this.animateWalkingSpeed();
     this.applyGravity();
   }
-  
-  loadImagesCharacter(){
+
+  /**
+   * Loads all character animation images.
+   */
+  loadImagesCharacter() {
     this.loadImages(this.IMAGES_IDLE);
     this.loadImages(this.IMAGES_LONG_IDLE);
     this.loadImages(this.IMAGES_WALKING);
@@ -49,38 +65,57 @@ class Character extends MoveableObject{
     this.loadImages(this.IMAGES_HURT);
   }
 
-  animateMovement(){
+  /**
+   * Animates character movement based on keyboard input.
+   * Updates camera position accordingly.
+   */
+  animateMovement() {
     setInterval(() => {
       this.WALKING_SOUND.pause();
-      
-      if(this.canMoveRight()){
+
+      if (this.canMoveRight()) {
         this.moveRight();
       } else if (this.canMoveLeft()) {
         this.moveLeft();
         this.otherDirection = true;
       }
 
-      if(this.canJump()){
+      if (this.canJump()) {
         this.jump();
         playAudio(this.JUMP_SOUND, 1);
       }
 
       this.world.camera_x = -this.position_x + 100;
-    }, 1000 / 60)
+    }, 1000 / 60);
   }
 
-  canMoveRight() { 
-    return this.world.keyboard.RIGHT && this.position_x < this.world.level.level_end_x && !this.hurts; 
+  /**
+   * Checks if the character can move right.
+   * @returns {boolean} True if right movement is allowed.
+   */
+  canMoveRight() {
+    return this.keyboard.RIGHT && this.position_x < this.world.level.level_end_x && !this.hurts;
   }
 
+  /**
+   * Checks if the character can move left.
+   * @returns {boolean} True if left movement is allowed.
+   */
   canMoveLeft() {
-    return this.world.keyboard.LEFT && this.position_x > 0 && !this.hurts;
+    return this.keyboard.LEFT && this.position_x > 0 && !this.hurts;
   }
 
+  /**
+   * Checks if the character can jump.
+   * @returns {boolean} True if jump is allowed.
+   */
   canJump() {
-    return (this.world.keyboard.UP || this.world.keyboard.SPACE) && !this.isObjectAboveGround();
+    return (this.keyboard.UP || this.keyboard.SPACE) && !this.isObjectAboveGround();
   }
 
+  /**
+   * Moves the character to the right and handles walking sound and speed.
+   */
   moveRight() {
     super.moveRight();
     if (this.otherDirection) {
@@ -98,6 +133,9 @@ class Character extends MoveableObject{
     playAudio(this.WALKING_SOUND, 1);
   }
 
+  /**
+   * Moves the character to the left and handles walking sound and speed.
+   */
   moveLeft() {
     super.moveLeft();
     if (!this.otherDirection) {
@@ -112,46 +150,63 @@ class Character extends MoveableObject{
     }
 
     this.increasingSpeed();
-    playAudio(this.WALKING_SOUND, 1)
+    playAudio(this.WALKING_SOUND, 1);
   }
 
-  jump(){
+  /**
+   * Makes the character jump and stops walking sound.
+   */
+  jump() {
     super.jump();
     this.WALKING_SOUND.pause();
     this.stopIncreasingSpeed();
   }
 
-  jumpOnEnemy(){
+  /**
+   * Makes the character jump on an enemy with reduced gravity.
+   */
+  jumpOnEnemy() {
     this.speedGravityY = 10;
     this.WALKING_SOUND.pause();
   }
 
+  /**
+   * Animates the character's condition (dead, hurt, jump, walk, idle).
+   */
   animateConditionOfCharacter() {
     this.characterConditionInterval = setInterval(() => {
-      if (this.isDead()) 
-        return this.handleDeath();
-      if (this.isHurt(0.7)) 
-        return this.handleHurt();
-      if (this.jumpAnimationRequirements()) 
-        return this.handleJump();
-      if (this.walkAnimationRequirements()) 
-        return this.handleWalk();
+      if (this.isDead()) return this.handleDeath();
+      if (this.isHurt(0.7)) return this.handleHurt();
+      if (this.jumpAnimationRequirements()) return this.handleJump();
+      if (this.walkAnimationRequirements()) return this.handleWalk();
       this.resetWalkCounters();
     }, 50);
   }
 
+  /**
+   * Handles the death animation.
+   */
   handleDeath() {
     this.characterDieAnimation();
   }
 
+  /**
+   * Handles the hurt animation.
+   */
   handleHurt() {
     this.playAnimation(this.IMAGES_HURT);
   }
 
+  /**
+   * Handles the jump animation.
+   */
   handleJump() {
     this.characterJumpAnimation();
   }
 
+  /**
+   * Handles the walk animation.
+   */
   handleWalk() {
     this.counter++;
 
@@ -162,19 +217,33 @@ class Character extends MoveableObject{
     }
   }
 
+  /**
+   * Resets walk animation counters.
+   */
   resetWalkCounters() {
     this.counter = 0;
     this.amountCounter = 0;
   }
 
+  /**
+   * Checks if jump animation should play.
+   * @returns {boolean} True if jump animation conditions are met.
+   */
   jumpAnimationRequirements() {
     return this.isObjectAboveGround() && this.speed >= 0 && !this.jumpedOnAEnemy;
   }
 
+  /**
+   * Checks if walk animation should play.
+   * @returns {boolean} True if walk animation conditions are met.
+   */
   walkAnimationRequirements() {
-    return (this.world.keyboard.RIGHT || this.world.keyboard.LEFT && this.position_x > 0) && this.position_x < this.world.level.level_end_x;
+    return (this.keyboard.RIGHT || this.keyboard.LEFT && this.position_x > 0) && this.position_x < this.world.level.level_end_x;
   }
 
+  /**
+   * Plays the jump animation with timing control.
+   */
   characterJumpAnimation() {
     clearInterval(this.characterConditionInterval);
     this.longIdle = 0;
@@ -189,15 +258,20 @@ class Character extends MoveableObject{
     }, 850);
   }
 
+  /**
+   * Makes the character jump backward when hurt.
+   */
   backwardJump() {
-    if (this.hurts) 
-      return;
-    
+    if (this.hurts) return;
+
     this.initiateBackwardJump();
     this.startBackwardMovement();
     this.endBackwardJump();
   }
 
+  /**
+   * Initiates the backward jump state.
+   */
   initiateBackwardJump() {
     this.hurts = true;
     this.speed = 15;
@@ -205,19 +279,28 @@ class Character extends MoveableObject{
     playAudio(this.HURT_SOUND, 1);
   }
 
+  /**
+   * Starts moving the character backward.
+   */
   startBackwardMovement() {
-    this.backwardInterval = setInterval(() => { 
-      this.position_x--; 
+    this.backwardInterval = setInterval(() => {
+      this.position_x--;
     }, 1000 / 200);
   }
 
+  /**
+   * Ends the backward jump state.
+   */
   endBackwardJump() {
     setTimeout(() => {
       clearInterval(this.backwardInterval);
       this.hurts = false;
     }, 700);
   }
-  
+
+  /**
+   * Plays the death animation and ends the game.
+   */
   characterDieAnimation() {
     this.WALKING_SOUND.pause();
     stopAllInterval();
@@ -227,11 +310,14 @@ class Character extends MoveableObject{
     }, 380);
 
     setTimeout(() => {
-      clearInterval(this.characterDieInterval)
+      clearInterval(this.characterDieInterval);
       gameIsOver(false);
     }, 1900);
   }
 
+  /**
+   * Animates walking speed and handles idle animations.
+   */
   animateWalkingSpeed() {
     setInterval(() => {
       if (this.shouldIdle()) {
@@ -242,12 +328,21 @@ class Character extends MoveableObject{
     }, 300);
   }
 
+  /**
+   * Checks if the character should play idle animation.
+   * @returns {boolean} True if idle animation should play.
+   */
   shouldIdle() {
-    return (!this.world.keyboard.LEFT && !this.world.keyboard.RIGHT) ||
+    return (
+      (!this.keyboard.LEFT && !this.keyboard.RIGHT) ||
       this.position_x <= 0 ||
-      this.position_x > this.world.level.level_end_x;
+      this.position_x > this.world.level.level_end_x
+    );
   }
 
+  /**
+   * Handles idle animation and stops walking sound.
+   */
   handleIdle() {
     this.WALKING_SOUND.pause();
     this.stopIncreasingSpeed();
@@ -260,13 +355,19 @@ class Character extends MoveableObject{
     }
   }
 
+  /**
+   * Gradually increases the character's speed and walking sound playback rate.
+   */
   increasingSpeed() {
     if (this.speed < 8) {
       this.speed *= 1.01;
       this.speedSound *= 1.008;
     }
   }
-  
+
+  /**
+   * Resets the character's speed and walking sound playback rate.
+   */
   stopIncreasingSpeed() {
     this.speed = 2.5;
     this.speedSound = 1;

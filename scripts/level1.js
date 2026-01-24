@@ -1,5 +1,18 @@
+/**
+ * @file level1.js
+ * @description Initializes the first level of the game with enemies, clouds, coins, salsa bottles, and background music.
+ */
+
+/**
+ * Global variable representing the first level of the game.
+ * @type {Level}
+ */
 let LEVEL_1;
 
+/**
+ * Initializes the first level by constructing all game objects and assigning them to LEVEL_1.
+ * Includes enemies, environmental objects, collectibles, and background audio.
+ */
 function initLevel1() {
   LEVEL_1 = new Level(
     [
@@ -49,6 +62,5 @@ function initLevel1() {
       new SalsaBottle(),
     ],
     new Audio('assets/sound/sandstorm_background.mp3')
-
   );
 }
