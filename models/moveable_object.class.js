@@ -64,10 +64,10 @@ class MoveableObject extends DrawableObject {
     this.speedGravityY = 25;
   }
 
-  playAnimation(images){
-    let i = this.currentImage % images.length;
-    let path = images[i];
-    this.img = this.imageCache[path];
+  playAnimation(imagesArray) {
+    let i = this.currentImage % imagesArray.length;
+    let path = imagesArray[i];
+    this.img = IMAGE_CACHE[path];
     this.currentImage++;
   }
 

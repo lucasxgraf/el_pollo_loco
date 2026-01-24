@@ -23,25 +23,33 @@ function init() {
   bindMobileBtns();
 }
 
-function preloadAllImages() {
+async function preloadAllImages() {
   const allImages = [];
   Object.values(ALL_IMAGES).forEach(category => {
     Object.values(category).forEach(value => {
-      if (Array.isArray(value))
-        allImages.push(...value);
+      if (Array.isArray(value)) allImages.push(...value);
+      else if (typeof value === 'string') allImages.push(value);
     });
   });
 
   totalAssets = allImages.length;
   loadedAssets = 0;
 
-  allImages.forEach(path => {
+  const promises = allImages.map(async (path) => {
     const img = new Image();
-    img.onload = updateLoadingProgress;
-    img.onerror = updateLoadingProgress;
     img.src = path;
     IMAGE_CACHE[path] = img;
-  }); 
+    try {
+      await img.decode();
+      updateLoadingProgress();
+    } catch (e) {
+      console.error("Fehler beim Dekodieren:", path);
+      updateLoadingProgress();
+    }
+  });
+
+  await Promise.all(promises);
+  console.log("Alle Bilder sind fertig dekodiert und bereit!");
 }
 
 function updateLoadingProgress() {

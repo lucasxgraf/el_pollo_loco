@@ -28,54 +28,59 @@ class World {
     this.keyboard = keyboard;
     this.drawWorld();
     this.setWorld();
-    this.run();
+    // this.run();
     this.createBackgroundObjects();
     this.createClouds();
     this.playBackgroundMusic();
   }
 
-  drawWorld(){
+  drawWorld() {
+    this.update();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
+  
+    this.ctx.save();
     this.ctx.translate(this.camera_x, 0);
-    
+  
+    this.drawMovingObjectsToWorld();
+
+    this.ctx.restore();
+  
+    this.drawNoneMovingObjectsToWorld();
+
+    requestAnimationFrame(() => {
+      this.drawWorld();
+    });
+  }
+
+  drawMovingObjectsToWorld() {
     this.addObjectsToMap(this.backgroundObjects);
-    this.addObjectsToMap(this.enemies);
     this.addObjectsToMap(this.clouds);
+    this.addObjectsToMap(this.enemies);
     this.addObjectsToMap(this.coins);
     this.addObjectsToMap(this.salsaBottles);
     this.addObjectsToMap(this.throwableObjects);
     this.addToMap(this.character);
-    
-    this.ctx.translate(-this.camera_x, 0);
+  }
+
+  drawNoneMovingObjectsToWorld() {
     this.addToMap(this.statusBarHealth);
     this.addToMap(this.statusBarCoin);
     this.addToMap(this.statusBarSalsaBottle);
     if (this.statusBarEndboss) {
       this.addToMap(this.statusBarEndboss);
     }
-    this.ctx.translate(this.camera_x, 0);
-
-    this.ctx.translate(-this.camera_x, 0);
-
-    let self = this;
-    requestAnimationFrame(function(){
-      self.drawWorld();
-    });
   }
 
   setWorld(){
     this.character.world = this;
   }
 
-  run(){
-    setInterval(() => {
-      this.checkCollisions();
-      this.checkThrowObjects();
-      this.checkCollectables();
-      this.checkCollisionsThrowableObjectsWithTheGround();
-      this.checkCollisionsThrowableObjectsWithEnemies();
-    }, 1000 / 60);
+  update() {
+    this.checkCollisions();
+    this.checkThrowObjects();
+    this.checkCollectables();
+    this.checkCollisionsThrowableObjectsWithTheGround();
+    this.checkCollisionsThrowableObjectsWithEnemies();
   }
 
   checkCollisions(){
@@ -105,25 +110,34 @@ class World {
   }
 
   checkCollectables() {
+    let coinsToRemove = [];
     this.coins.forEach((coin, index) => {
       if (this.character.isColliding(coin)) {
-        this.coins.splice(index, 1);
+        coinsToRemove.push(index);
         this.character.collectedCoins++;
         const percentage = (this.character.collectedCoins / 19) * 100;
         this.statusBarCoin.setPercentage(percentage);
         playAudio(this.COIN_COLLECT_SOUND, 1);
       }
     });
+    // Entferne nach der Iteration rückwärts, um Indexverschiebungen zu vermeiden
+    for (let i = coinsToRemove.length - 1; i >= 0; i--) {
+      this.coins.splice(coinsToRemove[i], 1);
+    }
   
+    let bottlesToRemove = [];
     this.salsaBottles.forEach((bottle, index) => {
       if (this.character.isColliding(bottle)) {
-        this.salsaBottles.splice(index, 1);
+        bottlesToRemove.push(index);
         this.character.collectedBottles++;
         const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
         this.statusBarSalsaBottle.setPercentage(percentage);
         playAudio(this.SALSA_BOTTLE_COLLECT_SOUND, 1);
       }
     });
+    for (let i = bottlesToRemove.length - 1; i >= 0; i--) {
+      this.salsaBottles.splice(bottlesToRemove[i], 1);
+    }
   }
 
   checkCollisionsThrowableObjectsWithTheGround() {

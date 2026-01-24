@@ -4,7 +4,7 @@ class DrawableObject {
   height = 150;
   width = 100;
   img;
-  imageCache = {};
+  images = [];
   currentImage = 0;
   offset = {
     top: 0,
@@ -13,30 +13,35 @@ class DrawableObject {
     bottom: 0
   }
 
-  loadImage(imgPath){
-    if (window.GLOBAL_IMAGE_CACHE && window.GLOBAL_IMAGE_CACHE[imgPath]) {
-      this.img = window.GLOBAL_IMAGE_CACHE[imgPath];
+  loadImage(path) {
+    if (IMAGE_CACHE[path]) {
+      this.img = IMAGE_CACHE[path];
     } else {
+      console.warn("Bild nicht im Cache gefunden:", path);
+      // Fallback: Neues Bild laden (sollte im produktiven Code vermieden werden)
       this.img = new Image();
-      this.img.src = imgPath;
+      this.img.src = path;
     }
   }
 
-  loadImages(arr){
+  loadImages(arr) {
     arr.forEach(path => {
-      if (window.GLOBAL_IMAGE_CACHE && window.GLOBAL_IMAGE_CACHE[path]) {
-        // benutze das vorab geladene Image-Objekt
-        this.imageCache[path] = window.GLOBAL_IMAGE_CACHE[path];
+      if (IMAGE_CACHE[path]) {
+        this.images.push(IMAGE_CACHE[path]);
       } else {
-        let img = new Image();
+        console.warn("Bild nicht im Cache:", path);
+        // Fallback
+        const img = new Image();
         img.src = path;
-        this.imageCache[path] = img;
+        this.images.push(img);
       }
     });
   }
 
-  drawObject(ctx){
-    ctx.drawImage(this.img, this.position_x, this.position_y, this.width, this.height);
+  drawObject(ctx) {
+    if (this.img) {
+      ctx.drawImage(this.img, this.position_x, this.position_y, this.width, this.height);
+    }
   }
 
   drawObjectHitbox(ctx){
