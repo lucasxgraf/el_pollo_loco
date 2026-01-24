@@ -14,7 +14,6 @@ class DrawableObject {
   }
 
   loadImage(path) {
-    // Prüfen, ob das Bild im Cache ist
     if (IMAGE_CACHE && IMAGE_CACHE[path]) {
       this.img = IMAGE_CACHE[path];
     } else {

@@ -28,7 +28,6 @@ class World {
     this.keyboard = keyboard;
     this.drawWorld();
     this.setWorld();
-    // this.run();
     this.createBackgroundObjects();
     this.createClouds();
     this.playBackgroundMusic();
@@ -110,33 +109,51 @@ class World {
   }
 
   checkCollectables() {
+    this.checkCoins();
+    this.checkBottles();
+  }
+  
+  checkCoins() {
     let coinsToRemove = [];
     this.coins.forEach((coin, index) => {
       if (this.character.isColliding(coin)) {
         coinsToRemove.push(index);
-        this.character.collectedCoins++;
-        const percentage = (this.character.collectedCoins / 19) * 100;
-        this.statusBarCoin.setPercentage(percentage);
-        playAudio(this.COIN_COLLECT_SOUND, 1);
+        this.collectCoin();
       }
     });
-    // Entferne nach der Iteration rückwärts, um Indexverschiebungen zu vermeiden
-    for (let i = coinsToRemove.length - 1; i >= 0; i--) {
-      this.coins.splice(coinsToRemove[i], 1);
-    }
   
+    this.removeCollectables(this.coins, coinsToRemove);
+  }
+  
+  checkBottles() {
     let bottlesToRemove = [];
     this.salsaBottles.forEach((bottle, index) => {
       if (this.character.isColliding(bottle)) {
         bottlesToRemove.push(index);
-        this.character.collectedBottles++;
-        const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
-        this.statusBarSalsaBottle.setPercentage(percentage);
-        playAudio(this.SALSA_BOTTLE_COLLECT_SOUND, 1);
+        this.collectBottle();
       }
     });
-    for (let i = bottlesToRemove.length - 1; i >= 0; i--) {
-      this.salsaBottles.splice(bottlesToRemove[i], 1);
+  
+    this.removeCollectables(this.salsaBottles, bottlesToRemove);
+  }
+  
+  collectCoin() {
+    this.character.collectedCoins++;
+    const percentage = (this.character.collectedCoins / 19) * 100;
+    this.statusBarCoin.setPercentage(percentage);
+    playAudio(this.COIN_COLLECT_SOUND, 1);
+  }
+  
+  collectBottle() {
+    this.character.collectedBottles++;
+    const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
+    this.statusBarSalsaBottle.setPercentage(percentage);
+    playAudio(this.SALSA_BOTTLE_COLLECT_SOUND, 1);
+  }
+  
+  removeCollectables(collection, indicesToRemove) {
+    for (let i = indicesToRemove.length - 1; i >= 0; i--) {
+      collection.splice(indicesToRemove[i], 1);
     }
   }
 
@@ -164,12 +181,14 @@ class World {
 
   bottleCollidingWithEnemy(enemy, bottle) {
     enemy.hit();
+
     if (enemy instanceof Endboss && this.statusBarEndboss) {
       this.statusBarEndboss.setPercentage(enemy.health);
       playAudio(SOUNDS.endboss.ENDBOSS_HURT_SOUND, 0.5);
     } else {
       playAudio(SOUNDS.chicken.DEAD_CHICKEN_SOUND, 0.5);
     }
+
     this.bottleBreaks(bottle);
   }
 
@@ -282,7 +301,6 @@ class World {
   createClouds() {
     this.clouds = [];
     const cloudImages = ALL_IMAGES.clouds;
-
     const numberOfClouds = 6; 
     const cloudWidth = 720;  
     const spacingBetweenClouds = cloudWidth;

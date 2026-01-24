@@ -1,0 +1,193 @@
+@media (max-width: 800px) {
+  .instructions_modal {
+    height: 50dvh;
+    gap: 56px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .instructions_container {
+    padding: 0;
+  }
+
+  .instructions {
+    font-size: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .instruction_key {
+    gap: 8px;
+  }
+
+  .instruction_key img {
+    height: 32px;
+    width: 32px;
+  }
+}
+
+@media only screen and (max-width: 720px) {
+  main {
+    gap: 16px;
+  }
+
+  canvas {
+    width: 100%;
+  }
+
+  #menu img{
+    width: 100%;
+  }
+
+  .btn {
+    font-size: 1rem;
+    padding: 8px;
+    min-width: 32px;
+  }
+}
+
+@media (max-width: 510px) {
+  .instructions_modal {
+    width: 90vw;
+    height: auto;
+    padding: 20px;
+    gap: 32px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .instructions_container {
+    gap: 24px;
+  }
+
+  .instructions {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .instruction_key {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .instruction_outcome span {
+    color: #000000;
+  }
+}
+
+@media (max-height: 1000px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .instructions_modal {
+    gap: 32px;
+  }
+
+  .instructions {
+    font-size: 1.5rem;
+  }
+
+  .instruction_key img {
+    height: 32px;
+    width: 32px;
+  }
+}
+
+@media (max-height: 600px) {
+  .btn {
+    font-size: 1rem;
+  }
+
+  .settings_container {
+    position: absolute;
+    justify-content: center;
+    gap: 16px;
+    top: 16px;
+  }
+}
+
+@media (max-height: 480px) {
+  main {
+    gap: 8px;
+    align-items: flex-start;
+    padding: 0;
+  }
+
+  .btn {
+    font-size: 1rem;
+    padding: 8px;
+  }
+
+  canvas {
+    width: 100dvw;
+    height: 100dvh;
+  }
+
+  #menu img {
+    width: 100dvw;
+    height: 100dvh;
+  }
+
+  .settings_container {
+    position: absolute;
+    top: 16px;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .mobile_btn_container{
+    width: 100%;
+  }
+
+  .endgame_btns {
+    margin-top: 8px;
+    gap: 8px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .instructions_modal {
+    height: 100dvh;
+    width: 100dvw;
+    padding: 32px;
+  }
+
+  .instructions {
+    font-size: 1rem;
+  }
+} 
+
+@media screen and (max-width: 1024px) and (max-height: 1400px) {
+  .mobile_btn_container {
+    display: flex;
+    position: absolute;
+    bottom: 16px;
+    padding: 0 16px;
+  }
+}
+
+@media (pointer: coarse) {
+  .mobile_btn_container {
+    display: flex;
+    position: absolute;
+    bottom: 16px;
+    padding: 0 16px;
+  }
+
+  .rotate_phone {
+    display: flex; 
+  }
+}
+
+@media (pointer: fine) {
+  .mobile_btn_container {
+    display: none;
+  }
+}

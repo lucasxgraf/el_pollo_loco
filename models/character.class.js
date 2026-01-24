@@ -83,24 +83,34 @@ class Character extends MoveableObject{
 
   moveRight() {
     super.moveRight();
-    if (this.otherDirection) this.stopIncreasingSpeed();
+    if (this.otherDirection) {
+      this.stopIncreasingSpeed();
+    }
+
     this.otherDirection = false;
+
     if (!this.isObjectAboveGround()) {
       playAudio(this.WALKING_SOUND, 1);
       this.WALKING_SOUND.playbackRate = this.speedSound;
     }
+
     this.increasingSpeed();
     playAudio(this.WALKING_SOUND, 1);
   }
 
   moveLeft() {
     super.moveLeft();
-    if (!this.otherDirection) this.stopIncreasingSpeed();
+    if (!this.otherDirection) {
+      this.stopIncreasingSpeed();
+    }
+
     this.otherDirection = true;
+
     if (!this.isObjectAboveGround) {
       playAudio(this.WALKING_SOUND, 1);
       this.WALKING_SOUND.playbackRate = this.speedSound;
     }
+
     this.increasingSpeed();
     playAudio(this.WALKING_SOUND, 1)
   }
@@ -116,26 +126,45 @@ class Character extends MoveableObject{
     this.WALKING_SOUND.pause();
   }
 
-  animateConditionOfCharacter(){
+  animateConditionOfCharacter() {
     this.characterConditionInterval = setInterval(() => {
-      if (this.isDead()) {
-          this.characterDieAnimation();
-        } else if (this.isHurt(0.7)) {
-          this.playAnimation(this.IMAGES_HURT);
-        } else if (this.jumpAnimationRequirements()) {
-          this.characterJumpAnimation();
-        } else if (this.walkAnimationRequirements()) {
-          this.counter++;
-          if (this.counter >= 4) {
-            this.playAnimation(this.IMAGES_WALKING);
-            this.amountCounter += 0.25;
-            this.counter = 0 + this.amountCounter;
-          }
-      } else {
-        this.counter = 0;
-        this.amountCounter = 0;
-      }
+      if (this.isDead()) 
+        return this.handleDeath();
+      if (this.isHurt(0.7)) 
+        return this.handleHurt();
+      if (this.jumpAnimationRequirements()) 
+        return this.handleJump();
+      if (this.walkAnimationRequirements()) 
+        return this.handleWalk();
+      this.resetWalkCounters();
     }, 50);
+  }
+
+  handleDeath() {
+    this.characterDieAnimation();
+  }
+
+  handleHurt() {
+    this.playAnimation(this.IMAGES_HURT);
+  }
+
+  handleJump() {
+    this.characterJumpAnimation();
+  }
+
+  handleWalk() {
+    this.counter++;
+
+    if (this.counter >= 4) {
+      this.playAnimation(this.IMAGES_WALKING);
+      this.amountCounter += 0.25;
+      this.counter = 0 + this.amountCounter;
+    }
+  }
+
+  resetWalkCounters() {
+    this.counter = 0;
+    this.amountCounter = 0;
   }
 
   jumpAnimationRequirements() {
@@ -152,6 +181,7 @@ class Character extends MoveableObject{
     this.characterJumpInterval = setInterval(() => {
       this.playAnimation(this.IMAGES_JUMPING);
     }, 220);
+
     setTimeout(() => {
       this.currentImage = 0;
       this.animateConditionOfCharacter();
@@ -160,29 +190,42 @@ class Character extends MoveableObject{
   }
 
   backwardJump() {
-    if (!this.hurts) {
-      this.hurts = true;
-      this.speed = 15;
-      this.stopIncreasingSpeed();
-      playAudio(this.HURT_SOUND, 1);
+    if (this.hurts) 
+      return;
+    
+    this.initiateBackwardJump();
+    this.startBackwardMovement();
+    this.endBackwardJump();
+  }
 
-      this.backwardInterval = setInterval(() => { 
-        this.position_x--; 
-      }, 1000 / 200);
-      
-      setTimeout(() => {
-        clearInterval(this.backwardInterval);
-        this.hurts = false;
-      }, 700);
-    }
+  initiateBackwardJump() {
+    this.hurts = true;
+    this.speed = 15;
+    this.stopIncreasingSpeed();
+    playAudio(this.HURT_SOUND, 1);
+  }
+
+  startBackwardMovement() {
+    this.backwardInterval = setInterval(() => { 
+      this.position_x--; 
+    }, 1000 / 200);
+  }
+
+  endBackwardJump() {
+    setTimeout(() => {
+      clearInterval(this.backwardInterval);
+      this.hurts = false;
+    }, 700);
   }
   
   characterDieAnimation() {
     this.WALKING_SOUND.pause();
     stopAllInterval();
+
     this.characterDieInterval = setInterval(() => {
       this.playAnimation(this.IMAGES_DEAD);
     }, 380);
+
     setTimeout(() => {
       clearInterval(this.characterDieInterval)
       gameIsOver(false);
@@ -191,17 +234,30 @@ class Character extends MoveableObject{
 
   animateWalkingSpeed() {
     setInterval(() => {
-      if ((!this.world.keyboard.LEFT && !this.world.keyboard.RIGHT) || this.position_x <= 0 || this.position_x > this.world.level.level_end_x) {
-        this.WALKING_SOUND.pause(); 
-        this.stopIncreasingSpeed();
-        this.longIdle++
-        if (this.longIdle <= 20) { 
-          this.playAnimation(this.IMAGES_IDLE);
-        } else this.playAnimation(this.IMAGES_LONG_IDLE);
+      if (this.shouldIdle()) {
+        this.handleIdle();
       } else {
         this.longIdle = 0;
       }
     }, 300);
+  }
+
+  shouldIdle() {
+    return (!this.world.keyboard.LEFT && !this.world.keyboard.RIGHT) ||
+      this.position_x <= 0 ||
+      this.position_x > this.world.level.level_end_x;
+  }
+
+  handleIdle() {
+    this.WALKING_SOUND.pause();
+    this.stopIncreasingSpeed();
+    this.longIdle++;
+
+    if (this.longIdle <= 20) {
+      this.playAnimation(this.IMAGES_IDLE);
+    } else {
+      this.playAnimation(this.IMAGES_LONG_IDLE);
+    }
   }
 
   increasingSpeed() {

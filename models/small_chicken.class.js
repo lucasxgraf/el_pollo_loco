@@ -28,29 +28,44 @@ class SmallChicken extends MoveableObject {
     this.applyGravity();
   }
 
-  animate(){
+  animate() {
+    this.startMovement();
+    this.startAnimation();
+    this.startGravity();
+  }
+  
+  startMovement() {
     this.animateChickenInterval = setInterval(() => {
       this.moveLeft();
-    }, 1000 / 60)
-
+    }, 1000 / 60);
+  }
+  
+  startAnimation() {
     setInterval(() => {
       if (this.health <= 0) {
-        this.playAnimation(this.IMAGES_DEAD);
-        if (!this.soundPlayed) {
-          playAudio(this.DEAD_SMALL_CHICKEN_SOUND, 1);
-          this.soundPlayed = true;
-        }
-        clearInterval(this.animateChickenInterval);
-        this.isDead = true;
+        this._handleDeath();
       } else {
         this.playAnimation(this.IMAGES_WALKING);
       }
-    }, 100 );
-
+    }, 100);
+  }
+  
+  startGravity() {
     setInterval(() => {
-      if (!this.isDead)
-          this.speedGravityY = 20;
-    }, 3000)
+      if (!this.isDead) this.speedGravityY = 20;
+    }, 3000);
+  }
+  
+  handleDeath() {
+    this.playAnimation(this.IMAGES_DEAD);
+    
+    if (!this.soundPlayed) {
+      playAudio(this.DEAD_SMALL_CHICKEN_SOUND, 1);
+      this.soundPlayed = true;
+    }
+
+    clearInterval(this.animateChickenInterval);
+    this.isDead = true;
   }
 
   isObjectAboveGround(){  
