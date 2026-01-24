@@ -281,6 +281,21 @@ function toggleKeyboardInstruction(event) {
   playAudio(swipeSound, 0.5, 0);
 }
 
+function toggleImpressum(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  let impressum = document.getElementById('impressumBtnInfo');
+  let isOpening = !impressum.classList.contains('show');
+
+  if (isOpening) {
+    impressum.classList.add('show');
+  } else {
+    impressum.classList.remove('show');
+  }
+  playAudio(swipeSound, 0.5, 0);
+}
+
 function playGame() {
   showStartScreenButtons();
   showGameScreen();

@@ -52,15 +52,11 @@
         <img id="volumeBtn" src="assets/img/menu_description/volume_up.svg" alt="Volume Icon">
       </div>
 
-      <div onclick="playGame()" id="playBtn" class="btn">
-        Play Now
-      </div>
-
       <div onclick="toggleKeyboardInstruction(event)" class="btn">
         <img id="keyboardBtn" src="assets/img/menu_description/keyboard.svg" alt="Keyboard Icon">
       </div>
 
-      <div onclick="toggleKeyboardInstruction(event)" id="keyboardBtnInfo" class="keyboard_info">
+      <div onclick="toggleKeyboardInstruction(event)" id="keyboardBtnInfo">
         <div onclick="event.stopPropagation()" class="instructions_modal">
           <h1>Keyboard Instructions</h1>
           <button id="closeInstructionsBtn" class="close_btn" aria-label="Close instructions">×
@@ -116,8 +112,53 @@
       <div onclick="toggleFullscreen()" id="fullscreenBtn" class="btn d_none">
         <img id="volumeBtn" src="assets/img/menu_description/fullscreen.svg" alt="Volume Icon">
       </div>
-    </div>
 
+      <div onclick="playGame()" id="playBtn" class="btn">
+        Play Now
+      </div>
+
+      <div onclick="toggleImpressum()" class="btn">
+        <span>§</span>
+      </div>
+
+      <div onclick="toggleImpressum(event)" id="impressumBtnInfo">
+        <div onclick="event.stopPropagation()" class="instructions_modal">
+          <h1>Impressum</h1>
+          <button class="close_btn" aria-label="Close impressum">×
+          </button>
+          <div class="impressum_container">
+            <div class="impressum_content">
+              <p>
+                <strong>Angaben gemäß § 5 TMG</strong> <br>
+                Lucas Graf <br>
+                Weißestraße 36 <br>
+                04299 Leipzig <br>
+                Deutschland </p>
+              
+                <p><strong>Kontakt</strong> <br>
+                E-Mail: lucasgraf01@gmail.com <br>
+                Telefon: +49 (0) 170 1251262
+              </p>
+              
+              <p><strong>Haftung für Inhalte</strong> <br>
+                Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. 
+                Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.
+              </p>
+              
+              <p><strong>Datenschutz</strong> <br>
+                Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. 
+                Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.
+              </p>
+              
+              <p><strong>Spielgrafiken & Assets</strong> <br>
+                Dieses Spiel wurde im Rahmen eines Lernprojekts erstellt. 
+                Alle verwendeten Grafiken und Assets stammen aus frei verfügbaren Quellen oder wurden zu Bildungszwecken verwendet.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     
     <div id="menu">
       <img src="assets/img/9_intro_outro_screens/start/startscreen_1.png" alt="Start Screen">
@@ -155,7 +196,6 @@
       </div>
     </div>
 
-
     <div id="endgameBtns" class="endgame_btns d_none">
       <button id="restartGame" onclick="restartGame()" class="restart_btn btn">Restart</button>
       <button id="goBackToMenu" onclick="goBackToMenu()" class="go_back_to_menu btn">Go back to menu</button>
@@ -165,7 +205,6 @@
       <img src="assets/img/menu_description/rotate_phone.png" alt="Rotate phone image">
       <p>Please rotate your phone.</p>
     </div>
-
   </main>
 
 </body>
