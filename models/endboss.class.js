@@ -109,18 +109,15 @@ class Endboss extends MoveableObject {
     if (!this.isJumping && this.hadFirstContact && !this.isObjectAboveGround()) {
       this.isJumping = true;
       
-      this.speedGravityY = 35; // High jump force
+      this.speedGravityY = 35;
       
-      // Horizontal movement logic during the jump
       this.jumpInterval = setInterval(() => {
-        // Recalculate direction and distance in each frame to ensure movement
         const direction = world.character.position_x < this.position_x ? -1 : 1;
         const distance = Math.abs(world.character.position_x - this.position_x);
         
         if (this.isObjectAboveGround()) {
-          // Only move horizontally if we are further than 100 units away
           if (distance > 100) {
-            this.position_x += direction * 15; // Fixed speed for reliable movement
+            this.position_x += direction * 15;
           }
           this.playAnimation(this.IMAGES_ATTACK);
         } else {
@@ -131,34 +128,25 @@ class Endboss extends MoveableObject {
     }
   }
 
-  /**
-   * Makes the endboss dash towards the character with increased speed
-   */
   dashToCharacter() {
     if (!this.isDashing && this.hadFirstContact) {
       this.isDashing = true;
       const direction = world.character.position_x < this.position_x ? -1 : 1;
-      
-      // Increase speed significantly for the dash
       const originalSpeed = this.speed;
-      this.speed = 30; // Much faster than normal
-      
-      // Move in the direction of the character for a short duration
+      this.speed = 30;
       let dashDistance = 0;
-      const dashMax = 200; // Maximum distance for dash
+      const dashMax = 200;
       
       this.dashInterval = setInterval(() => {
         if (dashDistance < dashMax) {
-          this.position_x += direction * 5; // Move forward quickly
+          this.position_x += direction * 5;
           dashDistance += 5;
         } else {
           clearInterval(this.dashInterval);
-          this.speed = originalSpeed; // Restore original speed
+          this.speed = originalSpeed;
           this.isDashing = false;
         }
       }, 30);
-      
-      // Play attack animation during dash
       this.playAnimation(this.IMAGES_ATTACK);
     }
   }

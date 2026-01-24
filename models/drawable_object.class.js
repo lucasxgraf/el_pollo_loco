@@ -14,26 +14,29 @@ class DrawableObject {
   }
 
   loadImage(path) {
-    if (IMAGE_CACHE[path]) {
+    // Prüfen, ob das Bild im Cache ist
+    if (IMAGE_CACHE && IMAGE_CACHE[path]) {
       this.img = IMAGE_CACHE[path];
     } else {
-      console.warn("Bild nicht im Cache gefunden:", path);
-      // Fallback: Neues Bild laden (sollte im produktiven Code vermieden werden)
       this.img = new Image();
       this.img.src = path;
+      if (IMAGE_CACHE) {
+        IMAGE_CACHE[path] = this.img;
+      }
     }
   }
 
   loadImages(arr) {
-    arr.forEach(path => {
-      if (IMAGE_CACHE[path]) {
+    arr.forEach((path) => {
+      if (IMAGE_CACHE && IMAGE_CACHE[path]) {
         this.images.push(IMAGE_CACHE[path]);
       } else {
-        console.warn("Bild nicht im Cache:", path);
-        // Fallback
-        const img = new Image();
+        let img = new Image();
         img.src = path;
         this.images.push(img);
+        if (IMAGE_CACHE) {
+          IMAGE_CACHE[path] = img;
+        }
       }
     });
   }

@@ -36,21 +36,24 @@ async function preloadAllImages() {
   totalAssets = allImages.length;
   loadedAssets = 0;
 
-  const promises = allImages.map(async (path) => {
-    const img = new Image();
-    img.src = path;
-    IMAGE_CACHE[path] = img;
-    try {
-      await img.decode();
-      updateLoadingProgress();
-    } catch (e) {
-      console.error("Fehler beim Dekodieren:", path);
-      updateLoadingProgress();
-    }
+  const promises = allImages.map((path) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = path;
+      img.onload = () => {
+        updateLoadingProgress();
+        resolve();
+      };
+      img.onerror = () => {
+        console.error("Fehler beim Laden des Bildes:", path);
+        updateLoadingProgress();
+        resolve();
+      };
+    });
   });
 
   await Promise.all(promises);
-  console.log("Alle Bilder sind fertig dekodiert und bereit!");
+  console.log("Alle Bilder sind fertig geladen und bereit!");
 }
 
 function updateLoadingProgress() {
@@ -423,18 +426,13 @@ function checkScreenOrientation() {
   }
 }
 
-document.getElementById('closeInstructionsBtn').addEventListener('click', function() {
+document.getElementById('closeInstructionsBtn').addEventListener('click', function(event) {
+  event.stopPropagation();
   const keyboardInfo = document.getElementById('keyboardBtnInfo');
-  if (keyboardInfo.classList.contains('show')) {
-    keyboardInfo.classList.remove('show');
-  }
-});
-
-closeBtn.addEventListener('click', () => {
   keyboardInfo.classList.remove('show');
 });
 
-keyboardInfo.addEventListener('click', () => {
+closeBtn.addEventListener('click', () => {
   keyboardInfo.classList.remove('show');
 });
 

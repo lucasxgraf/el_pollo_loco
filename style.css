@@ -190,13 +190,13 @@ canvas {
 
 .close_btn {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 16px;
+  right: 16px;
   background: transparent;
   border: none;
   font-size: 2rem;
   font-weight: bold;
-  cursor: pointer;
+  cursor: pointer !important;
   color: #333;
   transition: color 0.3s;
   z-index: 10;
@@ -396,7 +396,7 @@ h1 {
   }
 }
 
-@media (max-width: 430px) {
+@media (max-width: 510px) {
   .instructions_modal {
     width: 90vw;
     height: auto;
