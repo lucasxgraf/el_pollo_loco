@@ -79,9 +79,9 @@ function playAudio(path, volume, repeat) {
 }
 
 function stopAudio(path) {
-  if (mute) { 
-    return
-  } else {
+  if (!path) return;
+  if (typeof path.pause === 'function') {
     path.pause();
+    path.currentTime = 0;
   }
 }

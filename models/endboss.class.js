@@ -94,8 +94,13 @@ class Endboss extends MoveableObject {
   }
 
   firstContactWithEndboss() {
+    if (gameEnded) 
+      return;
+
     this.meetCounter = 0;
-    playAudio(this.ENDBOSS_SOUND, 0.15, 0);
+    if (!mute) {
+      playAudio(this.ENDBOSS_SOUND, 0.15, 0);
+    }
     this.hadFirstContact = true;
     world.statusBarEndboss = new StatusBarEndboss();
   }

@@ -149,6 +149,9 @@ canvas {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  z-index: 999;
+    position: relative;
+
 }
 
 .settings_container img {

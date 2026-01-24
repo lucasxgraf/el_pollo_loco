@@ -11,6 +11,7 @@ let loadingProgress = 0;
 let totalAssets = 0;
 let loadedAssets = 0;
 let gameStarted = false;
+let gameEnded = false;
 const IMAGE_CACHE = {};
 
 const keyboardInfo = document.getElementById('keyboardBtnInfo');
@@ -199,6 +200,37 @@ function bindMobileBtns() {
   })
 }
 
+function toggleAllSounds() {
+  if (mute) {
+    if (world && world.level && world.level.enemies) {
+      world.level.enemies.forEach(enemy => {
+        if (enemy instanceof Endboss) {
+          stopAudio(enemy.ENDBOSS_SOUND);
+          stopAudio(enemy.ENDBOSS_DIE_SOUND);
+          stopAudio(enemy.ENDBOSS_HURT_SOUND);
+        }
+      });
+    }
+    win_Sound.pause();
+    lose_Sound.pause();
+  } else {
+    if (gameEnded) 
+      return;
+
+    if (world) {
+      world.playBackgroundMusic();
+    }
+
+    if (world && world.level && world.level.enemies) {
+      world.level.enemies.forEach(enemy => {
+        if (enemy instanceof Endboss && enemy.hadFirstContact && !enemy.isDead) {
+          playAudio(enemy.ENDBOSS_SOUND, 0.15, 0);
+        }
+      });
+    }
+  }
+}
+
 function toggleVolume() {
   if (mute) {
     displayVolumeUpIcon();
@@ -213,6 +245,7 @@ function displayVolumeUpIcon() {
   if (world) {
     world.playBackgroundMusic();
   }
+  toggleAllSounds();
 }
 
 function displayVolumeOffIcon() {
@@ -226,6 +259,7 @@ function displayVolumeOffIcon() {
 
   document.getElementById('volumeBtn').src = 'assets/img/menu_description/volume_off.svg';
   mute = true;
+  toggleAllSounds();
 }
 
 function toggleKeyboardInstruction(event) {
@@ -272,8 +306,9 @@ function showGameScreen() {
 }
 
 function gameIsOver(playerHasWon) {
+  gameEnded = true;
   stopAllInterval();
-  stopEndbossSoundIfLost();
+  stopAllEndbossSounds();
 
   document.getElementById('canvas').classList.add('d_none');
   if (playerHasWon) {
@@ -284,12 +319,13 @@ function gameIsOver(playerHasWon) {
   exitFullscreen();
 }
 
-function stopEndbossSoundIfLost() {
+function stopAllEndbossSounds() {
   if (world && world.level && world.level.enemies) {
     world.level.enemies.forEach(enemy => {
       if (enemy instanceof Endboss) {
         stopAudio(enemy.ENDBOSS_SOUND);
         stopAudio(enemy.ENDBOSS_DIE_SOUND);
+        stopAudio(enemy.ENDBOSS_HURT_SOUND);
       }
     });
   }
@@ -298,7 +334,9 @@ function stopEndbossSoundIfLost() {
 function playerWin() {
   document.getElementById('youWin').classList.remove('d_none');
   document.getElementById('endgameBtns').classList.remove('d_none');
-  playAudio(win_Sound, 1, 0);
+  if (!mute) {
+    playAudio(win_Sound, 1, 0);
+  }
   document.getElementById('playBtn').classList.add('d_none');
   document.getElementById('fullscreenBtn').classList.add('d_none');
   document.getElementById('mobileBtn').classList.add('d_none');
@@ -307,7 +345,9 @@ function playerWin() {
 function playerLost() {
   document.getElementById('youLost').classList.remove('d_none');
   document.getElementById('endgameBtns').classList.remove('d_none');
-  playAudio(lose_Sound, 1, 0);
+  if (!mute) {
+    playAudio(lose_Sound, 1, 0);
+  }
   document.getElementById('playBtn').classList.add('d_none');
   document.getElementById('fullscreenBtn').classList.add('d_none');
   document.getElementById('mobileBtn').classList.add('d_none');
