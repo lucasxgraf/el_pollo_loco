@@ -185,14 +185,14 @@ canvas {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  pointer-events: none;
+  overflow-y: auto;
   gap: 80px;
 }
 
 .close_btn {
   position: absolute;
   top: 16px;
-  right: 16px;
+  right: 24px;
   background: transparent;
   border: none;
   font-size: 2rem;
@@ -228,11 +228,16 @@ canvas {
 .instructions_container p {
   margin-bottom: 8px;
   line-height: 1.4;
+  font-size: 1rem;
 }
 
 h1 {
   text-align: center;
   font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
 }
 
 .impressum_content,
@@ -467,6 +472,7 @@ h1 {
   .btn {
     font-size: 1rem;
     padding: 8px;
+    min-width: 32px;
   }
 }
 

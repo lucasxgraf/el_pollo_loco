@@ -441,16 +441,32 @@ function checkScreenOrientation() {
   }
 }
 
-document.getElementById('closeInstructionsBtn').addEventListener('click', function(event) {
-  event.stopPropagation();
+document.addEventListener('DOMContentLoaded', () => {
+  const closeBtn = document.getElementById('closeInstructionsBtn');
   const keyboardInfo = document.getElementById('keyboardBtnInfo');
-  keyboardInfo.classList.remove('show');
+
+  closeBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    keyboardInfo.classList.remove('show');
+  });
+  playAudio(swipeSound, 0.5, 0);
 });
 
-closeBtn.addEventListener('click', () => {
-  keyboardInfo.classList.remove('show');
+document.addEventListener('DOMContentLoaded', () => {
+  const closeBtn = document.getElementById('closeImpressumBtn');
+  const keyboardInfo = document.getElementById('impressumBtnInfo');
+
+  closeBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    keyboardInfo.classList.remove('show');
+    playAudio(swipeSound, 0.5, 0);
+  });
 });
 
-instructionsModal.addEventListener('click', (event) => {
-  event.stopPropagation();
-});
+// closeBtn.addEventListener('click', () => {
+//   keyboardInfo.classList.remove('show');
+// });
+
+// instructionsModal.addEventListener('click', (event) => {
+//   event.stopPropagation();
+// });
