@@ -53,16 +53,11 @@ class World {
   drawWorld() {
     this.update();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     this.ctx.save();
     this.ctx.translate(this.camera_x, 0);
-
     this.drawMovingObjectsToWorld();
-
     this.ctx.restore();
-
     this.drawNoneMovingObjectsToWorld();
-
     requestAnimationFrame(() => {
       this.drawWorld();
     });
@@ -116,11 +111,7 @@ class World {
    */
   checkCollisions() {
     this.level.enemies.forEach((enemy) => {
-      if (
-        this.character.isColliding(enemy) &&
-        !enemy.isDead &&
-        !this.character.hurts
-      ) {
+      if (this.character.isColliding(enemy) && !enemy.isDead && !this.character.hurts) {
         if (this.isJumpingOnEnemy(enemy)) {
           enemy.health = 0;
           enemy.isDead = true;
