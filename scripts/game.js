@@ -127,11 +127,19 @@ function preloadSound(){
  * initializing the level, and creating the game world.
  */
 function playGame() {
+  console.log('playGame aufgerufen');
+  gameRunning = true;
+  gameIsOverCalled = false;
+
   showStartScreenButtons();
   showGameScreen();
   initLevel1();
+
   canvas = document.getElementById('canvas');
+  keyboard = new Keyboard();
   world = new World(canvas, keyboard);
+
+  console.log('Neue Welt erstellt:', world);
 }
 
 /**
@@ -166,6 +174,14 @@ function showGameScreen() {
  * @param {boolean} playerHasWon - Whether the player won the game.
  */
 function gameIsOver(playerHasWon) {
+  if (gameIsOverCalled) {
+    console.log('gameIsOver wurde bereits aufgerufen, Abbruch');
+    return;
+  }
+  gameIsOverCalled = true;
+  gameRunning = false;
+  console.log('gameIsOver aufgerufen, playerHasWon:', playerHasWon);
+
   gameEnded = true;
   stopAllInterval();
   stopAllEndbossSounds();
@@ -191,6 +207,7 @@ function stopAllEndbossSounds() {
         stopAudio(enemy.ENDBOSS_SOUND);
         stopAudio(enemy.ENDBOSS_DIE_SOUND);
         stopAudio(enemy.ENDBOSS_HURT_SOUND);
+        enemy.ENDBOSS_DIE_SOUND.currentTime = 0;
       }
     });
   }
@@ -316,12 +333,39 @@ function playEndbossSounds() {
  * Restarts the game by hiding result screens and starting gameplay again.
  */
 function restartGame() {
+  console.log('restartGame aufgerufen');
+  gameIsOverCalled = false;
+  gameRunning = false;
+
+  stopAllInterval();
+  stopAllEndbossSounds();
+
+  win_Sound.pause();
+  win_Sound.currentTime = 0;
+  lose_Sound.pause();
+  lose_Sound.currentTime = 0;
+
+  gameEnded = false;
+
   document.getElementById('youWin').classList.add('d_none');
   document.getElementById('youLost').classList.add('d_none');
   document.getElementById('endgameBtns').classList.add('d_none');
-  playGame();
-}
 
+  if (world && world.level && world.level.enemies) {
+    world.level.enemies.forEach(enemy => {
+      if (enemy instanceof Endboss) {
+        console.log('Endboss-Reset wird aufgerufen');
+        enemy.resetGameEndboss();
+      }
+    });
+  }
+
+  playGame();
+
+  if (!mute && world) {
+    world.playBackgroundMusic();
+  }
+}
 /**
  * Returns the player to the main menu by reloading the index page.
  */

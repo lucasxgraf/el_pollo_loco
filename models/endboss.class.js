@@ -57,6 +57,18 @@ class Endboss extends MoveableObject {
   }
   
   handleEndbossBehavior() {
+    console.log('handleEndbossBehavior aufgerufen, isDead:', this.isDead);
+  
+    if (this.isDead) {
+      if (!this.endbossDieAnimationStarted) {
+        this.endbossDieAnimationStarted = true;
+        this.endbossDieAnimation();
+      }
+      return;
+    }
+  
+    this.endbossDieAnimationStarted = false; // Reset flag
+  
     if (this.meetCounter < 16 && this.meetCounter >= 0) {
       this.endbossAlert();
     } else if (this.hadFirstContact && !this.isHurt(1.5)) {
@@ -86,8 +98,12 @@ class Endboss extends MoveableObject {
   }
   
   checkHealth() {
-    if (this.health <= 0) {
-      this.endbossDieAnimation();
+    if (this.health <= 0 && !this.isDead) {
+      this.isDead = true;
+      if (!this.endbossDieAnimationStarted) {
+        this.endbossDieAnimationStarted = true;
+        this.endbossDieAnimation();
+      }
       stopAudio(this.ENDBOSS_SOUND);
       clearInterval(this.animateEndbossInterval);
       clearInterval(this.healthInterval);
@@ -209,13 +225,49 @@ class Endboss extends MoveableObject {
   }
 
   endbossDieAnimation() {
+    console.trace('endbossDieAnimation wurde aufgerufen');
+    console.log('Endboss: endbossDieAnimation gestartet');
     this.endbossDieInterval = setInterval(() => {
       this.playAnimation(this.IMAGES_DEAD);
     }, 700);
     
-    setTimeout(() => {
+    this.endbossDieTimeout = setTimeout(() => {
       clearInterval(this.endbossDieInterval);
-      gameIsOver(true);
+      console.log('Endboss: endbossDieTimeout läuft, gameRunning:', gameRunning);
+      if (gameRunning) {
+        console.log('Endboss: gameIsOver(true) wird aufgerufen');
+        gameIsOver(true);
+      }
     }, 2300);
+  }
+
+  resetGameEndboss() {
+    console.log('Endboss: resetGameEndboss aufgerufen');
+    
+    // 1. Alle Intervalle und Timeouts stoppen
+    clearInterval(this.animateEndbossInterval);
+    clearInterval(this.healthInterval);
+    clearInterval(this.jumpInterval);
+    clearInterval(this.dashInterval);
+    clearInterval(this.endbossDieInterval);
+  
+    if (this.endbossDieTimeout) {
+      clearTimeout(this.endbossDieTimeout);
+    }
+  
+    // 2. WICHTIG: Gesundheit zurücksetzen!
+    this.health = 100; // Oder den Wert, den dein Endboss am Anfang hat
+    
+    // 3. Status-Variablen zurücksetzen
+    this.meetCounter = -1;
+    this.hadFirstContact = false;
+    this.isDead = false;
+    this.isJumping = false;
+    this.isDashing = false;
+    this.endbossDieAnimationStarted = false;
+  
+    // 4. Bild zurücksetzen und Logik neu starten
+    this.loadImage(this.IMAGES_WALKING[0]);
+    this.animate();
   }
 }

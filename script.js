@@ -14,6 +14,8 @@ let totalAssets = 0;
 let loadedAssets = 0;
 let gameStarted = false;
 let gameEnded = false;
+let gameRunning = false;
+let gameIsOverCalled = false;
 const IMAGE_CACHE = {};
 
 /**
