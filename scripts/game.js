@@ -127,7 +127,6 @@ function preloadSound(){
  * initializing the level, and creating the game world.
  */
 function playGame() {
-  console.log('playGame aufgerufen');
   gameRunning = true;
   gameIsOverCalled = false;
 
@@ -138,8 +137,6 @@ function playGame() {
   canvas = document.getElementById('canvas');
   keyboard = new Keyboard();
   world = new World(canvas, keyboard);
-
-  console.log('Neue Welt erstellt:', world);
 }
 
 /**
@@ -174,14 +171,10 @@ function showGameScreen() {
  * @param {boolean} playerHasWon - Whether the player won the game.
  */
 function gameIsOver(playerHasWon) {
-  if (gameIsOverCalled) {
-    console.log('gameIsOver wurde bereits aufgerufen, Abbruch');
+  if (gameIsOverCalled) 
     return;
-  }
   gameIsOverCalled = true;
   gameRunning = false;
-  console.log('gameIsOver aufgerufen, playerHasWon:', playerHasWon);
-
   gameEnded = true;
   stopAllInterval();
   stopAllEndbossSounds();
@@ -330,42 +323,63 @@ function playEndbossSounds() {
 }
 
 /**
- * Restarts the game by hiding result screens and starting gameplay again.
+ * Restarts the game by resetting all relevant states, stopping sounds and intervals,
+ * hiding UI elements, resetting enemies, and starting the game again.
  */
 function restartGame() {
-  console.log('restartGame aufgerufen');
   gameIsOverCalled = false;
   gameRunning = false;
-
+  gameEnded = false;
   stopAllInterval();
   stopAllEndbossSounds();
+  resetSounds();
+  hideEndgameUI();
+  resetEnemies();
+  playGame();
+  playBackgroundMusicIfNotMuted();
+}
 
+/**
+ * Resets win and lose sounds to initial state and pauses them.
+ */
+function resetSounds() {
   win_Sound.pause();
   win_Sound.currentTime = 0;
   lose_Sound.pause();
   lose_Sound.currentTime = 0;
+}
 
-  gameEnded = false;
-
+/**
+ * Hides the endgame UI elements.
+ */
+function hideEndgameUI() {
   document.getElementById('youWin').classList.add('d_none');
   document.getElementById('youLost').classList.add('d_none');
   document.getElementById('endgameBtns').classList.add('d_none');
+}
 
+/**
+ * Resets all Endboss enemies by calling their reset method if available.
+ */
+function resetEnemies() {
   if (world && world.level && world.level.enemies) {
     world.level.enemies.forEach(enemy => {
-      if (enemy instanceof Endboss) {
-        console.log('Endboss-Reset wird aufgerufen');
+      if (enemy instanceof Endboss && typeof enemy.resetGameEndboss === 'function') {
         enemy.resetGameEndboss();
       }
     });
   }
+}
 
-  playGame();
-
+/**
+ * Plays background music if the game is not muted and the world exists.
+ */
+function playBackgroundMusicIfNotMuted() {
   if (!mute && world) {
     world.playBackgroundMusic();
   }
 }
+
 /**
  * Returns the player to the main menu by reloading the index page.
  */

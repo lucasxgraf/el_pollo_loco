@@ -390,8 +390,6 @@ class World {
     }
 
     moveableObject.drawObject(this.ctx);
-    // moveableObject.drawObjectHitbox(this.ctx);
-    // moveableObject.drawObjectHitboxOffset(this.ctx);
 
     if (moveableObject.otherDirection) {
       this.flipImageBack(moveableObject);
