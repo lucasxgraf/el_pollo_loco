@@ -18,19 +18,13 @@ class ThrowableObject extends MoveableObject {
   animateBottleInterval;
   throwInterval;
   intervalCounter = 80;
-
-  /** @type {boolean} Flag indicating if the bottle has broken upon impact. */
   break = false;
-
-  /** @type {Object} Collision offset values for precise hitbox tuning. */
   offset = {
     top: 10,
     left: 10,
     right: 10,
     bottom: 10,
   };
-
-  /** @type {Array<string>} Image paths for bottle rotation animation frames. */
   IMAGES_BOTTLE_ROTATION = ALL_IMAGES.salsaBottlesRotation;
   IMAGES_BOTTLE_BREAK = ALL_IMAGES.salsaBottlesBreak;
   THROWING_SOUND = new Audio(SOUNDS.salsaBottle.THROWING_SOUND);
@@ -83,4 +77,15 @@ class ThrowableObject extends MoveableObject {
       }
     }, 25);
   }
+
+/**
+ * Cleans up throwable object intervals and sounds to prevent memory leaks.
+ * Clears all active intervals and stops any playing splash sound.
+ */
+cleanup() {
+  clearInterval(this.animateBottleInterval);
+  clearInterval(this.throwInterval);
+  clearInterval(this.applyGravityInterval);
+  stopAudio(this.SPLASH_SOUND);
+}
 }

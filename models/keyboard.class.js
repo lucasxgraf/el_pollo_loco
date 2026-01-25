@@ -8,22 +8,11 @@
  * Tracks which keys are currently pressed.
  */
 class Keyboard {
-  /** @type {boolean} Whether the left movement key is pressed. */
   LEFT = false;
-
-  /** @type {boolean} Whether the right movement key is pressed. */
   RIGHT = false;
-
-  /** @type {boolean} Whether the up movement key is pressed. */
   UP = false;
-
-  /** @type {boolean} Whether the down movement key is pressed. */
   DOWN = false;
-
-  /** @type {boolean} Whether the jump (space) key is pressed. */
   SPACE = false;
-
-  /** @type {boolean} Whether the throw (Q) key is pressed. */
   Q = false;
 }
 
@@ -36,23 +25,18 @@ function bindKeyboardBtns() {
     if (e.key == 'ArrowRight' || e.key == 'd') {
       keyboard.RIGHT = true;
     }
-
     if (e.key == 'ArrowDown' || e.key == 's') {
       keyboard.DOWN = true;
     }
-
     if (e.key == 'ArrowLeft' || e.key == 'a') {
       keyboard.LEFT = true;
     }
-
     if (e.key == 'ArrowUp' || e.key == 'w') {
       keyboard.UP = true;
     }
-
     if (e.key == ' ') {
       keyboard.SPACE = true;
     }
-
     if (e.key == 'q') {
       keyboard.Q = true;
     }
@@ -62,23 +46,18 @@ function bindKeyboardBtns() {
     if (e.key == 'ArrowRight' || e.key == 'd') {
       keyboard.RIGHT = false;
     }
-
     if (e.key == 'ArrowDown' || e.key == 's') {
       keyboard.DOWN = false;
     }
-
     if (e.key == 'ArrowLeft' || e.key == 'a') {
       keyboard.LEFT = false;
     }
-
     if (e.key == 'ArrowUp' || e.key == 'w') {
       keyboard.UP = false;
     }
-
     if (e.key == ' ') {
       keyboard.SPACE = false;
     }
-
     if (e.key == 'q') {
       keyboard.Q = false;
     }

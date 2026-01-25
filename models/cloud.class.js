@@ -53,7 +53,6 @@ class Cloud extends MoveableObject {
     const numberOfClouds = 6;
     const cloudWidth = 720;
     const spacingBetweenClouds = cloudWidth;
-  
     for (let i = 0; i < numberOfClouds; i++) {
       const imagePath = cloudImages[i % cloudImages.length];
       const position_x = i * spacingBetweenClouds + 720;

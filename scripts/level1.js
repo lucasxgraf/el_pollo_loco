@@ -3,10 +3,6 @@
  * @description Initializes the first level of the game with enemies, clouds, coins, salsa bottles, and background music.
  */
 
-/**
- * Global variable representing the first level of the game.
- * @type {Level}
- */
 let LEVEL_1;
 
 /**

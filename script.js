@@ -35,11 +35,9 @@ function toggleVolume() {
 function displayVolumeUpIcon() {
   document.getElementById('volumeBtn').src = 'assets/img/menu_description/volume_up.svg';
   mute = false;
-
   if (world) {
-    world.playBackgroundMusic();
+    playBackgroundMusic(world);
   }
-
   toggleAllSounds();
 }
 
@@ -48,17 +46,14 @@ function displayVolumeUpIcon() {
  */
 function displayVolumeOffIcon() {
   if (world) {
-    world.stopBackgroundMusic();
+    stopBackgroundMusic(world);
   }
-
   win_Sound.pause();
   lose_Sound.pause();
   win_Sound.currentTime = 0;
   lose_Sound.currentTime = 0;
-
   document.getElementById('volumeBtn').src = 'assets/img/menu_description/volume_off.svg';
   mute = true;
-
   toggleAllSounds();
 }
 
@@ -87,16 +82,13 @@ function toggleElementVisibility(event, elementId) {
   if (event) {
     event.stopPropagation();
   }
-
   let element = document.getElementById(elementId);
   let isOpen = !element.classList.contains('show');
-
   if (isOpen) {
     element.classList.add('show');
   } else {
     element.classList.remove('show');
   }
-
   playAudio(swipeSound, 0.5, 0);
 }
 
@@ -151,12 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function checkScreenOrientation() {
   let rotateElement = document.getElementById('rotatePhone');
-  
   if (!rotateElement) 
     return;
-
   const IS_PORTRAIT = window.innerHeight > window.innerWidth;
-
   if (IS_PORTRAIT) {
     rotateElement.classList.remove('d_none');
   } else {
@@ -180,7 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupCloseButton(closeBtnId, infoPanelId) {
   const CLOSE_BTN = document.getElementById(closeBtnId);
   const INFO_PANEL = document.getElementById(infoPanelId);
-
   CLOSE_BTN.addEventListener('click', (event) => {
     event.stopPropagation();
     INFO_PANEL.classList.remove('show');

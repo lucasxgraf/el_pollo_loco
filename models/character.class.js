@@ -72,19 +72,16 @@ class Character extends MoveableObject {
   animateMovement() {
     setInterval(() => {
       this.WALKING_SOUND.pause();
-
       if (this.canMoveRight()) {
         this.moveRight();
       } else if (this.canMoveLeft()) {
         this.moveLeft();
         this.otherDirection = true;
       }
-
       if (this.canJump()) {
         this.jump();
         playAudio(this.JUMP_SOUND, 1);
       }
-
       this.world.camera_x = -this.position_x + 100;
     }, 1000 / 60);
   }
@@ -121,14 +118,11 @@ class Character extends MoveableObject {
     if (this.otherDirection) {
       this.stopIncreasingSpeed();
     }
-
     this.otherDirection = false;
-
     if (!this.isObjectAboveGround()) {
       playAudio(this.WALKING_SOUND, 1);
       this.WALKING_SOUND.playbackRate = this.speedSound;
     }
-
     this.increasingSpeed();
     playAudio(this.WALKING_SOUND, 1);
   }
@@ -141,14 +135,11 @@ class Character extends MoveableObject {
     if (!this.otherDirection) {
       this.stopIncreasingSpeed();
     }
-
     this.otherDirection = true;
-
     if (!this.isObjectAboveGround) {
       playAudio(this.WALKING_SOUND, 1);
       this.WALKING_SOUND.playbackRate = this.speedSound;
     }
-
     this.increasingSpeed();
     playAudio(this.WALKING_SOUND, 1);
   }
@@ -250,7 +241,6 @@ class Character extends MoveableObject {
     this.characterJumpInterval = setInterval(() => {
       this.playAnimation(this.IMAGES_JUMPING);
     }, 220);
-
     setTimeout(() => {
       this.currentImage = 0;
       this.animateConditionOfCharacter();
@@ -262,8 +252,8 @@ class Character extends MoveableObject {
    * Makes the character jump backward when hurt.
    */
   backwardJump() {
-    if (this.hurts) return;
-
+    if (this.hurts) 
+      return;
     this.initiateBackwardJump();
     this.startBackwardMovement();
     this.endBackwardJump();
@@ -304,11 +294,9 @@ class Character extends MoveableObject {
   characterDieAnimation() {
     this.WALKING_SOUND.pause();
     stopAllInterval();
-
     this.characterDieInterval = setInterval(() => {
       this.playAnimation(this.IMAGES_DEAD);
     }, 380);
-
     setTimeout(() => {
       clearInterval(this.characterDieInterval);
       gameIsOver(false);
@@ -347,7 +335,6 @@ class Character extends MoveableObject {
     this.WALKING_SOUND.pause();
     this.stopIncreasingSpeed();
     this.longIdle++;
-
     if (this.longIdle <= 20) {
       this.playAnimation(this.IMAGES_IDLE);
     } else {

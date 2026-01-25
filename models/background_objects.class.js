@@ -19,7 +19,6 @@ class BackgroundObject extends MoveableObject {
    */
   constructor(imgPath, position_x, position_y) {
     super().loadImage(imgPath);
-
     this.position_x = position_x;
     this.position_y = position_y;
   }
@@ -36,7 +35,6 @@ class BackgroundObject extends MoveableObject {
       'assets/img/5_background/layers/2_second_layer/',
       'assets/img/5_background/layers/1_first_layer/',
     ];
-  
     for (let i = -1; i < 7; i++) {
       const xPos = i * 719;
       const variant = i % 2 === 0 ? '1.png' : '2.png';

@@ -30,7 +30,6 @@ class Endboss extends MoveableObject {
     right: 35,
     bottom: 10
   };
-
   IMAGES_ALERT = ALL_IMAGES.endboss.IMAGES_ALERT;
   IMAGES_WALKING = ALL_IMAGES.endboss.IMAGES_WALKING;
   IMAGES_ATTACK = ALL_IMAGES.endboss.IMAGES_ATTACK;
@@ -70,7 +69,6 @@ class Endboss extends MoveableObject {
       this.handleEndbossBehavior();
       this.checkFirstContact();
     }, 150);
-
     this.healthInterval = setInterval(() => {
       this.checkHealth();
     }, 200);
@@ -85,9 +83,7 @@ class Endboss extends MoveableObject {
       this.handleDeath();
       return;
     }
-
     this.endbossDieAnimationStarted = false;
-
     if (this.meetCounter < 16 && this.meetCounter >= 0) {
       this.endbossAlert();
     } else if (this.hadFirstContact && !this.isHurt(1.5)) {
@@ -155,7 +151,6 @@ class Endboss extends MoveableObject {
   endbossAlert() {
     this.playAnimation(this.IMAGES_ALERT);
     this.meetCounter++;
-
     if (this.meetCounter == 14) {
       world.throwing = true;
     }
@@ -175,7 +170,6 @@ class Endboss extends MoveableObject {
   firstContactWithEndboss() {
     if (gameEnded) 
       return;
-
     this.meetCounter = 0;
     if (!mute) {
       playAudio(this.ENDBOSS_SOUND, 0.15, 0);
@@ -191,7 +185,6 @@ class Endboss extends MoveableObject {
   jumpToCharacter() {
     if (!this.canJump()) 
       return;
-    
     this.initiateJump();
     this.startJumpMovement();
   }
@@ -219,7 +212,6 @@ class Endboss extends MoveableObject {
     this.jumpInterval = setInterval(() => {
       const direction = world.character.position_x < this.position_x ? -1 : 1;
       const distance = Math.abs(world.character.position_x - this.position_x);
-      
       if (this.isObjectAboveGround()) {
         this.handleJumpMovement(direction, distance);
       } else {
@@ -237,7 +229,6 @@ class Endboss extends MoveableObject {
     if (distance > 100) {
       this.position_x += direction * 15;
     }
-
     this.playAnimation(this.IMAGES_ATTACK);
   }
 
@@ -255,7 +246,6 @@ class Endboss extends MoveableObject {
   dashToCharacter() {
     if (!this.canDash()) 
       return;
-  
     this.initiateDash();
     this.startDashMovement();
   }
@@ -318,7 +308,6 @@ class Endboss extends MoveableObject {
     this.endbossDieInterval = setInterval(() => {
       this.playAnimation(this.IMAGES_DEAD);
     }, 700);
-    
     this.endbossDieTimeout = setTimeout(() => {
       clearInterval(this.endbossDieInterval);
       if (gameRunning) {
@@ -334,6 +323,7 @@ class Endboss extends MoveableObject {
   resetGameEndboss() {
     this.clearAllIntervals();
     this.clearTimeouts();
+    stopAudio(this.ENDBOSS_SOUND);
     this.resetProperties();
     this.restartAnimation();
   }
@@ -377,5 +367,23 @@ class Endboss extends MoveableObject {
   restartAnimation() {
     this.loadImage(this.IMAGES_WALKING[0]);
     this.animate();
+  }
+
+  /**
+   * Cleans up all active intervals, timeouts, and sounds related to the endboss.
+   * Prevents memory leaks and stops any playing endboss audio.
+   */
+  cleanup() {
+    clearInterval(this.animateEndbossInterval);
+    clearInterval(this.healthInterval);
+    clearInterval(this.jumpInterval);
+    clearInterval(this.dashInterval);
+    clearInterval(this.endbossDieInterval);
+    if (this.endbossDieTimeout) {
+      clearTimeout(this.endbossDieTimeout);
+    }
+    stopAudio(this.ENDBOSS_SOUND);
+    stopAudio(this.ENDBOSS_DIE_SOUND);
+    stopAudio(this.ENDBOSS_HURT_SOUND);
   }
 }

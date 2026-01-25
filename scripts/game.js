@@ -21,7 +21,6 @@ async function preloadAllImages() {
   const allImages = collectAllImages();
   totalAssets = allImages.length;
   loadedAssets = 0;
-
   const promises = allImages.map(createImagePromise);
   await Promise.all(promises);
 }
@@ -72,7 +71,6 @@ function updateLoadingProgress() {
   loadingProgress = Math.round((loadedAssets / totalAssets) * 100);
   document.getElementById('loadingPercentage').textContent = loadingProgress + '%';
   document.getElementById('loadingBar').style.width = loadingProgress + '%';
-
   if (loadedAssets === totalAssets) {
     loadingScreen();
     gameStarted = true;
@@ -129,11 +127,9 @@ function preloadSound(){
 function playGame() {
   gameRunning = true;
   gameIsOverCalled = false;
-
   showStartScreenButtons();
   showGameScreen();
   initLevel1();
-
   canvas = document.getElementById('canvas');
   keyboard = new Keyboard();
   world = new World(canvas, keyboard);
@@ -144,11 +140,9 @@ function playGame() {
  */
 function showStartScreenButtons() {
   let settings = document.getElementById('settingsContainer');
-
   if (settings) {
     settings.classList.remove('d_none');
   }
-
   document.getElementById('youWin').classList.add('d_none');
   document.getElementById('youLost').classList.add('d_none');
   document.getElementById('endgameBtns').classList.add('d_none');
@@ -178,9 +172,7 @@ function gameIsOver(playerHasWon) {
   gameEnded = true;
   stopAllInterval();
   stopAllEndbossSounds();
-
   document.getElementById('canvas').classList.add('d_none');
-
   if (playerHasWon) {
     playerWin();
   } else {
@@ -230,7 +222,6 @@ function showGameResult(isWin) {
   document.getElementById('playBtn').classList.add('d_none');
   document.getElementById('fullscreenBtn').classList.add('d_none');
   document.getElementById('mobileBtn').classList.add('d_none');
-
   if (isWin) {
     document.getElementById('youWin').classList.remove('d_none');
     if (!mute) {
@@ -251,7 +242,6 @@ function showEndScreenButtons() {
   document.querySelectorAll('.endgame_btns').forEach(container => {
     container.classList.remove('d_none');
   });
-  
   document.querySelectorAll('.restart_btn, .go_back_to_menu').forEach(btn => {
     btn.classList.remove('d_none');
   });
@@ -274,13 +264,11 @@ function toggleAllSounds() {
 function handleMutedState() {
   if (!world || !world.level || !world.level.enemies) 
     return;
-  
   world.level.enemies.forEach(enemy => {
     if (enemy instanceof Endboss) {
       stopEndbossSounds(enemy);
     }
   });
-  
   win_Sound.pause();
   lose_Sound.pause();
 }
@@ -291,11 +279,9 @@ function handleMutedState() {
 function handleUnmutedState() {
   if (gameEnded) 
     return;
-  
   if (world) {
-    world.playBackgroundMusic();
+    playBackgroundMusic(world);
   }
-  
   if (world && world.level && world.level.enemies) {
     playEndbossSounds();
   }
@@ -327,6 +313,9 @@ function playEndbossSounds() {
  * hiding UI elements, resetting enemies, and starting the game again.
  */
 function restartGame() {
+  if (world) {
+    world.cleanup();
+  }
   gameIsOverCalled = false;
   gameRunning = false;
   gameEnded = false;
@@ -376,7 +365,7 @@ function resetEnemies() {
  */
 function playBackgroundMusicIfNotMuted() {
   if (!mute && world) {
-    world.playBackgroundMusic();
+    playBackgroundMusic(world);
   }
 }
 

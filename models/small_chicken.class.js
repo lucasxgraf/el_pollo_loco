@@ -86,12 +86,10 @@ class SmallChicken extends MoveableObject {
    */
   handleDeath() {
     this.playAnimation(this.IMAGES_DEAD);
-
     if (!this.soundPlayed) {
       playAudio(this.DEAD_SMALL_CHICKEN_SOUND, 1);
       this.soundPlayed = true;
     }
-
     clearInterval(this.animateChickenInterval);
     this.isDead = true;
   }

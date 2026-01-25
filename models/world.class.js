@@ -44,13 +44,15 @@ class World {
     this.clouds = Cloud.createClouds();
     this.drawWorld();
     this.setWorld();
-    this.playBackgroundMusic();
+    playBackgroundMusic(this);
   }
 
   /**
    * Main rendering loop that clears and redraws the world continuously.
    */
   drawWorld() {
+    if (gameEnded) 
+      return;
     this.update();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.save();
@@ -99,6 +101,8 @@ class World {
    * Performs all game logic updates each frame.
    */
   update() {
+    if (gameEnded) 
+      return;
     this.checkCollisions();
     this.checkThrowObjects();
     this.checkCollectables();
@@ -224,7 +228,6 @@ class World {
   checkCollisionsThrowableObjectsWithEnemies() {
     this.throwableObjects.forEach((bottle) => {
       if (bottle.hasHit) return;
-
       this.level.enemies.forEach((enemy) => {
         if (
           bottle.isColliding(enemy) &&
@@ -245,14 +248,12 @@ class World {
    */
   bottleCollidingWithEnemy(enemy, bottle) {
     enemy.hit();
-
     if (enemy instanceof Endboss && this.statusBarEndboss) {
       this.statusBarEndboss.setPercentage(enemy.health);
       playAudio(SOUNDS.endboss.ENDBOSS_HURT_SOUND, 0.5);
     } else {
       playAudio(SOUNDS.chicken.DEAD_CHICKEN_SOUND, 0.5);
     }
-
     this.bottleBreaks(bottle);
   }
 
@@ -379,9 +380,7 @@ class World {
     if (moveableObject.otherDirection) {
       this.flipImage(moveableObject);
     }
-
     moveableObject.drawObject(this.ctx);
-
     if (moveableObject.otherDirection) {
       this.flipImageBack(moveableObject);
     }
@@ -406,18 +405,10 @@ class World {
     moveableObject.position_x = moveableObject.position_x * -1;
     this.ctx.restore();
   }
-
   /**
-   * Starts playing the level's background music.
+   * For connecting cleanup function from world.helpers.js
    */
-  playBackgroundMusic() {
-    playAudio(this.level.backgroundMusic, 0.5);
-  }
-
-  /**
-   * Stops playing the level's background music.
-   */
-  stopBackgroundMusic() {
-    stopAudio(this.level.backgroundMusic);
+  cleanup() {
+    cleanup(this);
   }
 }
