@@ -1,3 +1,11 @@
+/**
+ * @file images.js
+ * @description Contains arrays of image paths for preloading and organized image assets for the game.
+ */
+
+/**
+ * @constant {string[]} PRELOAD_START_IMG - List of image paths to preload at game start.
+ */
 const PRELOAD_START_IMG = [
   'assets/img/menu_description/arrow_left.svg',
   'assets/img/menu_description/arrow_right.svg',
@@ -21,6 +29,9 @@ const PRELOAD_START_IMG = [
   'assets/img/You won, you lost/You lost.png'
 ];
 
+/**
+ * @constant {Object} ALL_IMAGES - Organized image asset paths by category and animation type.
+ */
 const ALL_IMAGES = {
   character: {
     IMAGES_IDLE: [
