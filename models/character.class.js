@@ -150,7 +150,6 @@ class Character extends MoveableObject {
   jump() {
     super.jump();
     this.WALKING_SOUND.pause();
-    this.stopIncreasingSpeed();
   }
 
   /**
@@ -168,7 +167,7 @@ class Character extends MoveableObject {
     this.characterConditionInterval = setInterval(() => {
       if (this.isDead()) return this.handleDeath();
       if (this.isHurt(0.7)) return this.handleHurt();
-      if (this.jumpAnimationRequirements()) return this.handleJump();
+      if (this.isObjectAboveGround()) return this.handleJump();
       if (this.walkAnimationRequirements()) return this.handleWalk();
       this.resetWalkCounters();
     }, 50);
@@ -189,10 +188,29 @@ class Character extends MoveableObject {
   }
 
   /**
-   * Handles the jump animation.
+   * Handles the jump animation logic by selecting the correct frame 
+   * based on the vertical speed (gravity).
    */
   handleJump() {
-    this.characterJumpAnimation();
+    this.longIdle = 0;
+    let i = this.resolveJumpImageIndex();
+    let path = this.IMAGES_JUMPING[i];
+    this.img = IMAGE_CACHE[path];
+  }
+
+  /**
+   * Resolves the index of the jump image based on vertical speed.
+   * @returns {number} The index of the image in IMAGES_JUMPING.
+   */
+  resolveJumpImageIndex() {
+    if (this.speedGravityY > 15) return 1; // Start jump
+    if (this.speedGravityY > 10) return 2;
+    if (this.speedGravityY > 5) return 3;
+    if (this.speedGravityY > 0) return 4; // Peak
+    if (this.speedGravityY > -5) return 5; // Start falling
+    if (this.speedGravityY > -10) return 6;
+    if (this.speedGravityY > -15) return 7;
+    return 8; // Landing approach
   }
 
   /**
@@ -200,7 +218,6 @@ class Character extends MoveableObject {
    */
   handleWalk() {
     this.counter++;
-
     if (this.counter >= 4) {
       this.playAnimation(this.IMAGES_WALKING);
       this.amountCounter += 0.25;
@@ -214,14 +231,6 @@ class Character extends MoveableObject {
   resetWalkCounters() {
     this.counter = 0;
     this.amountCounter = 0;
-  }
-
-  /**
-   * Checks if jump animation should play.
-   * @returns {boolean} True if jump animation conditions are met.
-   */
-  jumpAnimationRequirements() {
-    return this.isObjectAboveGround() && this.speed >= 0 && !this.jumpedOnAEnemy;
   }
 
   /**
