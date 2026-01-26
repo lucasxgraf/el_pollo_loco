@@ -18,6 +18,7 @@ class Character extends MoveableObject {
   collectedBottles = 0;
   stop = true;
   jumpedOnEnemy = false;
+  canThrow = true;
   counter = 0;
   longIdle = 0;
   amountCounter = 0;
@@ -369,5 +370,42 @@ class Character extends MoveableObject {
     this.speedSound = 1;
     this.counter = 0;
     this.amountCounter = 0;
+  }
+
+  /**
+   * Attempts to throw a bottle if cooldown and inventory allow it.
+   * Plays a sound if no bottles are available.
+   */
+  attemptToThrowBottle() {
+    if (!this.canThrow) 
+      return;
+    if (this.collectedBottles <= 0) {
+      this.canThrow = false;
+      playAudio(SOUNDS.salsaBottle.NO_THROWING_SOUND, 1);
+      setTimeout(() => { 
+        this.canThrow = true; 
+      }, 1000); 
+      return;
+    }
+
+    this.canThrow = false;
+    this.throwingObject();
+
+    setTimeout(() => {
+      this.canThrow = true;
+    }, 1000);
+  }
+
+  /**
+   * Creates and throws a new salsa bottle.
+   * Updates the bottle inventory and status bar.
+   */
+  throwingObject() {
+    let bottle = new ThrowableObject(this.position_x + 50, this.position_y + 100);
+    this.world.throwableObjects.push(bottle);
+    this.collectedBottles--;
+    this.world.statusBarSalsaBottle.setPercentage(
+      Math.min((this.collectedBottles / 10) * 100, 100)
+    );
   }
 }

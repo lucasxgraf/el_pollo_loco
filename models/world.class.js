@@ -108,6 +108,7 @@ class World {
     this.checkCollectables();
     this.checkCollisionsThrowableObjectsWithTheGround();
     this.checkCollisionsThrowableObjectsWithEnemies();
+    checkIfGameIsStillWinnable(this);
   }
 
   /**
@@ -130,15 +131,12 @@ class World {
   }
 
   /**
-   * Handles throwing of salsa bottles based on input and availability.
+   * Handles throwing of salsa bottles based on input.
+   * Delegates throwing logic to the character.
    */
   checkThrowObjects() {
-    if (this.canThrowObjects()) {
-      this.throwingObject();
-    } else if (this.canNotThrowObjects()) {
-      if (SOUNDS.salsaBottle.NO_THROWING_SOUND.paused) {
-        playAudio(SOUNDS.salsaBottle.NO_THROWING_SOUND, 1);
-      }
+    if (this.keyboard.Q) {
+      this.character.attemptToThrowBottle();
     }
   }
 
@@ -247,12 +245,17 @@ class World {
    * @param {ThrowableObject} bottle - The bottle that caused the hit.
    */
   bottleCollidingWithEnemy(enemy, bottle) {
+    if (bottle.break) 
+      return;
     enemy.hit();
     if (enemy instanceof Endboss && this.statusBarEndboss) {
       this.statusBarEndboss.setPercentage(enemy.health);
       playAudio(SOUNDS.endboss.ENDBOSS_HURT_SOUND, 0.5);
     } else {
-      playAudio(SOUNDS.chicken.DEAD_CHICKEN_SOUND, 0.5);
+      if (enemy.DEAD_CHICKEN_SOUND) 
+        playAudio(enemy.DEAD_CHICKEN_SOUND, 0.5);
+      if (enemy.DEAD_SMALL_CHICKEN_SOUND) 
+        playAudio(enemy.DEAD_SMALL_CHICKEN_SOUND, 0.5);
     }
     this.bottleBreaks(bottle);
   }
@@ -306,58 +309,6 @@ class World {
         this.character.height -
         this.character.offset.bottom <
         enemy.position_y + enemy.height / 2
-    );
-  }
-
-  /**
-   * Throws a new salsa bottle if conditions are met.
-   */
-  throwingObject() {
-    this.allowThrowingObjects();
-    let bottle = new ThrowableObject(
-      this.character.position_x + 50,
-      this.character.position_y + 100
-    );
-    this.throwableObjects.push(bottle);
-    this.character.collectedBottles--;
-    const percentage = Math.min(
-      (this.character.collectedBottles / 5) * 100,
-      100
-    );
-    this.statusBarSalsaBottle.setPercentage(percentage);
-  }
-
-  /**
-   * Temporarily disables throwing to enforce cooldown.
-   */
-  allowThrowingObjects() {
-    this.throwing = false;
-    setTimeout(() => {
-      this.throwing = true;
-    }, 1000);
-  }
-
-  /**
-   * Checks if the player can currently throw a bottle.
-   * @returns {boolean} True if throwing is possible.
-   */
-  canThrowObjects() {
-    return (
-      this.keyboard.Q &&
-      this.throwing &&
-      this.character.collectedBottles > 0
-    );
-  }
-
-  /**
-   * Checks if the player tried to throw but has no bottles.
-   * @returns {boolean} True if throwing failed due to lack of bottles.
-   */
-  canNotThrowObjects() {
-    return (
-      this.keyboard.Q &&
-      this.throwing &&
-      this.character.collectedBottles <= 0
     );
   }
 

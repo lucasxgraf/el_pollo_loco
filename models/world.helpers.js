@@ -73,3 +73,24 @@ function playBackgroundMusic(world) {
 function stopBackgroundMusic(world) {
   stopAudio(world.level.backgroundMusic);
 }
+
+/**
+ * Checks if the game is still winnable.
+ * If the endboss is alive but no bottles are left (in inventory or on ground), the game ends.
+ * @param {World} world - The current game world instance.
+ */
+function checkIfGameIsStillWinnable(world) {
+  const endboss = world.level.enemies.find(e => e instanceof Endboss);
+  if (!endboss || endboss.isDead) return;
+  const bottlesInInventory = world.character.collectedBottles;
+  const bottlesOnGround = world.level.salsaBottles.length;
+  const bottlesInAir = world.throwableObjects.length;
+  if (bottlesInInventory === 0 && bottlesOnGround === 0 && bottlesInAir === 0) {
+    setTimeout(() => {
+      if (gameRunning) {
+        gameIsOver(false);
+      }
+    }, 2000);
+  }
+}
+
