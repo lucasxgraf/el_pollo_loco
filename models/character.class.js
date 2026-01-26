@@ -17,6 +17,8 @@ class Character extends MoveableObject {
   collectedCoins = 0;
   collectedBottles = 0;
   stop = true;
+  justJumped = false;
+  jumpAnimationPlayed = false;
   jumpedOnEnemy = false;
   canThrow = true;
   counter = 0;
@@ -150,6 +152,8 @@ class Character extends MoveableObject {
    */
   jump() {
     super.jump();
+    this.justJumped = true;
+    this.jumpAnimationPlayed = false;
     this.WALKING_SOUND.pause();
   }
 
@@ -161,17 +165,29 @@ class Character extends MoveableObject {
     this.WALKING_SOUND.pause();
   }
 
+/**
+ * Animates the character's condition based on current state.
+ * Handles death, hurt, jump, walk, and idle animations at regular intervals.
+ */
+animateConditionOfCharacter() {
+  this.characterConditionInterval = setInterval(() => {
+    if (this.isDead()) return this.handleDeath();
+    if (this.isHurt(0.7)) return this.handleHurt();
+    if (this.isObjectAboveGround()) return this.handleAirborne();
+    if (this.walkAnimationRequirements()) return this.handleWalk();
+    this.resetWalkCounters();
+  }, 50);
+}
+
   /**
-   * Animates the character's condition (dead, hurt, jump, walk, idle).
+   * Handles character behavior when airborne (jumping/falling).
+   * Resets idle counter and manages jump animation state.
    */
-  animateConditionOfCharacter() {
-    this.characterConditionInterval = setInterval(() => {
-      if (this.isDead()) return this.handleDeath();
-      if (this.isHurt(0.7)) return this.handleHurt();
-      if (this.isObjectAboveGround()) return this.handleJump();
-      if (this.walkAnimationRequirements()) return this.handleWalk();
-      this.resetWalkCounters();
-    }, 50);
+  handleAirborne() {
+    this.longIdle = 0;
+    if (!this.jumpAnimationPlayed) {
+      this.handleJump();
+    }
   }
 
   /**
@@ -189,29 +205,21 @@ class Character extends MoveableObject {
   }
 
   /**
-   * Handles the jump animation logic by selecting the correct frame 
-   * based on the vertical speed (gravity).
+   * Plays the jump animation sequence exactly once.
+   * After completion, resumes normal animation checks.
    */
   handleJump() {
-    this.longIdle = 0;
-    let i = this.resolveJumpImageIndex();
-    let path = this.IMAGES_JUMPING[i];
-    this.img = IMAGE_CACHE[path];
-  }
-
-  /**
-   * Resolves the index of the jump image based on vertical speed.
-   * @returns {number} The index of the image in IMAGES_JUMPING.
-   */
-  resolveJumpImageIndex() {
-    if (this.speedGravityY > 15) return 1; // Start jump
-    if (this.speedGravityY > 10) return 2;
-    if (this.speedGravityY > 5) return 3;
-    if (this.speedGravityY > 0) return 4; // Peak
-    if (this.speedGravityY > -5) return 5; // Start falling
-    if (this.speedGravityY > -10) return 6;
-    if (this.speedGravityY > -15) return 7;
-    return 8; // Landing approach
+    this.jumpAnimationPlayed = true;
+    this.currentImage = 0;
+    const jumpInterval = setInterval(() => {
+      if (this.currentImage < this.IMAGES_JUMPING.length) {
+        let path = this.IMAGES_JUMPING[this.currentImage];
+        this.img = IMAGE_CACHE[path];
+        this.currentImage++;
+      } else {
+        clearInterval(jumpInterval);
+      }
+    }, 130);
   }
 
   /**
@@ -344,12 +352,12 @@ class Character extends MoveableObject {
   handleIdle() {
     this.WALKING_SOUND.pause();
     this.stopIncreasingSpeed();
-    this.longIdle++;
     if (this.longIdle <= 20) {
       this.playAnimation(this.IMAGES_IDLE);
     } else {
       this.playAnimation(this.IMAGES_LONG_IDLE);
     }
+    this.longIdle++;
   }
 
   /**
