@@ -21,20 +21,17 @@ class Cloud extends MoveableObject {
   constructor(imagePath, position_x) {
     super().loadImage(imagePath);
     this.position_x = position_x;
-    this.animate();
+    this.speed = 0.15; // Set a default speed if not inherited correctly
   }
 
   /**
-   * Animates the cloud by moving it left continuously.
-   * Resets position when it moves off-screen.
+   * Main logic update for the cloud.
    */
-  animate() {
-    setInterval(() => {
-      this.position_x -= this.speed;
-      if (this.position_x + this.width < 0) {
-        this.resetPosition();
-      }
-    }, 1000 / 60);
+  update() {
+    this.position_x -= this.speed;
+    if (this.position_x + this.width < 0) {
+      this.resetPosition();
+    }
   }
 
   /**

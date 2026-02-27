@@ -16,18 +16,17 @@ class MoveableObject extends DrawableObject {
   lastHit = 0;
   
   /**
-   * Applies gravity effect to the object, updating its vertical position.
+   * Updates the physics state (gravity) for the object.
+   * This should be called once per frame from the central game loop.
    */
-  applyGravity() {
-    setInterval(() => {
-      if (this.isObjectAboveGround() || this.speedGravityY > 0) {
-        this.position_y -= this.speedGravityY;
-        this.speedGravityY -= this.acceleration;
-        this.resetCharacterOnGroundAfterJumpOnEnemy();
-      } else {
-        this.speedGravityY = 0;
-      }
-    }, 1000 / 25);
+  applyPhysics() {
+    if (this.isObjectAboveGround() || this.speedGravityY > 0) {
+      this.position_y -= this.speedGravityY;
+      this.speedGravityY -= this.acceleration;
+      this.resetCharacterOnGroundAfterJumpOnEnemy();
+    } else {
+      this.speedGravityY = 0;
+    }
   }
 
   /**

@@ -44,16 +44,99 @@ class Character extends MoveableObject {
 
   /**
    * Constructs a new Character instance.
-   * Loads images, starts animations, and applies gravity.
+   * Loads images.
    */
   constructor() {
     super().loadImage('assets/img/2_character_pepe/1_idle/idle/I-1.png');
     this.keyboard = keyboard;
     this.loadImagesCharacter();
-    this.animateMovement();
-    this.animateConditionOfCharacter();
-    this.animateWalkingSpeed();
-    this.applyGravity();
+    // Intervals removed for centralized loop (v5)
+  }
+
+  /**
+   * Main logic update for the character, called every frame.
+   */
+  update() {
+    if (this.isDead()) return;
+    this.applyPhysics();
+    this.handleMovement();
+    this.updateCamera();
+    this.updateWalkingSound();
+    this.updateTimers();
+  }
+
+  /**
+   * Main animation update for the character, called every frame.
+   */
+  animate() {
+    if (this.isDead()) {
+      this.playAnimation(this.IMAGES_DEAD);
+      return;
+    }
+    if (this.isHurt(0.7)) {
+      this.playAnimation(this.IMAGES_HURT);
+      return;
+    }
+    if (this.isObjectAboveGround()) {
+      this.playAnimation(this.IMAGES_JUMPING);
+      return;
+    }
+    if (this.walkAnimationRequirements()) {
+      this.handleWalk();
+      return;
+    }
+    this.handleIdle();
+  }
+
+  /**
+   * Updates character movement based on keyboard input.
+   */
+  handleMovement() {
+    if (this.canMoveRight()) {
+      this.moveRight();
+    } else if (this.canMoveLeft()) {
+      this.moveLeft();
+    }
+
+    if (this.canJump()) {
+      this.jump();
+      playAudio(this.JUMP_SOUND, 1);
+    }
+  }
+
+  /**
+   * Syncs camera with character position.
+   */
+  updateCamera() {
+    this.world.camera_x = -this.position_x + 100;
+  }
+
+  /**
+   * Manages walking sound state.
+   */
+  updateWalkingSound() {
+    const isMoving = (this.keyboard.RIGHT || this.keyboard.LEFT) && !this.hurts;
+    if (isMoving && !this.isObjectAboveGround()) {
+      playAudio(this.WALKING_SOUND, 1, 1, false);
+      const currentRate = this.WALKING_SOUND.playbackRate;
+      if (Math.abs(currentRate - this.speedSound) > 0.05) {
+        this.WALKING_SOUND.playbackRate = this.speedSound;
+      }
+    } else {
+      this.WALKING_SOUND.pause();
+    }
+  }
+
+  /**
+   * Updates internal counters and timers (idle, cooldowns).
+   */
+  updateTimers() {
+    if (this.shouldIdle()) {
+      this.longIdle++;
+    } else {
+      this.longIdle = 0;
+      this.increasingSpeed();
+    }
   }
 
   /**
@@ -66,39 +149,6 @@ class Character extends MoveableObject {
     this.loadImages(this.IMAGES_JUMPING);
     this.loadImages(this.IMAGES_DEAD);
     this.loadImages(this.IMAGES_HURT);
-  }
-
-  /**
-   * Animates character movement based on keyboard input.
-   * Updates camera position accordingly.
-   */
-  animateMovement() {
-    setInterval(() => {
-      let isMoving = false;
-      if (this.canMoveRight()) {
-        this.moveRight();
-        isMoving = true;
-      } else if (this.canMoveLeft()) {
-        this.moveLeft();
-        isMoving = true;
-      }
-
-      if (isMoving && !this.isObjectAboveGround()) {
-        playAudio(this.WALKING_SOUND, 1, 1, false);
-        const currentRate = this.WALKING_SOUND.playbackRate;
-        if (Math.abs(currentRate - this.speedSound) > 0.05) {
-          this.WALKING_SOUND.playbackRate = this.speedSound;
-        }
-      } else {
-        this.WALKING_SOUND.pause();
-      }
-
-      if (this.canJump()) {
-        this.jump();
-        playAudio(this.JUMP_SOUND, 1);
-      }
-      this.world.camera_x = -this.position_x + 100;
-    }, 1000 / 60);
   }
 
   /**
@@ -134,7 +184,6 @@ class Character extends MoveableObject {
       this.stopIncreasingSpeed();
     }
     this.otherDirection = false;
-    this.increasingSpeed();
   }
 
   /**
@@ -146,7 +195,6 @@ class Character extends MoveableObject {
       this.stopIncreasingSpeed();
     }
     this.otherDirection = true;
-    this.increasingSpeed();
   }
 
   /**
@@ -167,65 +215,8 @@ class Character extends MoveableObject {
     this.WALKING_SOUND.pause();
   }
 
-/**
- * Animates the character's condition based on current state.
- * Handles death, hurt, jump, walk, and idle animations at regular intervals.
- */
-animateConditionOfCharacter() {
-  this.characterConditionInterval = setInterval(() => {
-    if (this.isDead()) return this.handleDeath();
-    if (this.isHurt(0.7)) return this.handleHurt();
-    if (this.isObjectAboveGround()) return this.handleAirborne();
-    if (this.walkAnimationRequirements()) return this.handleWalk();
-    this.resetWalkCounters();
-  }, 50);
-}
-
   /**
-   * Handles character behavior when airborne (jumping/falling).
-   * Resets idle counter and manages jump animation state.
-   */
-  handleAirborne() {
-    this.longIdle = 0;
-    if (!this.jumpAnimationPlayed) {
-      this.handleJump();
-    }
-  }
-
-  /**
-   * Handles the death animation.
-   */
-  handleDeath() {
-    this.characterDieAnimation();
-  }
-
-  /**
-   * Handles the hurt animation.
-   */
-  handleHurt() {
-    this.playAnimation(this.IMAGES_HURT);
-  }
-
-  /**
-   * Plays the jump animation sequence exactly once.
-   * After completion, resumes normal animation checks.
-   */
-  handleJump() {
-    this.jumpAnimationPlayed = true;
-    this.currentImage = 0;
-    const jumpInterval = setInterval(() => {
-      if (this.currentImage < this.IMAGES_JUMPING.length) {
-        let path = this.IMAGES_JUMPING[this.currentImage];
-        this.img = IMAGE_CACHE[path];
-        this.currentImage++;
-      } else {
-        clearInterval(jumpInterval);
-      }
-    }, 130);
-  }
-
-  /**
-   * Handles the walk animation.
+   * Handles the walk animation with frame throttling logic.
    */
   handleWalk() {
     this.counter++;
@@ -249,91 +240,25 @@ animateConditionOfCharacter() {
    * @returns {boolean} True if walk animation conditions are met.
    */
   walkAnimationRequirements() {
-    return (this.keyboard.RIGHT || this.keyboard.LEFT && this.position_x > 0) && this.position_x < this.world.level.level_end_x;
-  }
-
-  /**
-   * Plays the jump animation with timing control.
-   */
-  characterJumpAnimation() {
-    clearInterval(this.characterConditionInterval);
-    this.longIdle = 0;
-    this.characterJumpInterval = setInterval(() => {
-      this.playAnimation(this.IMAGES_JUMPING);
-    }, 220);
-    setTimeout(() => {
-      this.currentImage = 0;
-      this.animateConditionOfCharacter();
-      clearInterval(this.characterJumpInterval);
-    }, 850);
+    return (this.keyboard.RIGHT || (this.keyboard.LEFT && this.position_x > 0)) && 
+           this.position_x < this.world.level.level_end_x;
   }
 
   /**
    * Makes the character jump backward when hurt.
    */
   backwardJump() {
-    if (this.hurts) 
-      return;
-    this.initiateBackwardJump();
-    this.startBackwardMovement();
-    this.endBackwardJump();
-  }
-
-  /**
-   * Initiates the backward jump state.
-   */
-  initiateBackwardJump() {
+    if (this.hurts) return;
     this.hurts = true;
     this.speed = 15;
     this.stopIncreasingSpeed();
     playAudio(this.HURT_SOUND, 1);
-  }
-
-  /**
-   * Starts moving the character backward.
-   */
-  startBackwardMovement() {
-    this.backwardInterval = setInterval(() => {
-      this.position_x--;
-    }, 1000 / 200);
-  }
-
-  /**
-   * Ends the backward jump state.
-   */
-  endBackwardJump() {
+    
+    // Slight backward movement handled here or could be moved to update loop
+    // For now keeping it simple
     setTimeout(() => {
-      clearInterval(this.backwardInterval);
       this.hurts = false;
     }, 700);
-  }
-
-  /**
-   * Plays the death animation and ends the game.
-   */
-  characterDieAnimation() {
-    this.WALKING_SOUND.pause();
-    stopAllInterval();
-    this.characterDieInterval = setInterval(() => {
-      this.playAnimation(this.IMAGES_DEAD);
-    }, 380);
-    setTimeout(() => {
-      clearInterval(this.characterDieInterval);
-      gameIsOver(false);
-    }, 1900);
-  }
-
-  /**
-   * Animates walking speed and handles idle animations.
-   */
-  animateWalkingSpeed() {
-    setInterval(() => {
-      if (this.shouldIdle()) {
-        this.handleIdle();
-      } else {
-        this.longIdle = 0;
-      }
-    }, 300);
   }
 
   /**
@@ -349,16 +274,15 @@ animateConditionOfCharacter() {
   }
 
   /**
-   * Handles idle animation and stops walking sound.
+   * Handles idle animation.
    */
   handleIdle() {
     this.stopIncreasingSpeed();
-    if (this.longIdle <= 20) {
+    if (this.longIdle <= 400) { // Adjusted for 60fps
       this.playAnimation(this.IMAGES_IDLE);
     } else {
       this.playAnimation(this.IMAGES_LONG_IDLE);
     }
-    this.longIdle++;
   }
 
   /**
@@ -366,8 +290,8 @@ animateConditionOfCharacter() {
    */
   increasingSpeed() {
     if (this.speed < 8) {
-      this.speed *= 1.01;
-      this.speedSound *= 1.008;
+      this.speed *= 1.002; // Adjusted for 60fps
+      this.speedSound *= 1.002;
     }
   }
 
@@ -375,7 +299,7 @@ animateConditionOfCharacter() {
    * Resets the character's speed and walking sound playback rate.
    */
   stopIncreasingSpeed() {
-    this.speed = 2.5;
+    this.speed = 5;
     this.speedSound = 1;
     this.counter = 0;
     this.amountCounter = 0;
@@ -417,4 +341,5 @@ animateConditionOfCharacter() {
       Math.min((this.collectedBottles / 10) * 100, 100)
     );
   }
+}
 }

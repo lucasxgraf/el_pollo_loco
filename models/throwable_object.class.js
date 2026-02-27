@@ -32,7 +32,7 @@ class ThrowableObject extends MoveableObject {
 
   /**
    * Constructs a new ThrowableObject instance.
-   * Loads initial image, sets position, and initiates throwing and animation.
+   * Loads images and initiates throwing.
    * @param {number} position_x - Starting horizontal position.
    * @param {number} position_y - Starting vertical position.
    */
@@ -43,49 +43,44 @@ class ThrowableObject extends MoveableObject {
     this.position_x = position_x;
     this.position_y = position_y;
     this.throw();
-    this.animate();
   }
 
   /**
-   * Animates the bottle by cycling through rotation or break frames.
-   * Switches animations based on the 'break' flag.
+   * Main logic update for the bottle.
+   */
+  update() {
+    this.applyPhysics();
+    if (this.direction) {
+      this.position_x -= 7;
+    } else {
+      this.position_x += 7;
+    }
+  }
+
+  /**
+   * Main animation update for the bottle.
    */
   animate() {
-    this.animateBottleInterval = setInterval(() => {
-      if (this.break) {
-        this.playAnimation(this.IMAGES_BOTTLE_BREAK);
-      } else {
-        this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
-      }
-    }, this.intervalCounter);
+    if (this.break) {
+      this.playAnimation(this.IMAGES_BOTTLE_BREAK);
+    } else {
+      this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
+    }
   }
 
   /**
-   * Initiates the throwing motion of the bottle.
-   * Applies gravity and moves horizontally based on character direction.
+   * Initiates the throwing motion logic.
    */
   throw() {
     playAudio(this.THROWING_SOUND, 1);
     this.speedGravityY = 25;
-    this.applyGravity();
     world.character.longIdle = 0;
-    this.throwInterval = setInterval(() => {
-      if (this.direction) {
-        this.position_x -= 7;
-      } else {
-        this.position_x += 7;
-      }
-    }, 25);
   }
 
-/**
- * Cleans up throwable object intervals and sounds to prevent memory leaks.
- * Clears all active intervals and stops any playing splash sound.
- */
-cleanup() {
-  clearInterval(this.animateBottleInterval);
-  clearInterval(this.throwInterval);
-  clearInterval(this.applyGravityInterval);
-  stopAudio(this.SPLASH_SOUND);
-}
+  /**
+   * Cleans up throwable object sounds.
+   */
+  cleanup() {
+    stopAudio(this.SPLASH_SOUND);
+  }
 }

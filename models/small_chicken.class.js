@@ -36,61 +36,44 @@ class SmallChicken extends MoveableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.speed = 0.20 + Math.random() * 0.5;
     this.position_y = 360;
-    this.animate();
-    this.applyGravity();
   }
 
   /**
-   * Starts movement, animation, and gravity effects.
+   * Main logic update for the small chicken.
+   */
+  update() {
+    if (this.health <= 0) {
+      this.handleDeath();
+      return;
+    }
+    this.applyPhysics();
+    this.moveLeft();
+    
+    // Periodical jump logic can be throttled or moved
+    if (Math.random() < 0.005 && !this.isObjectAboveGround()) {
+      this.speedGravityY = 20;
+    }
+  }
+
+  /**
+   * Main animation update for the small chicken.
    */
   animate() {
-    this.startMovement();
-    this.startAnimation();
-    this.startGravity();
+    if (this.health <= 0) {
+      this.playAnimation(this.IMAGES_DEAD);
+    } else {
+      this.playAnimation(this.IMAGES_WALKING);
+    }
   }
 
   /**
-   * Starts moving the chicken left continuously.
-   */
-  startMovement() {
-    this.animateChickenInterval = setInterval(() => {
-      this.moveLeft();
-    }, 1000 / 60);
-  }
-
-  /**
-   * Starts the animation loop switching between walking and dead states.
-   */
-  startAnimation() {
-    setInterval(() => {
-      if (this.health <= 0) {
-        this.handleDeath();
-      } else {
-        this.playAnimation(this.IMAGES_WALKING);
-      }
-    }, 100);
-  }
-
-  /**
-   * Starts gravity effect, setting vertical speed periodically if not dead.
-   */
-  startGravity() {
-    setInterval(() => {
-      if (!this.isDead) this.speedGravityY = 20;
-    }, 3000);
-  }
-
-  /**
-   * Handles the death animation, sound, and stops movement.
-   * Plays death sound only once.
+   * Handles the death state and sound.
    */
   handleDeath() {
-    this.playAnimation(this.IMAGES_DEAD);
     if (!this.soundPlayed) {
       playAudio(this.DEAD_SMALL_CHICKEN_SOUND, 1);
       this.soundPlayed = true;
     }
-    clearInterval(this.animateChickenInterval);
     this.isDead = true;
   }
 

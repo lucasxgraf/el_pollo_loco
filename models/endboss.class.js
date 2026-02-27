@@ -38,81 +38,142 @@ class Endboss extends MoveableObject {
   ENDBOSS_SOUND = getAudioObject(SOUNDS.endboss.ENDBOSS_SOUND);
   ENDBOSS_DIE_SOUND = getAudioObject(SOUNDS.endboss.ENDBOSS_DIE_SOUND);
   ENDBOSS_HURT_SOUND = getAudioObject(SOUNDS.endboss.ENDBOSS_HURT_SOUND);
-
+  
   /**
    * Constructs a new Endboss instance.
-   * Loads initial image, all animation images, applies gravity, and starts animation.
+   * Loads images.
    */
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImagesEndboss();
-    this.applyGravity();
-    this.animate();
+    // Intervals removed for centralized loop (v5)
   }
 
   /**
-   * Loads all endboss animation images.
+   * Main logic update for the endboss.
    */
-  loadImagesEndboss() {
-    this.loadImages(this.IMAGES_WALKING);
-    this.loadImages(this.IMAGES_ALERT);
-    this.loadImages(this.IMAGES_ATTACK);
-    this.loadImages(this.IMAGES_HURT);
-    this.loadImages(this.IMAGES_DEAD);
-  }
-
-  /**
-   * Starts endboss animation and health check intervals.
-   */
-  animate() {
-    this.animateEndbossInterval = setInterval(() => {
-      this.handleEndbossBehavior();
-      this.checkFirstContact();
-    }, 150);
-    this.healthInterval = setInterval(() => {
-      this.checkHealth();
-    }, 200);
-  }
-
-  /**
-   * Handles the endboss behavior based on its current state.
-   * Manages death animation, alert state, walking, and combat actions.
-   */
-  handleEndbossBehavior() {
+  update() {
     if (this.isDead) {
-      this.handleDeath();
+      this.handleDeathLogic();
       return;
     }
-    this.endbossDieAnimationStarted = false;
+    
+    this.applyPhysics();
+    this.checkFirstContact();
+    this.handleAI();
+    this.handleAttacks();
+  }
+
+  /**
+   * Main animation update for the endboss.
+   */
+  animate() {
+    if (this.isDead) {
+      this.playAnimation(this.IMAGES_DEAD);
+      return;
+    }
+    
     if (this.meetCounter < 16 && this.meetCounter >= 0) {
-      this.endbossAlert();
+      this.playAnimation(this.IMAGES_ALERT);
     } else if (this.hadFirstContact && !this.isHurt(1.5)) {
-      this.endbossWalking();
-      this.randomJumpOrDash();
+      if (this.isJumping || this.isDashing) {
+        this.playAnimation(this.IMAGES_ATTACK);
+      } else {
+        this.playAnimation(this.IMAGES_WALKING);
+      }
     } else if (this.hadFirstContact) {
       this.playAnimation(this.IMAGES_HURT);
     }
   }
 
   /**
-   * Handles the endboss death state and starts the death animation if not already started.
+   * Handles high-level AI state transitions.
    */
-  handleDeath() {
-    if (!this.endbossDieAnimationStarted) {
-      this.endbossDieAnimationStarted = true;
-      this.endbossDieAnimation();
+  handleAI() {
+    if (this.meetCounter < 16 && this.meetCounter >= 0) {
+      this.meetCounter++;
+      if (this.meetCounter == 14) world.throwing = true;
+    } else if (this.hadFirstContact && !this.isHurt(1.5) && !this.isJumping && !this.isDashing) {
+      this.moveLeft();
+      this.randomAttackTrigger();
+    }
+  }
+
+  /**
+   * Handles ongoing attack movement (Jump/Dash).
+   */
+  handleAttacks() {
+    if (this.isJumping) {
+      this.continueJump();
+    } else if (this.isDashing) {
+      this.continueDashAction();
     }
   }
 
   /**
    * Randomly triggers jump or dash attacks.
    */
-  randomJumpOrDash() {
-    const rand = Math.random();
-    if (rand < 0.05) {
-      this.jumpToCharacter();
-    } else if (rand < 0.10) {
-      this.dashToCharacter();
+  randomAttackTrigger() {
+    if (Math.random() < 0.01) {
+      const rand = Math.random();
+      if (rand < 0.5) this.initiateJumpAction();
+      else this.initiateDashAction();
+    }
+  }
+
+  /**
+   * Initiates the jump state.
+   */
+  initiateJumpAction() {
+    if (this.isObjectAboveGround()) return;
+    this.isJumping = true;
+    this.speedGravityY = 35;
+    this.jumpTargetX = world.character.position_x < this.position_x ? -1 : 1;
+  }
+
+  /**
+   * Continues the jump movement logic.
+   */
+  continueJump() {
+    if (this.isObjectAboveGround()) {
+      const distance = Math.abs(world.character.position_x - this.position_x);
+      if (distance > 100) {
+        this.position_x += this.jumpTargetX * 15;
+      }
+    } else {
+      this.isJumping = false;
+    }
+  }
+
+  /**
+   * Initiates the dash state.
+   */
+  initiateDashAction() {
+    this.isDashing = true;
+    this.dashDirection = world.character.position_x < this.position_x ? -1 : 1;
+    this.dashDistance = 0;
+    this.dashMax = 200;
+  }
+
+  /**
+   * Continues the dash movement logic.
+   */
+  continueDashAction() {
+    if (this.dashDistance < this.dashMax) {
+      this.position_x += this.dashDirection * 15;
+      this.dashDistance += 15;
+    } else {
+      this.isDashing = false;
+    }
+  }
+
+  /**
+   * Handles death sound and flag.
+   */
+  handleDeathLogic() {
+    if (!this.soundPlayed) {
+      playAudio(this.ENDBOSS_DIE_SOUND, 0.5, 0);
+      this.soundPlayed = true;
     }
   }
 
@@ -123,229 +184,28 @@ class Endboss extends MoveableObject {
     if (world.character.position_x >= this.position_x - 450 && !this.hadFirstContact) {
       this.firstContactWithEndboss();
     }
-    if (world.character.x >= this.x - 900 && !this.hadFirstContact) {
-      world.throwing = false;
-    }
-  }
-
-  /**
-   * Checks endboss health and handles death.
-   */
-  checkHealth() {
-    if (this.health <= 0 && !this.isDead) {
-      this.isDead = true;
-      if (!this.endbossDieAnimationStarted) {
-        this.endbossDieAnimationStarted = true;
-        this.endbossDieAnimation();
-      }
-      stopAudio(this.ENDBOSS_SOUND);
-      clearInterval(this.animateEndbossInterval);
-      clearInterval(this.healthInterval);
-      playAudio(this.ENDBOSS_DIE_SOUND, 0.5, 1);
-    }
-  }
-
-  /**
-   * Plays alert animation during meeting phase.
-   */
-  endbossAlert() {
-    this.playAnimation(this.IMAGES_ALERT);
-    this.meetCounter++;
-    if (this.meetCounter == 14) {
-      world.throwing = true;
-    }
-  }
-
-  /**
-   * Plays walking animation and moves endboss left.
-   */
-  endbossWalking() {
-    this.playAnimation(this.IMAGES_WALKING);
-    this.moveLeft();
   }
 
   /**
    * Initiates first contact with player, starting alert phase.
    */
   firstContactWithEndboss() {
-    if (gameEnded) 
-      return;
+    if (gameEnded) return;
     this.meetCounter = 0;
     if (!mute) {
       playAudio(this.ENDBOSS_SOUND, 0.15, 0);
     }
-
     this.hadFirstContact = true;
     world.statusBarEndboss = new StatusBarEndboss();
   }
 
   /**
-   * Makes the endboss jump toward the player.
-   */
-  jumpToCharacter() {
-    if (!this.canJump()) 
-      return;
-    this.initiateJump();
-    this.startJumpMovement();
-  }
-
-  /**
-   * Checks if endboss can jump.
-   * @returns {boolean} True if jump is allowed.
-   */
-  canJump() {
-    return !this.isJumping && this.hadFirstContact && !this.isObjectAboveGround();
-  }
-
-  /**
-   * Initiates the jump state.
-   */
-  initiateJump() {
-    this.isJumping = true;
-    this.speedGravityY = 35;
-  }
-
-  /**
-   * Starts jump movement toward player.
-   */
-  startJumpMovement() {
-    this.jumpInterval = setInterval(() => {
-      const direction = world.character.position_x < this.position_x ? -1 : 1;
-      const distance = Math.abs(world.character.position_x - this.position_x);
-      if (this.isObjectAboveGround()) {
-        this.handleJumpMovement(direction, distance);
-      } else {
-        this.endJump();
-      }
-    }, 1000 / 60);
-  }
-
-  /**
-   * Handles jump movement physics.
-   * @param {number} direction - Direction of movement (-1 for left, 1 for right).
-   * @param {number} distance - Distance to player.
-   */
-  handleJumpMovement(direction, distance) {
-    if (distance > 100) {
-      this.position_x += direction * 15;
-    }
-    this.playAnimation(this.IMAGES_ATTACK);
-  }
-
-  /**
-   * Ends the jump state.
-   */
-  endJump() {
-    this.isJumping = false;
-    clearInterval(this.jumpInterval);
-  }
-
-  /**
-   * Makes the endboss dash toward the player.
-   */
-  dashToCharacter() {
-    if (!this.canDash()) 
-      return;
-    this.initiateDash();
-    this.startDashMovement();
-  }
-
-  /**
-   * Checks if endboss can dash.
-   * @returns {boolean} True if dash is allowed.
-   */
-  canDash() {
-    return !this.isDashing && this.hadFirstContact;
-  }
-
-  /**
-   * Initiates the dash state.
-   */
-  initiateDash() {
-    this.isDashing = true;
-    this.direction = world.character.position_x < this.position_x ? -1 : 1;
-    this.originalSpeed = this.speed;
-    this.speed = 30;
-    this.dashDistance = 0;
-    this.dashMax = 200;
-    this.playAnimation(this.IMAGES_ATTACK);
-  }
-
-  /**
-   * Starts dash movement toward player.
-   */
-  startDashMovement() {
-    this.dashInterval = setInterval(() => {
-      if (this.dashDistance < this.dashMax) {
-        this.continueDash();
-      } else {
-        this.endDash();
-      }
-    }, 30);
-  }
-
-  /**
-   * Continues dash movement.
-   */
-  continueDash() {
-    this.position_x += this.direction * 5;
-    this.dashDistance += 5;
-  }
-
-  /**
-   * Ends the dash state.
-   */
-  endDash() {
-    clearInterval(this.dashInterval);
-    this.speed = this.originalSpeed;
-    this.isDashing = false;
-  }
-
-  /**
-   * Plays the death animation and ends the game.
-   */
-  endbossDieAnimation() {
-    this.endbossDieInterval = setInterval(() => {
-      this.playAnimation(this.IMAGES_DEAD);
-    }, 700);
-    this.endbossDieTimeout = setTimeout(() => {
-      clearInterval(this.endbossDieInterval);
-      if (gameRunning) {
-        gameIsOver(true);
-      }
-    }, 2300);
-  }
-
-  /**
    * Resets the endboss to its initial state.
-   * Clears all intervals and timeouts, resets properties, and restarts animation.
    */
   resetGameEndboss() {
-    this.clearAllIntervals();
-    this.clearTimeouts();
     stopAudio(this.ENDBOSS_SOUND);
     this.resetProperties();
-    this.restartAnimation();
-  }
-
-  /**
-   * Clears all active intervals for the endboss.
-   */
-  clearAllIntervals() {
-    clearInterval(this.animateEndbossInterval);
-    clearInterval(this.healthInterval);
-    clearInterval(this.jumpInterval);
-    clearInterval(this.dashInterval);
-    clearInterval(this.endbossDieInterval);
-  }
-
-  /**
-   * Clears all active timeouts for the endboss.
-   */
-  clearTimeouts() {
-    if (this.endbossDieTimeout) {
-      clearTimeout(this.endbossDieTimeout);
-    }
+    this.loadImage(this.IMAGES_WALKING[0]);
   }
 
   /**
@@ -358,30 +218,13 @@ class Endboss extends MoveableObject {
     this.isDead = false;
     this.isJumping = false;
     this.isDashing = false;
-    this.endbossDieAnimationStarted = false;
+    this.soundPlayed = false;
   }
 
   /**
-   * Loads the initial walking image and restarts the animation.
-   */
-  restartAnimation() {
-    this.loadImage(this.IMAGES_WALKING[0]);
-    this.animate();
-  }
-
-  /**
-   * Cleans up all active intervals, timeouts, and sounds related to the endboss.
-   * Prevents memory leaks and stops any playing endboss audio.
+   * Placeholder for cleanup (intervals removed).
    */
   cleanup() {
-    clearInterval(this.animateEndbossInterval);
-    clearInterval(this.healthInterval);
-    clearInterval(this.jumpInterval);
-    clearInterval(this.dashInterval);
-    clearInterval(this.endbossDieInterval);
-    if (this.endbossDieTimeout) {
-      clearTimeout(this.endbossDieTimeout);
-    }
     stopAudio(this.ENDBOSS_SOUND);
     stopAudio(this.ENDBOSS_DIE_SOUND);
     stopAudio(this.ENDBOSS_HURT_SOUND);

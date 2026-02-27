@@ -48,12 +48,45 @@ class World {
   }
 
   /**
-   * Main rendering loop that clears and redraws the world continuously.
+   * Main logic update for the entire world.
+   * Called every frame from requestAnimationFrame.
+   */
+  update() {
+    if (gameEnded) return;
+    
+    this.character.update();
+    this.enemies.forEach(enemy => enemy.update());
+    this.clouds.forEach(cloud => cloud.update());
+    this.throwableObjects.forEach(bottle => bottle.update());
+    
+    this.checkCollisions();
+    this.checkThrowObjects();
+    this.checkCollectables();
+    this.checkCollisionsThrowableObjectsWithTheGround();
+    this.checkCollisionsThrowableObjectsWithEnemies();
+    checkIfGameIsStillWinnable(this);
+    
+    this.animateEntities();
+  }
+
+  /**
+   * Triggers animation updates for all visible entities.
+   * Logic for frame-rate independence or throttling is handled within entity animate() methods.
+   */
+  animateEntities() {
+    this.character.animate();
+    this.enemies.forEach(enemy => enemy.animate());
+    this.throwableObjects.forEach(bottle => bottle.animate());
+  }
+
+  /**
+   * Main rendering loop.
    */
   drawWorld() {
-    if (gameEnded) 
-      return;
-    this.update();
+    if (gameEnded) return;
+
+    this.update(); // Centralized logic + animation update
+
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.save();
     const cameraX = Math.round(this.camera_x);
@@ -61,55 +94,10 @@ class World {
     this.drawMovingObjectsToWorld();
     this.ctx.restore();
     this.drawNoneMovingObjectsToWorld();
+
     requestAnimationFrame(() => {
       this.drawWorld();
     });
-  }
-
-  /**
-   * Draws all moving game objects onto the canvas.
-   */
-  drawMovingObjectsToWorld() {
-    this.addObjectsToMap(this.backgroundObjects);
-    this.addObjectsToMap(this.clouds);
-    this.addObjectsToMap(this.enemies);
-    this.addObjectsToMap(this.coins);
-    this.addObjectsToMap(this.salsaBottles);
-    this.addObjectsToMap(this.throwableObjects);
-    this.addToMap(this.character);
-  }
-
-  /**
-   * Draws all static UI elements onto the canvas.
-   */
-  drawNoneMovingObjectsToWorld() {
-    this.addToMap(this.statusBarHealth);
-    this.addToMap(this.statusBarCoin);
-    this.addToMap(this.statusBarSalsaBottle);
-    if (this.statusBarEndboss) {
-      this.addToMap(this.statusBarEndboss);
-    }
-  }
-
-  /**
-   * Assigns the world reference to the character.
-   */
-  setWorld() {
-    this.character.world = this;
-  }
-
-  /**
-   * Performs all game logic updates each frame.
-   */
-  update() {
-    if (gameEnded) 
-      return;
-    this.checkCollisions();
-    this.checkThrowObjects();
-    this.checkCollectables();
-    this.checkCollisionsThrowableObjectsWithTheGround();
-    this.checkCollisionsThrowableObjectsWithEnemies();
-    checkIfGameIsStillWinnable(this);
   }
 
   /**

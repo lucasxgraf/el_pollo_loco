@@ -35,50 +35,38 @@ class Chicken extends MoveableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.speed = 0.15 + Math.random() * 0.5;
-    this.animate();
   }
 
   /**
-   * Starts movement and animation loops.
+   * Main logic update for the chicken.
+   */
+  update() {
+    if (this.health <= 0) {
+      this.handleDeath();
+      return;
+    }
+    this.moveLeft();
+  }
+
+  /**
+   * Main animation update for the chicken.
    */
   animate() {
-    this.startMovement();
-    this.startAnimation();
+    if (this.health <= 0) {
+      this.playAnimation(this.IMAGES_DEAD);
+    } else {
+      this.playAnimation(this.IMAGES_WALKING);
+    }
   }
 
   /**
-   * Starts moving the chicken left continuously.
-   */
-  startMovement() {
-    this.animateChickenInterval = setInterval(() => {
-      this.moveLeft();
-    }, 1000 / 60);
-  }
-
-  /**
-   * Starts the animation loop switching between walking and dead states.
-   */
-  startAnimation() {
-    setInterval(() => {
-      if (this.health <= 0) {
-        this.handleDeath();
-      } else {
-        this.playAnimation(this.IMAGES_WALKING);
-      }
-    }, 100);
-  }
-
-  /**
-   * Handles the death animation, sound, and stops movement.
-   * Plays death sound only once.
+   * Handles the death state and sound.
    */
   handleDeath() {
     if (!this.soundPlayed) {
       playAudio(this.DEAD_CHICKEN_SOUND, 1, 0);
       this.soundPlayed = true;
     }
-    this.playAnimation(this.IMAGES_DEAD);
-    clearInterval(this.animateChickenInterval);
     this.isDead = true;
   }
 }
