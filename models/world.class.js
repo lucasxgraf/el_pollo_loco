@@ -20,7 +20,7 @@ class World {
   canvas;
   ctx;
   keyboard;
-  camera_x = -100
+  camera_x = -100;
   statusBarHealth = new StatusBarHealth();
   statusBarCoin = new StatusBarCoin();
   statusBarSalsaBottle = new StatusBarSalsaBottle();
@@ -98,6 +98,38 @@ class World {
     requestAnimationFrame(() => {
       this.drawWorld();
     });
+  }
+
+  /**
+   * Draws all moving game objects onto the canvas.
+   */
+  drawMovingObjectsToWorld() {
+    this.addObjectsToMap(this.backgroundObjects);
+    this.addObjectsToMap(this.clouds);
+    this.addObjectsToMap(this.enemies);
+    this.addObjectsToMap(this.coins);
+    this.addObjectsToMap(this.salsaBottles);
+    this.addObjectsToMap(this.throwableObjects);
+    this.addToMap(this.character);
+  }
+
+  /**
+   * Draws all static UI elements onto the canvas.
+   */
+  drawNoneMovingObjectsToWorld() {
+    this.addToMap(this.statusBarHealth);
+    this.addToMap(this.statusBarCoin);
+    this.addToMap(this.statusBarSalsaBottle);
+    if (this.statusBarEndboss) {
+      this.addToMap(this.statusBarEndboss);
+    }
+  }
+
+  /**
+   * Assigns the world reference to the character.
+   */
+  setWorld() {
+    this.character.world = this;
   }
 
   /**

@@ -50,6 +50,17 @@ class Endboss extends MoveableObject {
   }
 
   /**
+   * Loads all endboss animation images.
+   */
+  loadImagesEndboss() {
+    this.loadImages(this.IMAGES_WALKING);
+    this.loadImages(this.IMAGES_ALERT);
+    this.loadImages(this.IMAGES_ATTACK);
+    this.loadImages(this.IMAGES_HURT);
+    this.loadImages(this.IMAGES_DEAD);
+  }
+
+  /**
    * Main logic update for the endboss.
    */
   update() {
