@@ -36,48 +36,35 @@ class SmallChicken extends MoveableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.speed = 0.20 + Math.random() * 0.5;
     this.position_y = 360;
-    this.animate();
+    this.smallChickenMainLoop();
     this.applyGravity();
   }
 
   /**
-   * Starts movement, animation, and gravity effects.
+   * Main small chicken loop consolidating movement, animations, and periodic gravity.
    */
-  animate() {
-    this.startMovement();
-    this.startAnimation();
-    this.startGravity();
-  }
-
-  /**
-   * Starts moving the chicken left continuously.
-   */
-  startMovement() {
+  smallChickenMainLoop() {
+    let frameCounter = 0;
+    let gravityCounter = 0;
     this.animateChickenInterval = setInterval(() => {
-      this.moveLeft();
-    }, 1000 / 60);
-  }
-
-  /**
-   * Starts the animation loop switching between walking and dead states.
-   */
-  startAnimation() {
-    setInterval(() => {
       if (this.health <= 0) {
         this.handleDeath();
       } else {
-        this.playAnimation(this.IMAGES_WALKING);
+        this.moveLeft();
+        // Update animation at ~10 FPS
+        if (frameCounter % 6 === 0) {
+          this.playAnimation(this.IMAGES_WALKING);
+        }
+        // Trigger jump effect every ~3 seconds (180 frames at 60 FPS)
+        if (gravityCounter >= 180) {
+          if (!this.isDead) this.speedGravityY = 20;
+          gravityCounter = 0;
+        }
       }
-    }, 100);
-  }
-
-  /**
-   * Starts gravity effect, setting vertical speed periodically if not dead.
-   */
-  startGravity() {
-    setInterval(() => {
-      if (!this.isDead) this.speedGravityY = 20;
-    }, 3000);
+      frameCounter++;
+      gravityCounter++;
+      if (frameCounter >= 60) frameCounter = 0;
+    }, 1000 / 60);
   }
 
   /**

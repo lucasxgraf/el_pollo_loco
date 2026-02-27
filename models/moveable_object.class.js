@@ -67,23 +67,26 @@ class MoveableObject extends DrawableObject {
 
   /**
    * Checks for collision with another movable object using axis-aligned bounding box (AABB).
+   * Optimized with cached offset calculations.
    * @param {MoveableObject} moveableObject - The object to check collision against.
    * @returns {boolean} True if the objects are colliding.
    */
   isColliding(moveableObject) {
+    const thisLeft = this.position_x + this.offset.left;
+    const thisRight = thisLeft + (this.width - this.offset.left - this.offset.right);
+    const thisTop = this.position_y + this.offset.top;
+    const thisBottom = thisTop + (this.height - this.offset.top - this.offset.bottom);
+
+    const otherLeft = moveableObject.position_x + moveableObject.offset.left;
+    const otherRight = otherLeft + (moveableObject.width - moveableObject.offset.left - moveableObject.offset.right);
+    const otherTop = moveableObject.position_y + moveableObject.offset.top;
+    const otherBottom = otherTop + (moveableObject.height - moveableObject.offset.top - moveableObject.offset.bottom);
+
     return (
-      this.position_x + this.offset.left + (this.width - this.offset.left - this.offset.right) >
-        moveableObject.position_x + moveableObject.offset.left &&
-      this.position_y + this.offset.top + (this.height - this.offset.top - this.offset.bottom) >
-        moveableObject.position_y + moveableObject.offset.top &&
-      this.position_x + this.offset.left <
-        moveableObject.position_x +
-          moveableObject.offset.left +
-          (moveableObject.width - moveableObject.offset.left - moveableObject.offset.right) &&
-      this.position_y + this.offset.top <
-        moveableObject.position_y +
-          moveableObject.offset.top +
-          (moveableObject.height - moveableObject.offset.top - moveableObject.offset.bottom)
+        thisRight > otherLeft &&
+        thisBottom > otherTop &&
+        thisLeft < otherRight &&
+        thisTop < otherBottom
     );
   }
 

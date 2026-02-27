@@ -35,37 +35,27 @@ class Chicken extends MoveableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.speed = 0.15 + Math.random() * 0.5;
-    this.animate();
+    this.chickenMainLoop();
   }
 
   /**
-   * Starts movement and animation loops.
+   * Main chicken loop consolidating movement and animations.
    */
-  animate() {
-    this.startMovement();
-    this.startAnimation();
-  }
-
-  /**
-   * Starts moving the chicken left continuously.
-   */
-  startMovement() {
+  chickenMainLoop() {
+    let frameCounter = 0;
     this.animateChickenInterval = setInterval(() => {
-      this.moveLeft();
-    }, 1000 / 60);
-  }
-
-  /**
-   * Starts the animation loop switching between walking and dead states.
-   */
-  startAnimation() {
-    setInterval(() => {
       if (this.health <= 0) {
         this.handleDeath();
       } else {
-        this.playAnimation(this.IMAGES_WALKING);
+        this.moveLeft();
+        // Update animation at ~10 FPS (every 6 frames)
+        if (frameCounter % 6 === 0) {
+          this.playAnimation(this.IMAGES_WALKING);
+        }
       }
-    }, 100);
+      frameCounter++;
+      if (frameCounter >= 60) frameCounter = 0;
+    }, 1000 / 60);
   }
 
   /**

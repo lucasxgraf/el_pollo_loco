@@ -25,16 +25,16 @@ class Cloud extends MoveableObject {
   }
 
   /**
-   * Animates the cloud by moving it left continuously.
-   * Resets position when it moves off-screen.
+   * Animates the cloud by moving it left at a reduced frequency to save CPU.
    */
   animate() {
+    // Reduce frequency to ~20 FPS (every 50ms)
     setInterval(() => {
-      this.position_x -= this.speed;
+      this.position_x -= this.speed * 3; // Compensate for lower refresh rate
       if (this.position_x + this.width < 0) {
         this.resetPosition();
       }
-    }, 1000 / 60);
+    }, 50);
   }
 
   /**
