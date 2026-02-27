@@ -61,6 +61,10 @@ class World {
     this.drawMovingObjectsToWorld();
     this.ctx.restore();
     this.drawNoneMovingObjectsToWorld();
+    if (typeof PerformanceMonitor !== 'undefined') {
+      PerformanceMonitor.update();
+      PerformanceMonitor.draw(this.ctx);
+    }
     requestAnimationFrame(() => {
       this.drawWorld();
     });

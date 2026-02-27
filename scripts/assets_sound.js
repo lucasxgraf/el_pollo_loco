@@ -74,6 +74,7 @@ const AUDIO_CACHE = {};
  * @param {boolean} restart - If true, resets audio to start before playing.
  */
 function playAudio(path, volume, repeat, restart) {
+  if (typeof PerformanceMonitor !== 'undefined') PerformanceMonitor.trackSound();
   if (mute || !path) 
     return;
 
