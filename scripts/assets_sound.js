@@ -132,6 +132,7 @@ function setupAndPlayAudio(audio, volume, repeat, restart) {
   }
   
   if (audio.paused || restart !== false) {
+    if (typeof PerformanceMonitor !== 'undefined') PerformanceMonitor.trackPlay();
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {});

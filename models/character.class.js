@@ -118,22 +118,25 @@ class Character extends MoveableObject {
 
   /**
    * Manages the walking sound based on movement state.
-   * Optimized to only talk to the Audio API when state changes.
+   * Optimized to use an internal state flag (isWalkingSoundPlaying) 
+   * to avoid expensive per-frame reads of the Audio API.
    * @param {boolean} isMoving - Current movement state.
    */
   handleMovementSound(isMoving) {
-    const isWalkingOnGround = isMoving && !this.isObjectAboveGround();
+    const shouldWalk = isMoving && !this.isObjectAboveGround();
     
-    if (isWalkingOnGround) {
-      if (this.WALKING_SOUND.paused) {
-        playAudio(this.WALKING_SOUND, 1, 1, false);
-      }
-      if (Math.abs(this.WALKING_SOUND.playbackRate - this.speedSound) > 0.01) {
+    if (shouldWalk && !this.isWalkingSoundPlaying) {
+      this.isWalkingSoundPlaying = true;
+      playAudio(this.WALKING_SOUND, 1, 1, false);
+      this.WALKING_SOUND.playbackRate = this.speedSound;
+    } else if (!shouldWalk && this.isWalkingSoundPlaying) {
+      this.isWalkingSoundPlaying = false;
+      this.WALKING_SOUND.pause();
+    } else if (shouldWalk && this.isWalkingSoundPlaying) {
+      // Optional: Gently update playbackRate if character speed changes,
+      // but only if the difference is significant.
+      if (Math.abs(this.WALKING_SOUND.playbackRate - this.speedSound) > 0.05) {
         this.WALKING_SOUND.playbackRate = this.speedSound;
-      }
-    } else {
-      if (!this.WALKING_SOUND.paused) {
-        this.WALKING_SOUND.pause();
       }
     }
   }
