@@ -23,7 +23,6 @@ class SmallChicken extends MoveableObject {
   };
   IMAGES_WALKING = ALL_IMAGES.smallChicken.IMAGES_WALKING;
   IMAGES_DEAD = ALL_IMAGES.smallChicken.IMAGES_DEAD;
-  DEAD_SMALL_CHICKEN_SOUND = new Audio(SOUNDS.smallChicken.DEAD_SMALL_CHICKEN_SOUND);
   soundPlayed = false;
 
   /**
@@ -37,7 +36,6 @@ class SmallChicken extends MoveableObject {
     this.speed = 0.20 + Math.random() * 0.5;
     this.position_y = 360;
     this.smallChickenMainLoop();
-    this.applyGravity();
   }
 
   /**
@@ -51,6 +49,7 @@ class SmallChicken extends MoveableObject {
         this.handleDeath();
       } else {
         this.moveLeft();
+        this.updateGravity(); // Gravity update integrated
         // Update animation at ~10 FPS
         if (frameCounter % 6 === 0) {
           this.playAnimation(this.IMAGES_WALKING);
@@ -74,7 +73,7 @@ class SmallChicken extends MoveableObject {
   handleDeath() {
     this.playAnimation(this.IMAGES_DEAD);
     if (!this.soundPlayed) {
-      playAudio(this.DEAD_SMALL_CHICKEN_SOUND, 1);
+      playAudio(SOUNDS.smallChicken.DEAD_SMALL_CHICKEN_SOUND, 1);
       this.soundPlayed = true;
     }
     clearInterval(this.animateChickenInterval);

@@ -102,18 +102,34 @@ class World {
     this.character.world = this;
   }
 
+  updateFrameCounter = 0;
+
   /**
    * Performs all game logic updates each frame.
+   * Throttled to reduce CPU usage.
    */
   update() {
     if (gameEnded) 
       return;
-    this.checkCollisions();
+
+    this.updateFrameCounter++;
+    
+    // Core physics/inputs every frame
     this.checkThrowObjects();
-    this.checkCollectables();
-    this.checkCollisionsThrowableObjectsWithTheGround();
-    this.checkCollisionsThrowableObjectsWithEnemies();
-    checkIfGameIsStillWinnable(this);
+    
+    // Expensive logic every 2nd frame (~30-60 FPS)
+    if (this.updateFrameCounter % 2 === 0) {
+      this.checkCollisions();
+      this.checkCollectables();
+      this.checkCollisionsThrowableObjectsWithTheGround();
+      this.checkCollisionsThrowableObjectsWithEnemies();
+    }
+
+    if (this.updateFrameCounter % 10 === 0) {
+      checkIfGameIsStillWinnable(this);
+    }
+
+    if (this.updateFrameCounter >= 60) this.updateFrameCounter = 0;
   }
 
   /**

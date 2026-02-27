@@ -17,17 +17,16 @@ class MoveableObject extends DrawableObject {
   
   /**
    * Applies gravity effect to the object, updating its vertical position.
+   * This method should be called once per frame from a main loop.
    */
-  applyGravity() {
-    setInterval(() => {
-      if (this.isObjectAboveGround() || this.speedGravityY > 0) {
-        this.position_y -= this.speedGravityY;
-        this.speedGravityY -= this.acceleration;
-        this.resetCharacterOnGroundAfterJumpOnEnemy();
-      } else {
-        this.speedGravityY = 0;
-      }
-    }, 1000 / 25);
+  updateGravity() {
+    if (this.isObjectAboveGround() || this.speedGravityY > 0) {
+      this.position_y -= this.speedGravityY;
+      this.speedGravityY -= this.acceleration;
+      this.resetCharacterOnGroundAfterJumpOnEnemy();
+    } else {
+      this.speedGravityY = 0;
+    }
   }
 
   /**

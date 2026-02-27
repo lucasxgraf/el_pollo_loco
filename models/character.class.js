@@ -51,7 +51,6 @@ class Character extends MoveableObject {
     this.keyboard = keyboard;
     this.loadImagesCharacter();
     this.characterMainLoop();
-    this.applyGravity();
   }
 
   /**
@@ -74,6 +73,7 @@ class Character extends MoveableObject {
     let frameCounter = 0;
     this.mainLoopInterval = setInterval(() => {
       this.updateMovement();
+      this.updateGravity();
       
       // Update animations/condition at ~20 FPS (every 3 frames)
       if (frameCounter % 3 === 0) {
@@ -128,16 +128,17 @@ class Character extends MoveableObject {
     if (shouldWalk && !this.isWalkingSoundPlaying) {
       this.isWalkingSoundPlaying = true;
       playAudio(this.WALKING_SOUND, 1, 1, false);
-      this.WALKING_SOUND.playbackRate = this.speedSound;
+      // this.WALKING_SOUND.playbackRate = this.speedSound; // Suspected bottleneck
     } else if (!shouldWalk && this.isWalkingSoundPlaying) {
       this.isWalkingSoundPlaying = false;
       this.WALKING_SOUND.pause();
     } else if (shouldWalk && this.isWalkingSoundPlaying) {
-      // Optional: Gently update playbackRate if character speed changes,
-      // but only if the difference is significant.
+      // Temporarily disabled playbackRate updates to fix mobile FPS drops
+      /*
       if (Math.abs(this.WALKING_SOUND.playbackRate - this.speedSound) > 0.05) {
         this.WALKING_SOUND.playbackRate = this.speedSound;
       }
+      */
     }
   }
 

@@ -46,8 +46,7 @@ class Endboss extends MoveableObject {
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImagesEndboss();
-    this.applyGravity();
-    this.animate();
+    this.endbossMainLoop();
   }
 
   /**
@@ -62,16 +61,28 @@ class Endboss extends MoveableObject {
   }
 
   /**
-   * Starts endboss animation and health check intervals.
+   * Main endboss loop consolidating behavior, health checks, and physics.
+   * Runs at 60 FPS to ensure smooth gravity and movement.
    */
-  animate() {
-    this.animateEndbossInterval = setInterval(() => {
-      this.handleEndbossBehavior();
-      this.checkFirstContact();
-    }, 150);
-    this.healthInterval = setInterval(() => {
-      this.checkHealth();
-    }, 200);
+  endbossMainLoop() {
+    let frameCounter = 0;
+    this.mainLoopInterval = setInterval(() => {
+      this.updateGravity();
+      
+      // Update behavior at ~6 FPS (every 10 frames, previously 150ms)
+      if (frameCounter % 10 === 0) {
+        this.handleEndbossBehavior();
+        this.checkFirstContact();
+      }
+
+      // Update health check at ~5 FPS (every 12 frames, previously 200ms)
+      if (frameCounter % 12 === 0) {
+        this.checkHealth();
+      }
+
+      frameCounter++;
+      if (frameCounter >= 60) frameCounter = 0;
+    }, 1000 / 60);
   }
 
   /**

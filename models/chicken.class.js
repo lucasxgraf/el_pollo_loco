@@ -23,7 +23,6 @@ class Chicken extends MoveableObject {
   };
   IMAGES_WALKING = ALL_IMAGES.chicken.IMAGES_WALKING;
   IMAGES_DEAD = ALL_IMAGES.chicken.IMAGES_DEAD;
-  DEAD_CHICKEN_SOUND = new Audio(SOUNDS.chicken.DEAD_CHICKEN_SOUND);
   soundPlayed = false;
 
   /**
@@ -48,6 +47,7 @@ class Chicken extends MoveableObject {
         this.handleDeath();
       } else {
         this.moveLeft();
+        this.updateGravity(); // Added gravity update here
         // Update animation at ~10 FPS (every 6 frames)
         if (frameCounter % 6 === 0) {
           this.playAnimation(this.IMAGES_WALKING);
@@ -64,7 +64,7 @@ class Chicken extends MoveableObject {
    */
   handleDeath() {
     if (!this.soundPlayed) {
-      playAudio(this.DEAD_CHICKEN_SOUND, 1, 0);
+      playAudio(SOUNDS.chicken.DEAD_CHICKEN_SOUND, 1, 0);
       this.soundPlayed = true;
     }
     this.playAnimation(this.IMAGES_DEAD);

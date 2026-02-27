@@ -43,39 +43,53 @@ class ThrowableObject extends MoveableObject {
     this.position_x = position_x;
     this.position_y = position_y;
     this.throw();
-    this.animate();
   }
 
   /**
-   * Animates the bottle by cycling through rotation or break frames.
-   * Switches animations based on the 'break' flag.
+   * Main loop for throwable objects.
+   * Consolidates movement, gravity, and animations.
    */
-  animate() {
-    this.animateBottleInterval = setInterval(() => {
+  throwableMainLoop() {
+    let frameCounter = 0;
+    this.mainLoopInterval = setInterval(() => {
       if (this.break) {
-        this.playAnimation(this.IMAGES_BOTTLE_BREAK);
+        // Animation for breaking at ~12 FPS
+        if (frameCounter % 5 === 0) {
+          this.playAnimation(this.IMAGES_BOTTLE_BREAK);
+        }
       } else {
-        this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
+        this.updateGravity();
+        this.updateHorizontalMovement();
+        // Rotation animation at ~12 FPS
+        if (frameCounter % 5 === 0) {
+          this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
+        }
       }
-    }, this.intervalCounter);
+
+      frameCounter++;
+      if (frameCounter >= 60) frameCounter = 0;
+    }, 1000 / 60);
   }
 
   /**
-   * Initiates the throwing motion of the bottle.
-   * Applies gravity and moves horizontally based on character direction.
+   * Updates horizontal position based on throwing direction.
+   */
+  updateHorizontalMovement() {
+    if (this.direction) {
+      this.position_x -= 7;
+    } else {
+      this.position_x += 7;
+    }
+  }
+
+  /**
+   * Initiates the throwing motion.
    */
   throw() {
     playAudio(this.THROWING_SOUND, 1);
     this.speedGravityY = 25;
-    this.applyGravity();
     world.character.longIdle = 0;
-    this.throwInterval = setInterval(() => {
-      if (this.direction) {
-        this.position_x -= 7;
-      } else {
-        this.position_x += 7;
-      }
-    }, 25);
+    this.throwableMainLoop();
   }
 
 /**
