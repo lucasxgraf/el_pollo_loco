@@ -27,9 +27,9 @@ class World {
   statusBarEndboss;
   throwableObjects = [];
   throwing = true;
-  NO_THROWING_SOUND = new Audio(SOUNDS.salsaBottle.NO_THROWING_SOUND);
-  COIN_COLLECT_SOUND = new Audio(SOUNDS.gameSound.COIN_COLLECT_SOUND);
-  SALSA_BOTTLE_COLLECT_SOUND = new Audio(SOUNDS.gameSound.SALSA_BOTTLE_COLLECT_SOUND);
+  NO_THROWING_SOUND = getAudioObject(SOUNDS.salsaBottle.NO_THROWING_SOUND);
+  COIN_COLLECT_SOUND = getAudioObject(SOUNDS.gameSound.COIN_COLLECT_SOUND);
+  SALSA_BOTTLE_COLLECT_SOUND = getAudioObject(SOUNDS.gameSound.SALSA_BOTTLE_COLLECT_SOUND);
 
   /**
    * Constructs a new World instance.

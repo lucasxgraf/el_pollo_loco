@@ -35,9 +35,9 @@ class Endboss extends MoveableObject {
   IMAGES_ATTACK = ALL_IMAGES.endboss.IMAGES_ATTACK;
   IMAGES_HURT = ALL_IMAGES.endboss.IMAGES_HURT;
   IMAGES_DEAD = ALL_IMAGES.endboss.IMAGES_DEAD;
-  ENDBOSS_SOUND = new Audio(SOUNDS.endboss.ENDBOSS_SOUND);
-  ENDBOSS_DIE_SOUND = new Audio(SOUNDS.endboss.ENDBOSS_DIE_SOUND);
-  ENDBOSS_HURT_SOUND = new Audio(SOUNDS.endboss.ENDBOSS_HURT_SOUND);
+  ENDBOSS_SOUND = getAudioObject(SOUNDS.endboss.ENDBOSS_SOUND);
+  ENDBOSS_DIE_SOUND = getAudioObject(SOUNDS.endboss.ENDBOSS_DIE_SOUND);
+  ENDBOSS_HURT_SOUND = getAudioObject(SOUNDS.endboss.ENDBOSS_HURT_SOUND);
 
   /**
    * Constructs a new Endboss instance.

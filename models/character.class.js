@@ -38,9 +38,9 @@ class Character extends MoveableObject {
   IMAGES_JUMPING = ALL_IMAGES.character.IMAGES_JUMPING;
   IMAGES_DEAD = ALL_IMAGES.character.IMAGES_DEAD;
   IMAGES_HURT = ALL_IMAGES.character.IMAGES_HURT;
-  WALKING_SOUND = new Audio(SOUNDS.character.WALKING_SOUND);
-  JUMP_SOUND = new Audio(SOUNDS.character.JUMP_SOUND);
-  HURT_SOUND = new Audio(SOUNDS.character.HURT_SOUND);
+  WALKING_SOUND = getAudioObject(SOUNDS.character.WALKING_SOUND);
+  JUMP_SOUND = getAudioObject(SOUNDS.character.JUMP_SOUND);
+  HURT_SOUND = getAudioObject(SOUNDS.character.HURT_SOUND);
 
   /**
    * Constructs a new Character instance.
@@ -85,7 +85,9 @@ class Character extends MoveableObject {
 
       if (isMoving && !this.isObjectAboveGround()) {
         playAudio(this.WALKING_SOUND, 1, 1, false);
-        this.WALKING_SOUND.playbackRate = this.speedSound;
+        if (this.WALKING_SOUND.playbackRate !== this.speedSound) {
+          this.WALKING_SOUND.playbackRate = this.speedSound;
+        }
       } else {
         this.WALKING_SOUND.pause();
       }

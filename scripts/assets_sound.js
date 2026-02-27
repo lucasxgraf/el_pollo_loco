@@ -115,17 +115,25 @@ function isValidAudio(audio) {
  * @param {boolean} restart - If true, resets audio to start before playing.
  */
 function setupAndPlayAudio(audio, volume, repeat, restart) {
-  audio.volume = volume !== undefined ? volume : 1;
+  const newVolume = volume !== undefined ? volume : 1;
+  if (audio.volume !== newVolume) {
+    audio.volume = newVolume;
+  }
+  
+  const isLoop = repeat == 1;
+  if (audio.loop !== isLoop) {
+    audio.loop = isLoop;
+  }
   
   if (restart !== false) {
     audio.currentTime = 0;
   }
   
-  audio.loop = repeat == 1;
-
-  const playPromise = audio.play();
-  if (playPromise !== undefined) {
-    playPromise.catch(() => {});
+  if (audio.paused || restart !== false) {
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {});
+    }
   }
 }
 
