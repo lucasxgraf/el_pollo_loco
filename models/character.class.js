@@ -74,13 +74,22 @@ class Character extends MoveableObject {
    */
   animateMovement() {
     setInterval(() => {
-      this.WALKING_SOUND.pause();
+      let isMoving = false;
       if (this.canMoveRight()) {
         this.moveRight();
+        isMoving = true;
       } else if (this.canMoveLeft()) {
         this.moveLeft();
-        this.otherDirection = true;
+        isMoving = true;
       }
+
+      if (isMoving && !this.isObjectAboveGround()) {
+        playAudio(this.WALKING_SOUND, 1, 1, false);
+        this.WALKING_SOUND.playbackRate = this.speedSound;
+      } else {
+        this.WALKING_SOUND.pause();
+      }
+
       if (this.canJump()) {
         this.jump();
         playAudio(this.JUMP_SOUND, 1);
@@ -122,12 +131,7 @@ class Character extends MoveableObject {
       this.stopIncreasingSpeed();
     }
     this.otherDirection = false;
-    if (!this.isObjectAboveGround()) {
-      playAudio(this.WALKING_SOUND, 1);
-      this.WALKING_SOUND.playbackRate = this.speedSound;
-    }
     this.increasingSpeed();
-    playAudio(this.WALKING_SOUND, 1);
   }
 
   /**
@@ -139,12 +143,7 @@ class Character extends MoveableObject {
       this.stopIncreasingSpeed();
     }
     this.otherDirection = true;
-    if (!this.isObjectAboveGround) {
-      playAudio(this.WALKING_SOUND, 1);
-      this.WALKING_SOUND.playbackRate = this.speedSound;
-    }
     this.increasingSpeed();
-    playAudio(this.WALKING_SOUND, 1);
   }
 
   /**
@@ -350,7 +349,6 @@ animateConditionOfCharacter() {
    * Handles idle animation and stops walking sound.
    */
   handleIdle() {
-    this.WALKING_SOUND.pause();
     this.stopIncreasingSpeed();
     if (this.longIdle <= 20) {
       this.playAnimation(this.IMAGES_IDLE);

@@ -71,8 +71,9 @@ const AUDIO_CACHE = {};
  * @param {string|HTMLAudioElement} path - Audio file path or Audio object.
  * @param {number} volume - Volume level (0.0 to 1.0).
  * @param {number} repeat - If 1, audio will loop; otherwise, no loop.
+ * @param {boolean} restart - If true, resets audio to start before playing.
  */
-function playAudio(path, volume, repeat) {
+function playAudio(path, volume, repeat, restart) {
   if (mute || !path) 
     return;
 
@@ -80,7 +81,7 @@ function playAudio(path, volume, repeat) {
   if (!isValidAudio(AUDIO)) 
     return;
 
-  setupAndPlayAudio(AUDIO, volume, repeat);
+  setupAndPlayAudio(AUDIO, volume, repeat, restart);
 }
 
 /**
@@ -111,10 +112,15 @@ function isValidAudio(audio) {
  * @param {HTMLAudioElement} audio - Audio object to play.
  * @param {number} volume - Volume level (0.0 to 1.0).
  * @param {number} repeat - If 1, audio will loop; otherwise, no loop.
+ * @param {boolean} restart - If true, resets audio to start before playing.
  */
-function setupAndPlayAudio(audio, volume, repeat) {
+function setupAndPlayAudio(audio, volume, repeat, restart) {
   audio.volume = volume !== undefined ? volume : 1;
-  audio.currentTime = 0;
+  
+  if (restart !== false) {
+    audio.currentTime = 0;
+  }
+  
   audio.loop = repeat == 1;
 
   const playPromise = audio.play();
