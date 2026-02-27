@@ -27,8 +27,8 @@ class ThrowableObject extends MoveableObject {
   };
   IMAGES_BOTTLE_ROTATION = ALL_IMAGES.salsaBottlesRotation;
   IMAGES_BOTTLE_BREAK = ALL_IMAGES.salsaBottlesBreak;
-  THROWING_SOUND = new Audio(SOUNDS.salsaBottle.THROWING_SOUND);
-  BREAKING_SOUND = new Audio(SOUNDS.salsaBottle.BREAKING_SOUND);
+  THROWING_SOUND = getAudioObject(SOUNDS.salsaBottle.THROWING_SOUND);
+  BREAKING_SOUND = getAudioObject(SOUNDS.salsaBottle.BREAKING_SOUND);
 
   /**
    * Constructs a new ThrowableObject instance.

@@ -23,7 +23,7 @@ class Chicken extends MoveableObject {
   };
   IMAGES_WALKING = ALL_IMAGES.chicken.IMAGES_WALKING;
   IMAGES_DEAD = ALL_IMAGES.chicken.IMAGES_DEAD;
-  DEAD_CHICKEN_SOUND = new Audio(SOUNDS.chicken.DEAD_CHICKEN_SOUND);
+  DEAD_CHICKEN_SOUND = getAudioObject(SOUNDS.chicken.DEAD_CHICKEN_SOUND);
   soundPlayed = false;
 
   /**

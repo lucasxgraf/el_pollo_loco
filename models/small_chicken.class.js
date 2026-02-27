@@ -23,7 +23,7 @@ class SmallChicken extends MoveableObject {
   };
   IMAGES_WALKING = ALL_IMAGES.smallChicken.IMAGES_WALKING;
   IMAGES_DEAD = ALL_IMAGES.smallChicken.IMAGES_DEAD;
-  DEAD_SMALL_CHICKEN_SOUND = new Audio(SOUNDS.smallChicken.DEAD_SMALL_CHICKEN_SOUND);
+  DEAD_SMALL_CHICKEN_SOUND = getAudioObject(SOUNDS.smallChicken.DEAD_SMALL_CHICKEN_SOUND);
   soundPlayed = false;
 
   /**

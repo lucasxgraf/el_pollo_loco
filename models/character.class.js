@@ -85,7 +85,8 @@ class Character extends MoveableObject {
 
       if (isMoving && !this.isObjectAboveGround()) {
         playAudio(this.WALKING_SOUND, 1, 1, false);
-        if (this.WALKING_SOUND.playbackRate !== this.speedSound) {
+        const currentRate = this.WALKING_SOUND.playbackRate;
+        if (Math.abs(currentRate - this.speedSound) > 0.05) {
           this.WALKING_SOUND.playbackRate = this.speedSound;
         }
       } else {
