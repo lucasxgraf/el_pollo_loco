@@ -117,6 +117,7 @@ function preloadSound(){
     audio.oncanplaythrough = updateLoadingProgress;
     audio.onerror = updateLoadingProgress;
     audio.src = src;
+    AUDIO_CACHE[src] = audio;
   });
 }
 

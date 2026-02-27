@@ -61,6 +61,11 @@ const SOUNDS = {
 };
 
 /**
+ * @constant {Object} AUDIO_CACHE - Stores Audio objects by path to prevent redundant creation.
+ */
+const AUDIO_CACHE = {};
+
+/**
  * Plays an audio file or Audio object with specified volume and repeat option.
  * Does nothing if muted or if path is invalid.
  * @param {string|HTMLAudioElement} path - Audio file path or Audio object.
@@ -84,7 +89,11 @@ function playAudio(path, volume, repeat) {
  * @returns {HTMLAudioElement} Audio object.
  */
 function getAudioObject(path) {
-  return typeof path === 'string' ? new Audio(path) : path;
+  if (typeof path !== 'string') return path;
+  if (!AUDIO_CACHE[path]) {
+    AUDIO_CACHE[path] = new Audio(path);
+  }
+  return AUDIO_CACHE[path];
 }
 
 /**
