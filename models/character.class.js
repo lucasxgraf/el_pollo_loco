@@ -103,14 +103,7 @@ class Character extends MoveableObject {
       isMoving = true;
     }
 
-    if (isMoving && !this.isObjectAboveGround()) {
-      playAudio(this.WALKING_SOUND, 1, 1, false);
-      if (this.WALKING_SOUND.playbackRate !== this.speedSound) {
-        this.WALKING_SOUND.playbackRate = this.speedSound;
-      }
-    } else {
-      this.WALKING_SOUND.pause();
-    }
+    this.handleMovementSound(isMoving);
 
     if (this.canMoveUp()) {
       this.jump();
@@ -120,6 +113,28 @@ class Character extends MoveableObject {
     // Explicit world check to prevent early initialization crashes
     if (this.world) {
       this.world.camera_x = -this.position_x + 100;
+    }
+  }
+
+  /**
+   * Manages the walking sound based on movement state.
+   * Optimized to only talk to the Audio API when state changes.
+   * @param {boolean} isMoving - Current movement state.
+   */
+  handleMovementSound(isMoving) {
+    const isWalkingOnGround = isMoving && !this.isObjectAboveGround();
+    
+    if (isWalkingOnGround) {
+      if (this.WALKING_SOUND.paused) {
+        playAudio(this.WALKING_SOUND, 1, 1, false);
+      }
+      if (Math.abs(this.WALKING_SOUND.playbackRate - this.speedSound) > 0.01) {
+        this.WALKING_SOUND.playbackRate = this.speedSound;
+      }
+    } else {
+      if (!this.WALKING_SOUND.paused) {
+        this.WALKING_SOUND.pause();
+      }
     }
   }
 

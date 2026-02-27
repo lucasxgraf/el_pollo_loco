@@ -109,6 +109,7 @@ function isValidAudio(audio) {
 /**
  * Configures audio properties and plays the audio.
  * Handles looping and resets playback time.
+ * Optimized to minimize redundant property assignments which can be expensive on mobile.
  * @param {HTMLAudioElement} audio - Audio object to play.
  * @param {number} volume - Volume level (0.0 to 1.0).
  * @param {number} repeat - If 1, audio will loop; otherwise, no loop.
@@ -116,7 +117,7 @@ function isValidAudio(audio) {
  */
 function setupAndPlayAudio(audio, volume, repeat, restart) {
   const newVolume = volume !== undefined ? volume : 1;
-  if (audio.volume !== newVolume) {
+  if (Math.abs(audio.volume - newVolume) > 0.01) {
     audio.volume = newVolume;
   }
   
@@ -125,7 +126,7 @@ function setupAndPlayAudio(audio, volume, repeat, restart) {
     audio.loop = isLoop;
   }
   
-  if (restart !== false) {
+  if (restart !== false && audio.currentTime !== 0) {
     audio.currentTime = 0;
   }
   
