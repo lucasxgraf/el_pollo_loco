@@ -114,17 +114,14 @@ class World {
 
     this.updateFrameCounter++;
     
-    // Core physics/inputs every frame
+    // Always check physics and collisions every frame for precision
     this.checkThrowObjects();
+    this.checkCollisions();
+    this.checkCollectables();
+    this.checkCollisionsThrowableObjectsWithTheGround();
+    this.checkCollisionsThrowableObjectsWithEnemies();
     
-    // Expensive logic every 2nd frame (~30-60 FPS)
-    if (this.updateFrameCounter % 2 === 0) {
-      this.checkCollisions();
-      this.checkCollectables();
-      this.checkCollisionsThrowableObjectsWithTheGround();
-      this.checkCollisionsThrowableObjectsWithEnemies();
-    }
-
+    // Throttled low-priority logic
     if (this.updateFrameCounter % 10 === 0) {
       checkIfGameIsStillWinnable(this);
     }

@@ -377,7 +377,7 @@ class Endboss extends MoveableObject {
    */
   restartAnimation() {
     this.loadImage(this.IMAGES_WALKING[0]);
-    this.animate();
+    this.endbossMainLoop();
   }
 
   /**
@@ -385,8 +385,7 @@ class Endboss extends MoveableObject {
    * Prevents memory leaks and stops any playing endboss audio.
    */
   cleanup() {
-    clearInterval(this.animateEndbossInterval);
-    clearInterval(this.healthInterval);
+    clearInterval(this.mainLoopInterval);
     clearInterval(this.jumpInterval);
     clearInterval(this.dashInterval);
     clearInterval(this.endbossDieInterval);

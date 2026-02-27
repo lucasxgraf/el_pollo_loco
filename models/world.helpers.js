@@ -28,10 +28,7 @@ function cleanup(world) {
  */
 function cleanupCharacter(world) {
   if (world.character) {
-    clearInterval(world.character.characterConditionInterval);
-    clearInterval(world.character.characterDieInterval);
-    clearInterval(world.character.backwardInterval);
-    clearInterval(world.character.characterJumpInterval);
+    clearInterval(world.character.mainLoopInterval);
   }
 }
 

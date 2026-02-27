@@ -97,9 +97,7 @@ class ThrowableObject extends MoveableObject {
  * Clears all active intervals and stops any playing splash sound.
  */
 cleanup() {
-  clearInterval(this.animateBottleInterval);
-  clearInterval(this.throwInterval);
-  clearInterval(this.applyGravityInterval);
+  clearInterval(this.mainLoopInterval);
   stopAudio(this.SPLASH_SOUND);
 }
 }
