@@ -34,29 +34,24 @@ class Chicken extends MoveableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.speed = 0.15 + Math.random() * 0.5;
-    this.chickenMainLoop();
   }
 
   /**
-   * Main chicken loop consolidating movement and animations.
+   * Called every frame by World.update() via requestAnimationFrame.
+   * @param {number} frameCounter - Global frame counter from the world loop.
    */
-  chickenMainLoop() {
-    let frameCounter = 0;
-    this.animateChickenInterval = setInterval(() => {
-      if (this.health <= 0) {
-        this.handleDeath();
-      } else {
-        this.moveLeft();
-        this.updateGravity(); // Added gravity update here
-        // Update animation at ~10 FPS (every 6 frames)
-        if (frameCounter % 6 === 0) {
-          this.playAnimation(this.IMAGES_WALKING);
-        }
-      }
-      frameCounter++;
-      if (frameCounter >= 60) frameCounter = 0;
-    }, 1000 / 60);
+  update(frameCounter, dt = 1) {
+    if (this.isDead) return;
+    if (this.health <= 0) {
+      this.handleDeath();
+      return;
+    }
+    this.moveLeft(dt);
+    this.updateGravity(dt);
+    if (frameCounter % 6 === 0) this.playAnimation(this.IMAGES_WALKING);
   }
+
+  cleanup() {}
 
   /**
    * Handles the death animation, sound, and stops movement.

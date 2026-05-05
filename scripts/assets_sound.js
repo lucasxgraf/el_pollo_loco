@@ -116,22 +116,22 @@ function isValidAudio(audio) {
  * @param {number} repeat - If 1, audio will loop; otherwise, no loop.
  * @param {boolean} restart - If true, resets audio to start before playing.
  */
-function setupAndPlayAudio(audio, volume, repeat, restart) {
+function setupAndPlayAudio(audio, volume, repeat, restart = false) {
   const newVolume = volume !== undefined ? volume : 1;
   if (Math.abs(audio.volume - newVolume) > 0.01) {
     audio.volume = newVolume;
   }
-  
+
   const isLoop = repeat == 1;
   if (audio.loop !== isLoop) {
     audio.loop = isLoop;
   }
-  
-  if (restart !== false && audio.currentTime !== 0) {
+
+  if (restart && audio.currentTime !== 0) {
     audio.currentTime = 0;
   }
-  
-  if (audio.paused || restart !== false) {
+
+  if (audio.paused || restart) {
     if (typeof PerformanceMonitor !== 'undefined') PerformanceMonitor.trackPlay();
     const playPromise = audio.play();
     if (playPromise !== undefined) {

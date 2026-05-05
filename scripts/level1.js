@@ -61,6 +61,6 @@ function initLevel1() {
       new SalsaBottle(),
       new SalsaBottle(),
     ],
-    new Audio('assets/sound/sandstorm_background.mp3')
+    getAudioObject(SOUNDS.gameSound.BACKGROUND_SOUND)
   );
 }

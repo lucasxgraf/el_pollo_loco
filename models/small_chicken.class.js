@@ -24,6 +24,7 @@ class SmallChicken extends MoveableObject {
   IMAGES_WALKING = ALL_IMAGES.smallChicken.IMAGES_WALKING;
   IMAGES_DEAD = ALL_IMAGES.smallChicken.IMAGES_DEAD;
   soundPlayed = false;
+  gravityCounter = 0;
 
   /**
    * Constructs a new SmallChicken instance.
@@ -35,36 +36,29 @@ class SmallChicken extends MoveableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.speed = 0.20 + Math.random() * 0.5;
     this.position_y = 360;
-    this.smallChickenMainLoop();
   }
 
   /**
-   * Main small chicken loop consolidating movement, animations, and periodic gravity.
+   * Called every frame by World.update() via requestAnimationFrame.
+   * @param {number} frameCounter - Global frame counter from the world loop.
    */
-  smallChickenMainLoop() {
-    let frameCounter = 0;
-    let gravityCounter = 0;
-    this.animateChickenInterval = setInterval(() => {
-      if (this.health <= 0) {
-        this.handleDeath();
-      } else {
-        this.moveLeft();
-        this.updateGravity(); // Gravity update integrated
-        // Update animation at ~10 FPS
-        if (frameCounter % 6 === 0) {
-          this.playAnimation(this.IMAGES_WALKING);
-        }
-        // Trigger jump effect every ~3 seconds (180 frames at 60 FPS)
-        if (gravityCounter >= 180) {
-          if (!this.isDead) this.speedGravityY = 20;
-          gravityCounter = 0;
-        }
-      }
-      frameCounter++;
-      gravityCounter++;
-      if (frameCounter >= 60) frameCounter = 0;
-    }, 1000 / 60);
+  update(frameCounter, dt = 1) {
+    if (this.isDead) return;
+    if (this.health <= 0) {
+      this.handleDeath();
+      return;
+    }
+    this.moveLeft(dt);
+    this.updateGravity(dt);
+    if (frameCounter % 6 === 0) this.playAnimation(this.IMAGES_WALKING);
+    this.gravityCounter++;
+    if (this.gravityCounter >= 180) {
+      this.speedGravityY = 20;
+      this.gravityCounter = 0;
+    }
   }
+
+  cleanup() {}
 
   /**
    * Handles the death animation, sound, and stops movement.

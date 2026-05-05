@@ -46,7 +46,6 @@ class Endboss extends MoveableObject {
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImagesEndboss();
-    this.endbossMainLoop();
   }
 
   /**
@@ -61,28 +60,17 @@ class Endboss extends MoveableObject {
   }
 
   /**
-   * Main endboss loop consolidating behavior, health checks, and physics.
-   * Runs at 60 FPS to ensure smooth gravity and movement.
+   * Called every frame by World.update() via requestAnimationFrame.
+   * Jump/dash intervals remain separate as they are short-lived and infrequent.
+   * @param {number} frameCounter - Global frame counter from the world loop.
    */
-  endbossMainLoop() {
-    let frameCounter = 0;
-    this.mainLoopInterval = setInterval(() => {
-      this.updateGravity();
-      
-      // Update behavior at ~6 FPS (every 10 frames, previously 150ms)
-      if (frameCounter % 10 === 0) {
-        this.handleEndbossBehavior();
-        this.checkFirstContact();
-      }
-
-      // Update health check at ~5 FPS (every 12 frames, previously 200ms)
-      if (frameCounter % 12 === 0) {
-        this.checkHealth();
-      }
-
-      frameCounter++;
-      if (frameCounter >= 60) frameCounter = 0;
-    }, 1000 / 60);
+  update(frameCounter, dt = 1) {
+    this.updateGravity(dt);
+    if (frameCounter % 10 === 0) {
+      this.handleEndbossBehavior();
+      this.checkFirstContact();
+    }
+    if (frameCounter % 12 === 0) this.checkHealth();
   }
 
   /**
@@ -377,7 +365,6 @@ class Endboss extends MoveableObject {
    */
   restartAnimation() {
     this.loadImage(this.IMAGES_WALKING[0]);
-    this.endbossMainLoop();
   }
 
   /**

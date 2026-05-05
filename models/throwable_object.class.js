@@ -27,8 +27,7 @@ class ThrowableObject extends MoveableObject {
   };
   IMAGES_BOTTLE_ROTATION = ALL_IMAGES.salsaBottlesRotation;
   IMAGES_BOTTLE_BREAK = ALL_IMAGES.salsaBottlesBreak;
-  THROWING_SOUND = new Audio(SOUNDS.salsaBottle.THROWING_SOUND);
-  BREAKING_SOUND = new Audio(SOUNDS.salsaBottle.BREAKING_SOUND);
+  THROWING_SOUND = getAudioObject(SOUNDS.salsaBottle.THROWING_SOUND);
 
   /**
    * Constructs a new ThrowableObject instance.
@@ -46,39 +45,27 @@ class ThrowableObject extends MoveableObject {
   }
 
   /**
-   * Main loop for throwable objects.
-   * Consolidates movement, gravity, and animations.
+   * Called every frame by World.update() via requestAnimationFrame.
+   * @param {number} frameCounter - Global frame counter from the world loop.
    */
-  throwableMainLoop() {
-    let frameCounter = 0;
-    this.mainLoopInterval = setInterval(() => {
-      if (this.break) {
-        // Animation for breaking at ~12 FPS
-        if (frameCounter % 5 === 0) {
-          this.playAnimation(this.IMAGES_BOTTLE_BREAK);
-        }
-      } else {
-        this.updateGravity();
-        this.updateHorizontalMovement();
-        // Rotation animation at ~12 FPS
-        if (frameCounter % 5 === 0) {
-          this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
-        }
-      }
-
-      frameCounter++;
-      if (frameCounter >= 60) frameCounter = 0;
-    }, 1000 / 60);
+  update(frameCounter, dt = 1) {
+    if (this.break) {
+      if (frameCounter % 5 === 0) this.playAnimation(this.IMAGES_BOTTLE_BREAK);
+    } else {
+      this.updateGravity(dt);
+      this.updateHorizontalMovement(dt);
+      if (frameCounter % 5 === 0) this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
+    }
   }
 
   /**
    * Updates horizontal position based on throwing direction.
    */
-  updateHorizontalMovement() {
-    if (this.direction) {
-      this.position_x -= 7;
+  updateHorizontalMovement(dt = 1) {
+    if (this.throwingDirection) {
+      this.position_x -= 7 * dt;
     } else {
-      this.position_x += 7;
+      this.position_x += 7 * dt;
     }
   }
 
@@ -86,18 +73,10 @@ class ThrowableObject extends MoveableObject {
    * Initiates the throwing motion.
    */
   throw() {
-    playAudio(this.THROWING_SOUND, 1);
+    playAudio(this.THROWING_SOUND, 1, 0, true);
     this.speedGravityY = 25;
     world.character.longIdle = 0;
-    this.throwableMainLoop();
   }
 
-/**
- * Cleans up throwable object intervals and sounds to prevent memory leaks.
- * Clears all active intervals and stops any playing splash sound.
- */
-cleanup() {
-  clearInterval(this.mainLoopInterval);
-  stopAudio(this.SPLASH_SOUND);
-}
+  cleanup() {}
 }

@@ -60,7 +60,7 @@ function cleanupThrowableObjects(world) {
  */
 function playBackgroundMusic(world) {
   if (mute) return;
-  playAudio(world.level.backgroundMusic, 0.5);
+  playAudio(world.level.backgroundMusic, 0.5, 1, false);
 }
 
 /**

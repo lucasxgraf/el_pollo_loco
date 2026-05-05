@@ -50,7 +50,6 @@ class Character extends MoveableObject {
     super().loadImage('assets/img/2_character_pepe/1_idle/idle/I-1.png');
     this.keyboard = keyboard;
     this.loadImagesCharacter();
-    this.characterMainLoop();
   }
 
   /**
@@ -66,40 +65,27 @@ class Character extends MoveableObject {
   }
 
   /**
-   * Main character loop consolidating movement, animations, and physics logic.
-   * Runs at 60 FPS but executes different logic at specific frame frequencies.
+   * Called every frame by World.update() via requestAnimationFrame.
+   * Replaces the old setInterval-based characterMainLoop for better mobile performance.
+   * @param {number} frameCounter - Global frame counter from the world loop.
    */
-  characterMainLoop() {
-    let frameCounter = 0;
-    this.mainLoopInterval = setInterval(() => {
-      this.updateMovement();
-      this.updateGravity();
-      
-      // Update animations/condition at ~20 FPS (every 3 frames)
-      if (frameCounter % 3 === 0) {
-        this.updateConditionLogic();
-      }
-
-      // Update idle state at ~3 FPS (every 20 frames)
-      if (frameCounter % 20 === 0) {
-        this.updateIdleState();
-      }
-
-      frameCounter++;
-      if (frameCounter >= 60) frameCounter = 0;
-    }, 1000 / 60);
+  update(frameCounter, dt = 1) {
+    this.updateMovement(dt);
+    this.updateGravity(dt);
+    if (frameCounter % 3 === 0) this.updateConditionLogic();
+    if (frameCounter % 20 === 0) this.updateIdleState();
   }
 
   /**
    * Handles character movement and sound state.
    */
-  updateMovement() {
+  updateMovement(dt = 1) {
     let isMoving = false;
     if (this.canMoveRight()) {
-      this.moveRight();
+      this.moveRight(dt);
       isMoving = true;
     } else if (this.canMoveLeft()) {
-      this.moveLeft();
+      this.moveLeft(dt);
       isMoving = true;
     }
 
