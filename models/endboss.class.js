@@ -46,8 +46,6 @@ class Endboss extends MoveableObject {
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImagesEndboss();
-    this.applyGravity();
-    this.animate();
   }
 
   /**
@@ -62,16 +60,17 @@ class Endboss extends MoveableObject {
   }
 
   /**
-   * Starts endboss animation and health check intervals.
+   * Called every frame by World.update() via requestAnimationFrame.
+   * Jump/dash intervals remain separate as they are short-lived and infrequent.
+   * @param {number} frameCounter - Global frame counter from the world loop.
    */
-  animate() {
-    this.animateEndbossInterval = setInterval(() => {
+  update(frameCounter, dt = 1) {
+    this.updateGravity(dt);
+    if (frameCounter % 10 === 0) {
       this.handleEndbossBehavior();
       this.checkFirstContact();
-    }, 150);
-    this.healthInterval = setInterval(() => {
-      this.checkHealth();
-    }, 200);
+    }
+    if (frameCounter % 12 === 0) this.checkHealth();
   }
 
   /**
@@ -366,7 +365,6 @@ class Endboss extends MoveableObject {
    */
   restartAnimation() {
     this.loadImage(this.IMAGES_WALKING[0]);
-    this.animate();
   }
 
   /**
@@ -374,8 +372,7 @@ class Endboss extends MoveableObject {
    * Prevents memory leaks and stops any playing endboss audio.
    */
   cleanup() {
-    clearInterval(this.animateEndbossInterval);
-    clearInterval(this.healthInterval);
+    clearInterval(this.mainLoopInterval);
     clearInterval(this.jumpInterval);
     clearInterval(this.dashInterval);
     clearInterval(this.endbossDieInterval);

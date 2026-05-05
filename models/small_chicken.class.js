@@ -23,8 +23,8 @@ class SmallChicken extends MoveableObject {
   };
   IMAGES_WALKING = ALL_IMAGES.smallChicken.IMAGES_WALKING;
   IMAGES_DEAD = ALL_IMAGES.smallChicken.IMAGES_DEAD;
-  DEAD_SMALL_CHICKEN_SOUND = new Audio(SOUNDS.smallChicken.DEAD_SMALL_CHICKEN_SOUND);
   soundPlayed = false;
+  gravityCounter = 0;
 
   /**
    * Constructs a new SmallChicken instance.
@@ -36,49 +36,29 @@ class SmallChicken extends MoveableObject {
     this.loadImages(this.IMAGES_DEAD);
     this.speed = 0.20 + Math.random() * 0.5;
     this.position_y = 360;
-    this.animate();
-    this.applyGravity();
   }
 
   /**
-   * Starts movement, animation, and gravity effects.
+   * Called every frame by World.update() via requestAnimationFrame.
+   * @param {number} frameCounter - Global frame counter from the world loop.
    */
-  animate() {
-    this.startMovement();
-    this.startAnimation();
-    this.startGravity();
+  update(frameCounter, dt = 1) {
+    if (this.isDead) return;
+    if (this.health <= 0) {
+      this.handleDeath();
+      return;
+    }
+    this.moveLeft(dt);
+    this.updateGravity(dt);
+    if (frameCounter % 6 === 0) this.playAnimation(this.IMAGES_WALKING);
+    this.gravityCounter++;
+    if (this.gravityCounter >= 180) {
+      this.speedGravityY = 20;
+      this.gravityCounter = 0;
+    }
   }
 
-  /**
-   * Starts moving the chicken left continuously.
-   */
-  startMovement() {
-    this.animateChickenInterval = setInterval(() => {
-      this.moveLeft();
-    }, 1000 / 60);
-  }
-
-  /**
-   * Starts the animation loop switching between walking and dead states.
-   */
-  startAnimation() {
-    setInterval(() => {
-      if (this.health <= 0) {
-        this.handleDeath();
-      } else {
-        this.playAnimation(this.IMAGES_WALKING);
-      }
-    }, 100);
-  }
-
-  /**
-   * Starts gravity effect, setting vertical speed periodically if not dead.
-   */
-  startGravity() {
-    setInterval(() => {
-      if (!this.isDead) this.speedGravityY = 20;
-    }, 3000);
-  }
+  cleanup() {}
 
   /**
    * Handles the death animation, sound, and stops movement.
@@ -87,7 +67,7 @@ class SmallChicken extends MoveableObject {
   handleDeath() {
     this.playAnimation(this.IMAGES_DEAD);
     if (!this.soundPlayed) {
-      playAudio(this.DEAD_SMALL_CHICKEN_SOUND, 1);
+      playAudio(SOUNDS.smallChicken.DEAD_SMALL_CHICKEN_SOUND, 1);
       this.soundPlayed = true;
     }
     clearInterval(this.animateChickenInterval);

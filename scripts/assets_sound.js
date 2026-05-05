@@ -74,6 +74,7 @@ const AUDIO_CACHE = {};
  * @param {boolean} restart - If true, resets audio to start before playing.
  */
 function playAudio(path, volume, repeat, restart) {
+  if (typeof PerformanceMonitor !== 'undefined') PerformanceMonitor.trackSound();
   if (mute || !path) 
     return;
 
@@ -109,27 +110,29 @@ function isValidAudio(audio) {
 /**
  * Configures audio properties and plays the audio.
  * Handles looping and resets playback time.
+ * Optimized to minimize redundant property assignments which can be expensive on mobile.
  * @param {HTMLAudioElement} audio - Audio object to play.
  * @param {number} volume - Volume level (0.0 to 1.0).
  * @param {number} repeat - If 1, audio will loop; otherwise, no loop.
  * @param {boolean} restart - If true, resets audio to start before playing.
  */
-function setupAndPlayAudio(audio, volume, repeat, restart) {
+function setupAndPlayAudio(audio, volume, repeat, restart = false) {
   const newVolume = volume !== undefined ? volume : 1;
-  if (audio.volume !== newVolume) {
+  if (Math.abs(audio.volume - newVolume) > 0.01) {
     audio.volume = newVolume;
   }
-  
+
   const isLoop = repeat == 1;
   if (audio.loop !== isLoop) {
     audio.loop = isLoop;
   }
-  
-  if (restart !== false) {
+
+  if (restart && audio.currentTime !== 0) {
     audio.currentTime = 0;
   }
-  
-  if (audio.paused || restart !== false) {
+
+  if (audio.paused || restart) {
+    if (typeof PerformanceMonitor !== 'undefined') PerformanceMonitor.trackPlay();
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {});

@@ -50,10 +50,6 @@ class Character extends MoveableObject {
     super().loadImage('assets/img/2_character_pepe/1_idle/idle/I-1.png');
     this.keyboard = keyboard;
     this.loadImagesCharacter();
-    this.animateMovement();
-    this.animateConditionOfCharacter();
-    this.animateWalkingSpeed();
-    this.applyGravity();
   }
 
   /**
@@ -69,35 +65,96 @@ class Character extends MoveableObject {
   }
 
   /**
-   * Animates character movement based on keyboard input.
-   * Updates camera position accordingly.
+   * Called every frame by World.update() via requestAnimationFrame.
+   * Replaces the old setInterval-based characterMainLoop for better mobile performance.
+   * @param {number} frameCounter - Global frame counter from the world loop.
    */
-  animateMovement() {
-    setInterval(() => {
-      let isMoving = false;
-      if (this.canMoveRight()) {
-        this.moveRight();
-        isMoving = true;
-      } else if (this.canMoveLeft()) {
-        this.moveLeft();
-        isMoving = true;
-      }
+  update(frameCounter, dt = 1) {
+    this.updateMovement(dt);
+    this.updateGravity(dt);
+    if (frameCounter % 3 === 0) this.updateConditionLogic();
+    if (frameCounter % 20 === 0) this.updateIdleState();
+  }
 
-      if (isMoving && !this.isObjectAboveGround()) {
-        playAudio(this.WALKING_SOUND, 1, 1, false);
-        if (this.WALKING_SOUND.playbackRate !== this.speedSound) {
-          this.WALKING_SOUND.playbackRate = this.speedSound;
-        }
-      } else {
-        this.WALKING_SOUND.pause();
-      }
+  /**
+   * Handles character movement and sound state.
+   */
+  updateMovement(dt = 1) {
+    let isMoving = false;
+    if (this.canMoveRight()) {
+      this.moveRight(dt);
+      isMoving = true;
+    } else if (this.canMoveLeft()) {
+      this.moveLeft(dt);
+      isMoving = true;
+    }
 
-      if (this.canJump()) {
-        this.jump();
-        playAudio(this.JUMP_SOUND, 1);
-      }
+    this.handleMovementSound(isMoving);
+
+    if (this.canMoveUp()) {
+      this.jump();
+      playAudio(this.JUMP_SOUND, 1);
+    }
+    
+    // Explicit world check to prevent early initialization crashes
+    if (this.world) {
       this.world.camera_x = -this.position_x + 100;
-    }, 1000 / 60);
+    }
+  }
+
+  /**
+   * Manages the walking sound based on movement state.
+   * Optimized to use an internal state flag (isWalkingSoundPlaying) 
+   * to avoid expensive per-frame reads of the Audio API.
+   * @param {boolean} isMoving - Current movement state.
+   */
+  handleMovementSound(isMoving) {
+    const shouldWalk = isMoving && !this.isObjectAboveGround();
+    
+    if (shouldWalk && !this.isWalkingSoundPlaying) {
+      this.isWalkingSoundPlaying = true;
+      playAudio(this.WALKING_SOUND, 1, 1, false);
+      // this.WALKING_SOUND.playbackRate = this.speedSound; // Suspected bottleneck
+    } else if (!shouldWalk && this.isWalkingSoundPlaying) {
+      this.isWalkingSoundPlaying = false;
+      this.WALKING_SOUND.pause();
+    } else if (shouldWalk && this.isWalkingSoundPlaying) {
+      // Temporarily disabled playbackRate updates to fix mobile FPS drops
+      /*
+      if (Math.abs(this.WALKING_SOUND.playbackRate - this.speedSound) > 0.05) {
+        this.WALKING_SOUND.playbackRate = this.speedSound;
+      }
+      */
+    }
+  }
+
+  /**
+   * Renamed and slightly optimized condition logic.
+   */
+  updateConditionLogic() {
+    if (this.isDead()) return this.handleDeath();
+    if (this.isHurt(0.7)) return this.handleHurt();
+    if (this.isObjectAboveGround()) return this.handleAirborne();
+    if (this.walkAnimationRequirements()) return this.handleWalk();
+    this.resetWalkCounters();
+  }
+
+  /**
+   * Handles idle animation timing.
+   */
+  updateIdleState() {
+    if (this.shouldIdle()) {
+      this.handleIdle();
+    } else {
+      this.longIdle = 0;
+    }
+  }
+
+  /**
+   * Checks if move up (jump) key is pressed.
+   */
+  canMoveUp() {
+    return this.canJump();
   }
 
   /**
@@ -166,19 +223,6 @@ class Character extends MoveableObject {
     this.WALKING_SOUND.pause();
   }
 
-/**
- * Animates the character's condition based on current state.
- * Handles death, hurt, jump, walk, and idle animations at regular intervals.
- */
-animateConditionOfCharacter() {
-  this.characterConditionInterval = setInterval(() => {
-    if (this.isDead()) return this.handleDeath();
-    if (this.isHurt(0.7)) return this.handleHurt();
-    if (this.isObjectAboveGround()) return this.handleAirborne();
-    if (this.walkAnimationRequirements()) return this.handleWalk();
-    this.resetWalkCounters();
-  }, 50);
-}
 
   /**
    * Handles character behavior when airborne (jumping/falling).
@@ -322,18 +366,6 @@ animateConditionOfCharacter() {
     }, 1900);
   }
 
-  /**
-   * Animates walking speed and handles idle animations.
-   */
-  animateWalkingSpeed() {
-    setInterval(() => {
-      if (this.shouldIdle()) {
-        this.handleIdle();
-      } else {
-        this.longIdle = 0;
-      }
-    }, 300);
-  }
 
   /**
    * Checks if the character should play idle animation.

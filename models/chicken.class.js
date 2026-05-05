@@ -23,7 +23,6 @@ class Chicken extends MoveableObject {
   };
   IMAGES_WALKING = ALL_IMAGES.chicken.IMAGES_WALKING;
   IMAGES_DEAD = ALL_IMAGES.chicken.IMAGES_DEAD;
-  DEAD_CHICKEN_SOUND = new Audio(SOUNDS.chicken.DEAD_CHICKEN_SOUND);
   soundPlayed = false;
 
   /**
@@ -35,38 +34,24 @@ class Chicken extends MoveableObject {
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_DEAD);
     this.speed = 0.15 + Math.random() * 0.5;
-    this.animate();
   }
 
   /**
-   * Starts movement and animation loops.
+   * Called every frame by World.update() via requestAnimationFrame.
+   * @param {number} frameCounter - Global frame counter from the world loop.
    */
-  animate() {
-    this.startMovement();
-    this.startAnimation();
+  update(frameCounter, dt = 1) {
+    if (this.isDead) return;
+    if (this.health <= 0) {
+      this.handleDeath();
+      return;
+    }
+    this.moveLeft(dt);
+    this.updateGravity(dt);
+    if (frameCounter % 6 === 0) this.playAnimation(this.IMAGES_WALKING);
   }
 
-  /**
-   * Starts moving the chicken left continuously.
-   */
-  startMovement() {
-    this.animateChickenInterval = setInterval(() => {
-      this.moveLeft();
-    }, 1000 / 60);
-  }
-
-  /**
-   * Starts the animation loop switching between walking and dead states.
-   */
-  startAnimation() {
-    setInterval(() => {
-      if (this.health <= 0) {
-        this.handleDeath();
-      } else {
-        this.playAnimation(this.IMAGES_WALKING);
-      }
-    }, 100);
-  }
+  cleanup() {}
 
   /**
    * Handles the death animation, sound, and stops movement.
@@ -74,7 +59,7 @@ class Chicken extends MoveableObject {
    */
   handleDeath() {
     if (!this.soundPlayed) {
-      playAudio(this.DEAD_CHICKEN_SOUND, 1, 0);
+      playAudio(SOUNDS.chicken.DEAD_CHICKEN_SOUND, 1, 0);
       this.soundPlayed = true;
     }
     this.playAnimation(this.IMAGES_DEAD);

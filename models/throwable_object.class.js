@@ -27,8 +27,7 @@ class ThrowableObject extends MoveableObject {
   };
   IMAGES_BOTTLE_ROTATION = ALL_IMAGES.salsaBottlesRotation;
   IMAGES_BOTTLE_BREAK = ALL_IMAGES.salsaBottlesBreak;
-  THROWING_SOUND = new Audio(SOUNDS.salsaBottle.THROWING_SOUND);
-  BREAKING_SOUND = new Audio(SOUNDS.salsaBottle.BREAKING_SOUND);
+  THROWING_SOUND = getAudioObject(SOUNDS.salsaBottle.THROWING_SOUND);
 
   /**
    * Constructs a new ThrowableObject instance.
@@ -43,49 +42,41 @@ class ThrowableObject extends MoveableObject {
     this.position_x = position_x;
     this.position_y = position_y;
     this.throw();
-    this.animate();
   }
 
   /**
-   * Animates the bottle by cycling through rotation or break frames.
-   * Switches animations based on the 'break' flag.
+   * Called every frame by World.update() via requestAnimationFrame.
+   * @param {number} frameCounter - Global frame counter from the world loop.
    */
-  animate() {
-    this.animateBottleInterval = setInterval(() => {
-      if (this.break) {
-        this.playAnimation(this.IMAGES_BOTTLE_BREAK);
-      } else {
-        this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
-      }
-    }, this.intervalCounter);
+  update(frameCounter, dt = 1) {
+    if (this.break) {
+      if (frameCounter % 5 === 0) this.playAnimation(this.IMAGES_BOTTLE_BREAK);
+    } else {
+      this.updateGravity(dt);
+      this.updateHorizontalMovement(dt);
+      if (frameCounter % 5 === 0) this.playAnimation(this.IMAGES_BOTTLE_ROTATION);
+    }
   }
 
   /**
-   * Initiates the throwing motion of the bottle.
-   * Applies gravity and moves horizontally based on character direction.
+   * Updates horizontal position based on throwing direction.
+   */
+  updateHorizontalMovement(dt = 1) {
+    if (this.throwingDirection) {
+      this.position_x -= 7 * dt;
+    } else {
+      this.position_x += 7 * dt;
+    }
+  }
+
+  /**
+   * Initiates the throwing motion.
    */
   throw() {
-    playAudio(this.THROWING_SOUND, 1);
+    playAudio(this.THROWING_SOUND, 1, 0, true);
     this.speedGravityY = 25;
-    this.applyGravity();
     world.character.longIdle = 0;
-    this.throwInterval = setInterval(() => {
-      if (this.direction) {
-        this.position_x -= 7;
-      } else {
-        this.position_x += 7;
-      }
-    }, 25);
   }
 
-/**
- * Cleans up throwable object intervals and sounds to prevent memory leaks.
- * Clears all active intervals and stops any playing splash sound.
- */
-cleanup() {
-  clearInterval(this.animateBottleInterval);
-  clearInterval(this.throwInterval);
-  clearInterval(this.applyGravityInterval);
-  stopAudio(this.SPLASH_SOUND);
-}
+  cleanup() {}
 }

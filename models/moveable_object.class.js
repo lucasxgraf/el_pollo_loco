@@ -17,17 +17,16 @@ class MoveableObject extends DrawableObject {
   
   /**
    * Applies gravity effect to the object, updating its vertical position.
+   * This method should be called once per frame from a main loop.
    */
-  applyGravity() {
-    setInterval(() => {
-      if (this.isObjectAboveGround() || this.speedGravityY > 0) {
-        this.position_y -= this.speedGravityY;
-        this.speedGravityY -= this.acceleration;
-        this.resetCharacterOnGroundAfterJumpOnEnemy();
-      } else {
-        this.speedGravityY = 0;
-      }
-    }, 1000 / 25);
+  updateGravity(dt = 1) {
+    if (this.isObjectAboveGround() || this.speedGravityY > 0) {
+      this.position_y -= this.speedGravityY * dt;
+      this.speedGravityY -= this.acceleration * dt;
+      this.resetCharacterOnGroundAfterJumpOnEnemy();
+    } else {
+      this.speedGravityY = 0;
+    }
   }
 
   /**
@@ -67,38 +66,41 @@ class MoveableObject extends DrawableObject {
 
   /**
    * Checks for collision with another movable object using axis-aligned bounding box (AABB).
+   * Optimized with cached offset calculations.
    * @param {MoveableObject} moveableObject - The object to check collision against.
    * @returns {boolean} True if the objects are colliding.
    */
   isColliding(moveableObject) {
+    const thisLeft = this.position_x + this.offset.left;
+    const thisRight = thisLeft + (this.width - this.offset.left - this.offset.right);
+    const thisTop = this.position_y + this.offset.top;
+    const thisBottom = thisTop + (this.height - this.offset.top - this.offset.bottom);
+
+    const otherLeft = moveableObject.position_x + moveableObject.offset.left;
+    const otherRight = otherLeft + (moveableObject.width - moveableObject.offset.left - moveableObject.offset.right);
+    const otherTop = moveableObject.position_y + moveableObject.offset.top;
+    const otherBottom = otherTop + (moveableObject.height - moveableObject.offset.top - moveableObject.offset.bottom);
+
     return (
-      this.position_x + this.offset.left + (this.width - this.offset.left - this.offset.right) >
-        moveableObject.position_x + moveableObject.offset.left &&
-      this.position_y + this.offset.top + (this.height - this.offset.top - this.offset.bottom) >
-        moveableObject.position_y + moveableObject.offset.top &&
-      this.position_x + this.offset.left <
-        moveableObject.position_x +
-          moveableObject.offset.left +
-          (moveableObject.width - moveableObject.offset.left - moveableObject.offset.right) &&
-      this.position_y + this.offset.top <
-        moveableObject.position_y +
-          moveableObject.offset.top +
-          (moveableObject.height - moveableObject.offset.top - moveableObject.offset.bottom)
+        thisRight > otherLeft &&
+        thisBottom > otherTop &&
+        thisLeft < otherRight &&
+        thisTop < otherBottom
     );
   }
 
   /**
    * Moves the object to the right by its speed value.
    */
-  moveRight() {
-    this.position_x += this.speed;
+  moveRight(dt = 1) {
+    this.position_x += this.speed * dt;
   }
 
   /**
    * Moves the object to the left by its speed value.
    */
-  moveLeft() {
-    this.position_x -= this.speed;
+  moveLeft(dt = 1) {
+    this.position_x -= this.speed * dt;
   }
 
   /**

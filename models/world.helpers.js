@@ -28,10 +28,7 @@ function cleanup(world) {
  */
 function cleanupCharacter(world) {
   if (world.character) {
-    clearInterval(world.character.characterConditionInterval);
-    clearInterval(world.character.characterDieInterval);
-    clearInterval(world.character.backwardInterval);
-    clearInterval(world.character.characterJumpInterval);
+    clearInterval(world.character.mainLoopInterval);
   }
 }
 
@@ -63,7 +60,7 @@ function cleanupThrowableObjects(world) {
  */
 function playBackgroundMusic(world) {
   if (mute) return;
-  playAudio(world.level.backgroundMusic, 0.5);
+  playAudio(world.level.backgroundMusic, 0.5, 1, false);
 }
 
 /**

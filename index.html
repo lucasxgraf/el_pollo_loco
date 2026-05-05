@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" translate="no">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,9 +12,10 @@
 
   <script src="scripts/assets_img.js"></script>
   <script src="scripts/assets_sound.js"></script>
+  <script src="scripts/performance_monitor.js"></script>
   <script src="models/drawable_object.class.js"></script>
   <script src="models/moveable_object.class.js"></script>
-  
+
   <script src="models/status_bar.class.js"></script>
   <script src="models/status_bar_health.class.js"></script>
   <script src="models/status_bar_coin.class.js"></script>
@@ -35,8 +37,9 @@
   <script src="scripts/level1.js"></script>
   <script src="scripts/game.js"></script>
   <script src="script.js"></script>
-  
+
 </head>
+
 <body onload="init()" oncontextmenu="return false">
 
   <div id="loadingScreen" class="loading_screen dnone">
@@ -71,11 +74,11 @@
                 <img src="assets/img/menu_description/arrow_right.svg" alt="Right Arrow"> <i>or</i>
                 <img src="assets/img/menu_description/key_d.svg" alt="D Key"> <i>to</i>
               </div>
-                <div class="instruction_outcome">
+              <div class="instruction_outcome">
                 <span>Move Right</span>
               </div>
             </div>
-            
+
             <div class="instructions">
               <div class="instruction_key">
                 <i>Press</i>
@@ -86,7 +89,7 @@
                 <span>Move Left</span>
               </div>
             </div>
-            
+
             <div class="instructions">
               <div class="instruction_key">
                 <i>Press</i>
@@ -94,11 +97,11 @@
                 <img src="assets/img/menu_description/space_bar.svg" alt="Space Bar"> <i>or</i>
                 <img src="assets/img/menu_description/key_w.svg" alt="W Key"> <i>to</i>
               </div>
-            <div class="instruction_outcome">
-              <span>Jump</span>
+              <div class="instruction_outcome">
+                <span>Jump</span>
+              </div>
             </div>
-            </div>
-          
+
             <div class="instructions">
               <div class="instruction_key">
                 <i>Press</i>
@@ -111,7 +114,7 @@
           </div>
         </div>
       </div>
-      
+
       <div onclick="toggleFullscreen()" id="fullscreenBtn" class="btn d_none">
         <img id="volumeBtn" src="assets/img/menu_description/fullscreen.svg" alt="Volume Icon">
       </div>
@@ -132,46 +135,48 @@
           <div class="impressum_container">
             <div class="impressum_content">
               <h2>Angaben gemäß § 5 TMG<h2>
-                <p>
-                  Lucas Graf <br>
-                  Weißestraße 36 <br>
-                  04299 Leipzig <br>
-                  Deutschland 
-                </p>
-              
-              <h2>Kontakt</h2>
-                <p>
-                  E-Mail: lucasgraf01@gmail.com <br>
-                  Telefon: +49 (0) 170 1251262
-                </p>
-              
-              <h2>Haftung für Inhalte</h2>
-                <p>
-                  Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. 
-                  Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.
-                </p>
-              
-              <h2>Datenschutz</h2>
-                <p>
-                  Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. 
-                  Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.
-                </p>
-              
-              <h2>Spielgrafiken & Assets</h2>
-                <p>
-                  Dieses Spiel wurde im Rahmen eines Lernprojekts erstellt. 
-                  Alle verwendeten Grafiken und Assets stammen aus frei verfügbaren Quellen oder wurden zu Bildungszwecken verwendet.
-                </p>
+                  <p>
+                    Lucas Graf <br>
+                    Weißestraße 36 <br>
+                    04299 Leipzig <br>
+                    Deutschland
+                  </p>
+
+                  <h2>Kontakt</h2>
+                  <p>
+                    E-Mail: lucasgraf01@gmail.com <br>
+                    Telefon: +49 (0) 170 1251262
+                  </p>
+
+                  <h2>Haftung für Inhalte</h2>
+                  <p>
+                    Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt.
+                    Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr
+                    übernehmen.
+                  </p>
+
+                  <h2>Datenschutz</h2>
+                  <p>
+                    Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich.
+                    Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.
+                  </p>
+
+                  <h2>Spielgrafiken & Assets</h2>
+                  <p>
+                    Dieses Spiel wurde im Rahmen eines Lernprojekts erstellt.
+                    Alle verwendeten Grafiken und Assets stammen aus frei verfügbaren Quellen oder wurden zu
+                    Bildungszwecken verwendet.
+                  </p>
             </div>
           </div>
         </div>
-        </div>
       </div>
-    
+    </div>
+
     <div id="menu">
       <img src="assets/img/9_intro_outro_screens/start/startscreen_1.png" alt="Start Screen">
     </div>
-    
+
     <div id="fullscreen" class="d_none">
       <canvas id="canvas" class="d_none" height="480" width="720">
       </canvas>
@@ -194,11 +199,11 @@
           </button>
         </div>
       </div>
-      
+
       <div id="youWin" class="d_none">
         <img src="assets/img/You won, you lost/You Win A.png" alt="Game win screen">
       </div>
-  
+
       <div id="youLost" class="d_none">
         <img src="assets/img/You won, you lost/You lost.png" alt="You lost screen">
       </div>
@@ -216,4 +221,5 @@
   </main>
 
 </body>
+
 </html>

@@ -42,18 +42,24 @@ class World {
     this.keyboard = keyboard;
     this.backgroundObjects = BackgroundObject.createBackgroundObjects();
     this.clouds = Cloud.createClouds();
-    this.drawWorld();
     this.setWorld();
+    this.drawWorld();
     playBackgroundMusic(this);
   }
 
+  lastTimestamp = 0;
+
   /**
    * Main rendering loop that clears and redraws the world continuously.
+   * Uses delta time to keep physics consistent across different display refresh rates.
+   * @param {number} timestamp - DOMHighResTimeStamp provided by requestAnimationFrame.
    */
-  drawWorld() {
-    if (gameEnded) 
+  drawWorld(timestamp = 0) {
+    if (gameEnded)
       return;
-    this.update();
+    const dt = this.lastTimestamp ? Math.min((timestamp - this.lastTimestamp) / (1000 / 60), 2) : 1;
+    this.lastTimestamp = timestamp;
+    this.update(dt);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.save();
     const cameraX = Math.round(this.camera_x);
@@ -61,9 +67,11 @@ class World {
     this.drawMovingObjectsToWorld();
     this.ctx.restore();
     this.drawNoneMovingObjectsToWorld();
-    requestAnimationFrame(() => {
-      this.drawWorld();
-    });
+    if (typeof PerformanceMonitor !== 'undefined') {
+      PerformanceMonitor.update();
+      PerformanceMonitor.draw(this.ctx);
+    }
+    requestAnimationFrame((ts) => this.drawWorld(ts));
   }
 
   /**
@@ -98,18 +106,31 @@ class World {
     this.character.world = this;
   }
 
+  updateFrameCounter = 0;
+
   /**
-   * Performs all game logic updates each frame.
+   * Performs all game logic updates each frame, driven by requestAnimationFrame.
+   * @param {number} dt - Delta time scalar (1.0 = 60fps, 2.0 = 30fps, 0.5 = 120fps).
    */
-  update() {
-    if (gameEnded) 
+  update(dt = 1) {
+    if (gameEnded)
       return;
-    this.checkCollisions();
+
+    this.updateFrameCounter++;
+    const fc = this.updateFrameCounter;
+
+    this.character.update(fc, dt);
+    this.enemies.forEach(enemy => enemy.update(fc, dt));
+    this.throwableObjects.forEach(bottle => bottle.update(fc, dt));
+
     this.checkThrowObjects();
+    this.checkCollisions();
     this.checkCollectables();
     this.checkCollisionsThrowableObjectsWithTheGround();
     this.checkCollisionsThrowableObjectsWithEnemies();
-    checkIfGameIsStillWinnable(this);
+
+    if (fc % 10 === 0) checkIfGameIsStillWinnable(this);
+    if (fc >= 60) this.updateFrameCounter = 0;
   }
 
   /**
@@ -120,7 +141,6 @@ class World {
       if (this.character.isColliding(enemy) && !enemy.isDead && !this.character.hurts) {
         if (this.isJumpingOnEnemy(enemy)) {
           enemy.health = 0;
-          enemy.isDead = true;
           this.character.jumpOnEnemy();
         } else {
           this.character.hit();
@@ -186,7 +206,7 @@ class World {
     this.character.collectedCoins++;
     const percentage = (this.character.collectedCoins / 19) * 100;
     this.statusBarCoin.setPercentage(percentage);
-    playAudio(this.COIN_COLLECT_SOUND, 1);
+    playAudio(this.COIN_COLLECT_SOUND, 1, 0, true);
   }
 
   /**
@@ -196,7 +216,7 @@ class World {
     this.character.collectedBottles++;
     const percentage = Math.min((this.character.collectedBottles / 5) * 100, 100);
     this.statusBarSalsaBottle.setPercentage(percentage);
-    playAudio(this.SALSA_BOTTLE_COLLECT_SOUND, 1);
+    playAudio(this.SALSA_BOTTLE_COLLECT_SOUND, 1, 0, true);
   }
 
   /**
@@ -267,9 +287,6 @@ class World {
    */
   bottleBreaks(bottle) {
     bottle.break = true;
-    bottle.intervalCounter = 200;
-    this.clearTheBottleIntervals(bottle);
-    bottle.animate();
     this.playBottleThrowSound(bottle);
   }
 
@@ -278,7 +295,7 @@ class World {
    * @param {ThrowableObject} bottle - The bottle that broke.
    */
   playBottleThrowSound(bottle) {
-    playAudio(SOUNDS.salsaBottle.BREAKING_SOUND, 1);
+    playAudio(SOUNDS.salsaBottle.BREAKING_SOUND, 1, 0, true);
     setTimeout(() => {
       this.throwableObjects.splice(
         this.throwableObjects.indexOf(bottle),
@@ -286,16 +303,6 @@ class World {
       );
       clearInterval(bottle.animateBottleInterval);
     }, 1300);
-  }
-
-  /**
-   * Clears all active intervals associated with a bottle.
-   * @param {ThrowableObject} bottle - The bottle whose intervals to clear.
-   */
-  clearTheBottleIntervals(bottle) {
-    clearInterval(bottle.animateBottleInterval);
-    clearInterval(bottle.throwInterval);
-    clearInterval(bottle.applyGravityInterval);
   }
 
   /**
