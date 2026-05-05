@@ -17,6 +17,7 @@ class Character extends MoveableObject {
   collectedCoins = 0;
   collectedBottles = 0;
   stop = true;
+  isDying = false;
   justJumped = false;
   jumpAnimationPlayed = false;
   jumpedOnEnemy = false;
@@ -239,6 +240,8 @@ class Character extends MoveableObject {
    * Handles the death animation.
    */
   handleDeath() {
+    if (this.isDying) return;
+    this.isDying = true;
     this.characterDieAnimation();
   }
 

@@ -269,6 +269,7 @@ canvas,
 .go_back_to_menu {
   padding: 10px 20px;
   font-weight: bold;
+  color: #000;
 }
 
 .rotate_phone {
@@ -341,8 +342,8 @@ canvas,
   background-color: #FFDF00;
 }
 
-button, 
-#mobileBtnLeft, 
+button,
+#mobileBtnLeft,
 #mobileBtnRight {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -351,6 +352,13 @@ button,
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+}
+
+#mobileBtnLeft,
+#mobileBtnRight,
+#mobileBtnJump,
+#mobileBtnThrow {
+  touch-action: none;
 }
 
 #fullscreen {

@@ -57,7 +57,13 @@ class World {
   drawWorld(timestamp = 0) {
     if (gameEnded)
       return;
-    const dt = this.lastTimestamp ? Math.min((timestamp - this.lastTimestamp) / (1000 / 60), 2) : 1;
+    const TARGET_INTERVAL = 1000 / 60;
+    const elapsed = this.lastTimestamp ? timestamp - this.lastTimestamp : TARGET_INTERVAL;
+    if (elapsed < TARGET_INTERVAL * 0.75) {
+      requestAnimationFrame((ts) => this.drawWorld(ts));
+      return;
+    }
+    const dt = Math.min(elapsed / TARGET_INTERVAL, 2);
     this.lastTimestamp = timestamp;
     this.update(dt);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -67,10 +73,6 @@ class World {
     this.drawMovingObjectsToWorld();
     this.ctx.restore();
     this.drawNoneMovingObjectsToWorld();
-    if (typeof PerformanceMonitor !== 'undefined') {
-      PerformanceMonitor.update();
-      PerformanceMonitor.draw(this.ctx);
-    }
     requestAnimationFrame((ts) => this.drawWorld(ts));
   }
 

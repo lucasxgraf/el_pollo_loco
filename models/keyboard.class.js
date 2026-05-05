@@ -66,55 +66,26 @@ function bindKeyboardBtns() {
 
 /**
  * Binds mobile touch event listeners to update the Keyboard instance state.
- * Supports left, right, jump, and throw buttons for mobile controls.
+ * Uses passive:false so preventDefault() can suppress the long-press context menu.
+ * touchcancel resets state when the OS interrupts a touch (e.g. swipe gesture).
  */
 function bindMobileBtns() {
-  document.getElementById('mobileBtnLeft').addEventListener('touchstart', (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-    keyboard.LEFT = true;
-  });
-  document.getElementById('mobileBtnLeft').addEventListener('touchend', (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-    keyboard.LEFT = false;
-  });
-  document.getElementById('mobileBtnRight').addEventListener('touchstart', (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-    keyboard.RIGHT = true;
-  });
-  document.getElementById('mobileBtnRight').addEventListener('touchend', (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-    keyboard.RIGHT = false;
-  });
-  document.getElementById('mobileBtnJump').addEventListener('touchstart', (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-    keyboard.SPACE = true;
-  });
-  document.getElementById('mobileBtnJump').addEventListener('touchend', (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-    keyboard.SPACE = false;
-  });
-  document.getElementById('mobileBtnThrow').addEventListener('touchstart', (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-    keyboard.Q = true;
-  });
-  document.getElementById('mobileBtnThrow').addEventListener('touchend', (e) => {
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-    keyboard.Q = false;
-  });
+  bindMobileBtn('mobileBtnLeft',  () => keyboard.LEFT  = true,  () => keyboard.LEFT  = false);
+  bindMobileBtn('mobileBtnRight', () => keyboard.RIGHT = true,  () => keyboard.RIGHT = false);
+  bindMobileBtn('mobileBtnJump',  () => keyboard.SPACE = true,  () => keyboard.SPACE = false);
+  bindMobileBtn('mobileBtnThrow', () => keyboard.Q     = true,  () => keyboard.Q     = false);
+}
+
+/**
+ * Attaches touchstart, touchend, touchcancel and contextmenu listeners to a mobile button.
+ * @param {string} id - Element id of the button.
+ * @param {Function} onPress - Called when the button is pressed.
+ * @param {Function} onRelease - Called when the button is released or cancelled.
+ */
+function bindMobileBtn(id, onPress, onRelease) {
+  const btn = document.getElementById(id);
+  btn.addEventListener('touchstart',  (e) => { e.preventDefault(); onPress();   }, { passive: false });
+  btn.addEventListener('touchend',    (e) => { e.preventDefault(); onRelease(); }, { passive: false });
+  btn.addEventListener('touchcancel', () => onRelease());
+  btn.addEventListener('contextmenu', (e) => e.preventDefault());
 }
